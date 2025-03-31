@@ -1,0 +1,360 @@
+/* 修改容器样式 */
+body {
+    margin: 0;
+    overflow: hidden;  /* 隐藏页面滚动条 */
+    height: 100vh;  /* 设置页面高度为视口高度 */
+}
+
+.container {
+    width: 100%;
+    padding-top: 75px;
+    padding-bottom: 15px; 
+    display: flex;
+    justify-content: center;
+    height: calc(100vh - 75px);  /* 设置容器高度为剩余视口高度 */
+}
+
+.content-wrapper {
+    width: 95%;
+    background: #fff;
+    border-radius: 20px;  /* 只保留上方圆角 */
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    height: 100%;  /* 占满容器高度 */
+    display: flex;
+    flex-direction: column;
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: 500;
+    color: #333;
+}
+
+.filter-section {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: center;  /* 改为居中对齐 */
+}
+
+.filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    width: fit-content;  /* 让容器宽度适应内容 */
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-label {
+    color: #666;
+    font-size: 14px;
+}
+
+.filter-select {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 14px;
+    color: #333;
+    width: 120px;
+}
+
+.search-group {
+    display: flex;
+    gap: 8px;
+    /* 删除 margin-left: auto */
+}
+
+.search-input {
+    width: 200px;
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.search-btn {
+    padding: 6px 16px;
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.search-btn:hover {
+    background: #4f46e5;
+}
+
+/* 内容布局 */
+.content-layout {
+    display: flex;
+    gap: 24px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.content-main {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.content-side {
+    flex: 1;
+    min-width: 300px;
+    max-width: 360px;
+}
+
+.voice-list {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 16px;
+    overflow-y: auto;  /* 添加垂直滚动 */
+    max-height: 100%;  /* 改为100%以适应容器高度 */
+    padding-right: 12px;  /* 为滚动条预留空间 */
+}
+
+/* 美化滚动条样式 */
+.voice-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.voice-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.voice-list::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.voice-list::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+.voice-item {
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s ease;
+}
+
+.voice-item:hover {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.voice-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.voice-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.voice-info {
+    flex: 1;
+}
+
+.voice-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.voice-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.author-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.author-name {
+    font-size: 14px;
+    color: #666;
+}
+
+.voice-date {
+    font-size: 14px;
+    color: #999;
+}
+
+.voice-preview {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
+.voice-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.use-voice-btn {
+    padding: 8px 20px;
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.use-voice-btn:hover {
+    background: #4f46e5;
+}
+
+.action-buttons-group {
+    display: flex;
+    gap: 16px;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    font-size: 14px;
+    padding: 4px;
+}
+
+.action-btn img {
+    width: 16px;
+    height: 16px;
+}
+
+/* 最佳声音列表样式 */
+.best-voices {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #eee;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.best-voice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.best-voice-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+    cursor: pointer;
+}
+
+.best-voice-item:hover {
+    background: #f8f9fa;
+}
+
+.best-voice-rank {
+    width: 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.best-voice-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.best-voice-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.best-voice-info {
+    flex: 1;
+}
+
+.best-voice-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.best-voice-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.best-voice-author img {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.best-voice-author span {
+    font-size: 12px;
+    color: #666;
+}
+
+.best-voice-likes {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #666;
+}
+
+.best-voice-likes i {
+    font-size: 14px;
+}

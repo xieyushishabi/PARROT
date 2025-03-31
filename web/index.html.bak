@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parrot Sound - AI语音平台</title>
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/index.css">
+    <link rel="stylesheet" href="assets/css/iconfont.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="nav-left">
+            <div class="logo">
+                <img src="assets/images/logo.png" alt="Parrot Sound">
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html" class="active">首页</a></li>
+                <li class="nav-item"><a href="dub.html">智能配音</a></li>
+                <li class="nav-item"><a href="clone.html">声音克隆</a></li>
+                <li class="nav-item"><a href="teaching.html">教育教学</a></li>
+                <li class="nav-item"><a href="community.html">社区资源</a></li>
+                <li class="nav-item"><a href="help.html">帮助中心</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <a href="user.html" class="nav-user">
+                <img src="assets/images/avatar-default.png" alt="用户头像">
+            </a>
+        </div>
+    </nav>
+
+    <!-- 主要内容区域 -->
+    <main>
+        <!-- 第一部分：头部横幅 -->
+        <section class="banner">
+            <div class="banner-image">
+                <img src="assets/images/banner-computer.jpg" alt="AI语音平台">
+            </div>
+            <div class="banner-content">
+                <h1>鹦音坊 AI语音平台</h1>
+                <p>打造数字语音课程，PPT转视频，个性化语音合成等</p>
+                <button class="start-btn">开始使用</button>
+            </div>
+        </section>
+
+        <!-- 第二部分：核心技术 -->
+        <section class="core-tech">
+            <div class="tech-banner">
+                <img src="assets/images/tech-banner.png" alt="技术横幅">
+            </div>
+            <h2>强大的核心技术</h2>
+            <p class="section-desc">超越文本转语音和语音转文本，教育教学资源添加声，社区互动性强。</p>
+            <div class="tech-grid-container">
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <img src="assets/images/tech-1.png" alt="现场录音功能">
+                        <h3>现场录音功能</h3>
+                        <div class="tech-desc">
+                            支持现场录音，用户可直接通过麦克风录制音频，录制时长建议为10s到45s，确保声音质量与清晰度。
+                        </div>
+                    </div>
+                    <div class="tech-item">
+                        <img src="assets/images/tech-2.png" alt="标准声音预设">
+                        <h3>标准声音预设</h3>
+                        <div class="tech-desc">
+                            系统提供了多种标准声音样本，用户可以直接使用这些声音进行语音合成，确保输出效果的专业性和一致性。
+                        </div>
+                    </div>
+                    <div class="tech-item">
+                        <img src="assets/images/tech-3.png" alt="定制化语音讲解">
+                        <h3>定制化语音讲解</h3>
+                        <div class="tech-desc">
+                            系统提供了多种标准声音样本，用户可以直接使用这些声音进行语音合成，确保输出效果的专业性和一致性。
+                        </div>
+                    </div>
+                    <div class="tech-item">
+                        <img src="assets/images/tech-4.png" alt="音频文件上传">
+                        <h3>音频文件上传</h3>
+                        <div class="tech-desc">
+                            用户可以上传自定义的音频文件，支持多种格式，方便录制老师或其他特定人的声音，以进行个性化的语音合成。
+                        </div>
+                    </div>
+                    <div class="tech-item">
+                        <img src="assets/images/tech-1.png" alt="现场录音功能">
+                        <h3>现场录音功能</h3>
+                        <div class="tech-desc">
+                            支持现场录音，用户可直接通过麦克风录制音频，录制时长建议为10s到45s，确保声音质量与清晰度。
+                        </div>
+                    </div>
+                    <div class="tech-item">
+                        <img src="assets/images/tech-2.png" alt="标准声音预设">
+                        <h3>标准声音预设</h3>
+                        <div class="tech-desc">
+                            系统提供了多种标准声音样本，用户可以直接使用这些声音进行语音合成，确保输出效果的专业性和一致性。
+                        </div>
+                    </div>
+                    <div class="tech-item">
+                        <img src="assets/images/tech-3.png" alt="定制化语音讲解">
+                        <h3>定制化语音讲解</h3>
+                        <div class="tech-desc">
+                            系统提供了多种标准声音样本，用户可以直接使用这些声音进行语音合成，确保输出效果的专业性和一致性。
+                        </div>
+                    </div>
+                    <div class="tech-item">
+                        <img src="assets/images/tech-4.png" alt="音频文件上传">
+                        <h3>音频文件上传</h3>
+                        <div class="tech-desc">
+                            用户可以上传自定义的音频文件，支持多种格式，方便录制老师或其他特定人的声音，以进行个性化的语音合成。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第三部分：课件制作 -->
+        <section class="course-making">
+            <h2>有声课件制作</h2>
+            <div class="course-items">
+                <div class="course-item">
+                    <div class="item-content">
+                        <img src="assets/images/course-1.png" alt="声音直接与字幕">
+                        <h3>声音置换与字幕</h3>
+                        <p>支持导入段音视频，进行声音置换并同步展示字幕，方便学生理解，提升课件的互动性与趣味性。</p>
+                    </div>
+                </div>
+                <div class="course-item">
+                    <div class="item-content">
+                        <img src="assets/images/course-2.png" alt="3D数字人">
+                        <h3>3D数字人</h3>
+                        <p>3D数字人能够支持多种语言的教学需求，满足不同地区和文化背景的学习者，提升全球化教学的效果。</p>
+                    </div>
+                </div>
+                <div class="course-item">
+                    <div class="item-content">
+                        <img src="assets/images/course-3.png" alt="语音合成">
+                        <h3>语音合成</h3>
+                        <p>依托语音生成、数字人讲解及多模态内容生成，全面支持教师与学生的互动式学习需求，满足早晚配音功能。</p>
+                    </div>
+                </div>
+                <div class="course-item">
+                    <div class="item-content">
+                        <img src="assets/images/course-4.png" alt="声音克隆">
+                        <h3>声音克隆</h3>
+                        <p>能够精确地捕捉并重现特定个人的声音特点，确保生成的语音输出听起来真实自然。无论是教师的讲解还是其他专业人士的声音，都能完美还原。</p>
+                    </div>
+                </div>
+                <div class="course-item">
+                    <div class="item-content">
+                        <img src="assets/images/course-5.png" alt="有声课件">
+                        <h3>有声课件</h3>
+                        <p>用户可以上传小型教学课件，如PPT文件，系统会自动处理并生成有声课件，方便教师使用，提升教学质量。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第四部分：底部 -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>产品服务</h4>
+                    <ul>
+                        <li><a href="dub.html">智能配音</a></li>
+                        <li><a href="clone.html">声音克隆</a></li>
+                        <li><a href="teaching.html">教育教学</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>关于我们</h4>
+                    <ul>
+                        <li><a href="help.html">使用帮助</a></li>
+                        <li><a href="help.html#feedback">联系我们</a></li>
+                    </ul>
+                </div>
+                
+            </div>
+            <div class="footer-bottom">
+                <p>©2025 鹦音坊所有权 备案</p>
+            </div>
+        </footer>
+    </main>
+
+    <!-- 登录/注册弹窗 -->
+    <div class="login-overlay">
+        <div class="login-modal">
+            <button class="close-btn">×</button>
+            <!-- 登录界面 -->
+            <div class="login-view">
+                <h2>欢迎登录Parrot Sound!</h2>
+                <div class="login-form">
+                    <div class="form-group">
+                        <label>用户名</label>
+                        <input type="text" placeholder="请输入用户名" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>密码</label>
+                        <input type="password" placeholder="请输入密码 (6-20个数字或字母)" class="form-input">
+                        <a href="#" class="forgot-password">忘记密码?</a>
+                    </div>
+                    <button class="login-btn">登录</button>
+                    <div class="register-link">
+                        <span>没有账号？</span>
+                        <a href="#" class="switch-to-register">注册</a>
+                    </div>
+                </div>
+            </div>
+            <!-- 验证密保问题界面 -->
+            <div class="verify-security-view" style="display: none;">
+                <h2>欢迎登录Parrot Sound!</h2>
+                <div class="register-form">
+                    <div class="form-group">
+                        <label>用户名</label>
+                        <input type="text" placeholder="请输入用户名" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>密保问题1：您的生日是？</label>
+                        <input type="text" placeholder="请输入答案" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>密保问题2：您母亲的名字是？</label>
+                        <input type="text" placeholder="请输入答案" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>密保问题3：您就读的小学是？</label>
+                        <input type="text" placeholder="请输入答案" class="form-input">
+                    </div>
+                    <button class="register-btn">去输入新密码</button>
+                    <div class="login-link">
+                        <span>已有账号？</span>
+                        <a href="#" class="switch-to-login">去登录</a>
+                    </div>
+                </div>
+            </div>
+            <!-- 注册界面 -->
+            <div class="register-view" style="display: none;">
+                <h2>欢迎登录Parrot Sound!</h2>
+                <div class="register-form">
+                    <div class="form-group">
+                        <label>用户名</label>
+                        <input type="text" placeholder="请输入用户名" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>密码</label>
+                        <input type="password" placeholder="请输入密码 (6-20个数字或字母)" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>确认密码</label>
+                        <input type="password" placeholder="请输入密码 (6-20个数字或字母)" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>密保问题1：您的生日是？</label>
+                        <input type="text" placeholder="请输入答案" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>密保问题2：您母亲的名字是？</label>
+                        <input type="text" placeholder="请输入答案" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>密保问题3：您就读的小学是？</label>
+                        <input type="text" placeholder="请输入答案" class="form-input">
+                    </div>
+                    <button class="register-btn">注册</button>
+                    <div class="login-link">
+                        <span>已有账号？</span>
+                        <a href="#" class="switch-to-login">去登录</a>
+                    </div>
+                </div>
+            </div>
+            <!-- 重置密码界面 -->
+            <div class="reset-password-view" style="display: none;">
+                <h2>欢迎登录Parrot Sound!</h2>
+                <div class="register-form">
+                    <div class="form-group">
+                        <label>密码</label>
+                        <input type="password" placeholder="请输入密码 (6-20个数字或字母)" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>确认密码</label>
+                        <input type="password" placeholder="请输入密码 (6-20个数字或字母)" class="form-input">
+                    </div>
+                    <button class="register-btn">确认重置密码</button>
+                    <div class="login-link">
+                        <span>已有账号？</span>
+                        <a href="#" class="switch-to-login">去登录</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/index.js"></script>
+</body>
+</html>

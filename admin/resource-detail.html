@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资源详情 - Parrot Sound</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="resource-detail.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="logo">Parrot Sound</div>
+            <div class="subtitle">管理平台</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="icon-home"></i>首页</a></li>
+                    <li><a href="manage.html"><i class="icon-user"></i>用户信息管理</a></li>
+                    <li class="active"><a href="resource-review.html"><i class="icon-language"></i>语音资源审核</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 主要内容区 -->
+        <main class="main-content">
+            <div class="user-info">
+                <img src="avatar.jpg" alt="用户头像" class="avatar">
+                <span>Leslie Alexander</span>
+                <button class="logout-btn"></button>
+            </div>
+
+            <div class="content-wrapper">
+                <div class="detail-header">
+                    <h2>用户 1237shde 创建的语音</h2>
+                    <a href="resource-review.html" class="back-btn">返回</a>
+                </div>
+                <div class="detail-content">
+                    <div class="resource-item">
+                        <img src="path/to/image.jpg" alt="封面照片" class="resource-image">
+                        <div class="resource-info">
+                            <h3>刘德华</h3>
+                            <div class="info-row">
+                                <img src="path/to/avatar.jpg" alt="用户头像" class="avatar">
+                                <p>用户名</p>
+                                <p>上传时间: <span>2025/1/22</span></p>
+                                <p>类型: <span>古灵精怪</span></p>
+                            </div>
+                            <button class="listen-btn">试听</button>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="approve-btn">通过</button>
+                            <button class="reject-btn">不通过</button>
+                        </div>
+                    </div>
+                    <!-- 其他资源项 -->
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="libs/axios.min.js"></script>
+    <script src="resource-detail.js"></script>
+</body>
+</html>

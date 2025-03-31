@@ -1,0 +1,693 @@
+/* 用户中心页面样式 */
+.user-content {
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.user-info {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+}
+
+/* 其他用户中心特定样式... */
+
+/* ... 其他用户中心页面样式 ... */
+
+/* 页面布局 */
+.container {
+    width: 100%;
+    height: calc(100vh - 75px);
+      /* 改回75px */
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.content-wrapper {
+    width: 95%;
+    display: flex;
+    overflow: visible;  /* 改为 visible，允许内容显示 */
+}
+
+/* 左侧导航 */
+.sidebar {
+    width: 200px;
+    padding-top: 40px;
+    padding-left: 36px;
+    margin-left: -40px;
+    padding-right: 34px;
+    border-right: 1px solid #eee;
+    margin-top: -50px;  /* 调整为与顶部导航栏无间距 */
+    background: white;
+    height: calc(100vh - 75px + 80px);
+}
+
+.menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 35px;  /* 从20px增加到35px */
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 8px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s;
+    background: #f5f7fb;
+    box-shadow: none;
+}
+
+.menu-item.active {
+    background: #4A7DFF;
+    color: white;
+}
+
+.menu-item.logout-btn {
+    margin-top: auto;
+    background: #fff1f0;
+    border: 1px solid #ffccc7;
+}
+
+.menu-item.logout-btn:hover {
+    background: #fff1f0;
+    color: #ff4d4f;
+    border-color: #ff4d4f;
+}
+
+/* 右侧内容区域 */
+.main-content {
+    flex: 1;
+    margin-left: 40px;
+    margin-top: 0;  /* 移除额外的间距 */
+    overflow-y: auto;
+    height: 100%;
+    padding-right: 15px;
+}
+
+/* 账号信息表单 */
+.info-form {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+/* 头像上传区域 */
+.avatar-upload {
+    grid-column: 1;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    
+}
+
+.avatar-preview {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.upload-icon {
+    display: none;
+}
+
+.avatar-upload::before {
+    content: "头像：";
+    color: #333;
+    width: 80px;
+}
+
+/* 调整表单项的顺序和布局 */
+.form-group:nth-child(2) {  /* 年龄 */
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.form-group:nth-child(3) {  /* 用户名 */
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.form-group:nth-child(4) {  /* 性别 */
+    grid-column: 2;
+    grid-row: 2;
+}
+
+.form-group:nth-child(5) {  /* 手机号 */
+    grid-column: 1;
+    grid-row: 3;
+}
+
+/* 表单组件 */
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;  /* 移除底部间距 */
+}
+
+.form-group label {
+    width: 80px;
+    color: #333;
+}
+
+.form-input {
+    flex: 1;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.gender-select {
+    display: flex;
+    gap: 24px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+/* 按钮区域 */
+.form-actions {
+    grid-column: 2;  /* 只占右列 */
+    grid-row: 3;
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;  /* 靠右对齐 */
+    align-items: center;  /* 垂直居中 */
+}
+
+.btn-save {
+    padding: 10px 24px;
+    background: #4A7DFF;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    padding: 10px 24px;
+    background: #f0f0f0;
+    color: #666;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* 修改密码部分 */
+.password-section {
+    margin-top: 24px;
+    margin-bottom: 15px;  /* 添加底部间距 */
+}
+
+.password-form {
+    background: white;
+    border-radius: 12px;
+    padding: 24px 24px 40px;  /* 增加底部内边距 */
+    margin-top: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto auto;
+    gap: 24px;
+}
+
+/* 密保问题标题 */
+.password-form h3 {
+    grid-column: 1 / -1;  /* 占满整行 */
+    grid-row: 1;  /* 第一行 */
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+    margin-bottom: 12px;
+}
+
+/* 密保问题区域 */
+.security-questions {
+    grid-column: 1;
+    grid-row: 2 / 5;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;  /* 增加问题之间的间距 */
+}
+
+.security-question {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.security-question label {
+    color: #333;
+    font-size: 14px;
+}
+
+.security-question input {
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #f5f7fb;
+}
+
+/* 密码设置区域 */
+.password-inputs {
+    grid-column: 2;  /* 右列 */
+    grid-row: 2 / 4;  /* 从第二行到第四行 */
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.password-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.password-field label {
+    color: #333;
+    font-size: 14px;
+}
+
+.password-field input {
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background: #f5f7fb;
+}
+
+/* 确认按钮 */
+.btn-confirm {
+    grid-column: 2;  /* 右列 */
+    grid-row: 4;  /* 第四行，与密保问题3对齐 */
+    width: 100%;
+    height: 36px;
+    padding: 0;
+    background: #4A7DFF;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 36px;
+    margin-top: 33px;  /* 添加顶部间距，使按钮下移 */
+}
+
+/* 标题样式 */
+h2 {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+    margin-top: 15px;  /* 增加标题的上边距 */
+}
+
+/* ... 其他用户中心页面样式 ... */
+
+/* 添加页面背景色 */
+body {
+    background-color: #f5f7fb;
+    overflow: hidden;  /* 隐藏页面的滚动条 */
+}
+
+/* 历史作品部分 */
+.history-section {
+    display: none;
+    margin-top: 15px;
+    margin-bottom: 13px;
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    min-height: calc(100vh - 103px);
+    max-height: calc(100vh - 103px);
+    overflow-y: hidden;  /* 改为hidden，防止整个区域出现滚动条 */
+}
+
+/* 顶部导航和搜索 */
+.history-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;  /* 减少间距，从24px改为16px */
+    margin-bottom: 24px;
+}
+
+.nav-tabs {
+    display: flex;
+    align-items: center;  /* 垂直居中对齐 */
+    gap: 37px;
+}
+
+.tab-item {
+    color: #333;  /* 加深颜色 */
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;  /* 加粗字体 */
+    padding-bottom: 8px;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-item.active {
+    color: #4A7DFF;
+    border-bottom-color: #4A7DFF;
+}
+
+/* 搜索和操作按钮区域 */
+.search-action-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-top: 16px;  /* 减少顶部内边距，从24px改为16px */
+    border-top: 1px solid #eee;
+}
+
+.search-box {
+    flex: 1;
+    max-width: 400px;
+}
+
+.search-input {
+    width: 100%;
+    height: 36px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 18px;
+    background: #f5f7fb;
+    font-size: 14px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 16px;
+    margin-left: auto;  /* 添加这行，使按钮靠右对齐 */
+}
+
+.btn-download, .btn-delete {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    background: #f5f7fb;
+    color: #333;
+}
+
+/* 作品列表 */
+.history-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);  /* 固定4列 */
+    gap: 16px;  /* 从24px减小到16px */
+    padding-right: 12px;
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;
+}
+
+/* 作品项 */
+.history-item {
+    width: 100%;
+    background: #f5f7fb;
+    border-radius: 8px;  /* 可以适当减小圆角 */
+    overflow: hidden;
+}
+
+.item-cover {
+    position: relative;
+    padding-top: 56.25%;  /* 16:9 比例 */
+}
+
+.item-cover img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.item-tag {
+    position: absolute;
+    top: 12px;
+    right: 12px;  /* 改为right */
+    left: auto;  /* 移除left */
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.item-more {
+    display: none;  /* 隐藏三个点 */
+}
+
+/* 作品信息区域 */
+.item-info {
+    padding: 8px;  /* 从12px减小到8px */
+}
+
+/* 标题区域 */
+.item-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;  /* 减小间距 */
+    margin-bottom: 4px;
+}
+
+.title-input {
+    flex: 1;
+    height: 19px;
+    padding: 0;  /* 移除左右内边距 */
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    background: transparent;
+}
+
+/* 保存按钮 */
+.btn-save-title {
+    display: none;
+    height: 19px;  /* 与输入框高度一致 */
+    padding: 0 6px;  /* 只保留水平内边距 */
+    border: none;
+    border-radius: 3px;
+    background: #4A7DFF;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    line-height: 19px;  /* 与高度一致，确保文字垂直居中 */
+}
+
+.title-input:hover {
+    border-color: #ddd;
+    background: white;
+}
+
+.title-input:focus {
+    border-color: #4A7DFF;
+    background: white;
+    outline: none;
+}
+
+.title-input:focus + .btn-save-title {
+    display: block;
+}
+
+.item-meta {
+    font-size: 12px;
+    color: #999;
+}
+
+/* 自定义滚动条样式 */
+.history-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.history-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 3px;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+/* 互动信息部分 */
+.interaction-section {
+    display: none;
+    margin-top: 15px;
+    margin-bottom: 13px;
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    min-height: calc(100vh - 103px);
+    max-height: calc(100vh - 103px);
+    overflow-y: hidden;
+}
+
+/* 顶部导航 */
+.interaction-section .history-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+    /* 移除边框 */
+    border-bottom: 1px solid #eee;
+    padding-bottom: 16px;
+}
+
+/* 作品列表样式 */
+.interaction-list {
+    padding-right: 12px;
+    max-height: calc(100vh - 250px);
+    overflow-y: auto;
+    margin-top: -30px;  /* 从-20px改为-30px，使列表再上移10px */
+}
+
+/* 谁赞过我的样式 */
+.interaction-user {
+    display: flex;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 0;  /* 移除底部外边距 */
+    gap: 16px;
+    border-bottom: 1px solid #eee;  /* 添加底部分割线 */
+}
+
+/* 最后一个项目不需要分割线 */
+.interaction-user:last-child {
+    border-bottom: none;
+}
+
+/* 头像和用户信息组合 */
+.user-wrapper {
+    display: flex;
+    flex-direction: row;  /* 改为横向排列 */
+    align-items: center;  /* 垂直居中对齐 */
+    width: auto;  /* 移除固定宽度 */
+    gap: 0px;  /* 添加间距 */
+}
+
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 0;  /* 移除底部间距 */
+    flex-shrink: 0;  /* 防止头像被压缩 */
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-info {
+    width: auto;  /* 移除固定宽度 */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;  /* 左对齐 */
+}
+
+.user-name {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 4px;
+    text-align: left;  /* 左对齐 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.like-time {
+    font-size: 12px;
+    color: #999;
+    text-align: left;  /* 左对齐 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 点赞内容区域 */
+.liked-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;  /* 两端对齐 */
+    flex: 1;
+}
+
+/* 点赞内容的文字 */
+.liked-text {
+    font-size: 14px;
+    color: #666;
+    margin-left: 24px;  /* 添加左边距 */
+}
+
+/* 点赞内容的图片 */
+.liked-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;  /* 防止图片被压缩 */
+    margin-left: auto;  /* 确保图片靠右 */
+}
+
+.liked-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 滚动条样式 */
+.interaction-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.interaction-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.interaction-list::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 3px;
+}
+
+.interaction-list::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+} 

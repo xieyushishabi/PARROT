@@ -1,0 +1,1071 @@
+/* 声音克隆页面特定样式 */
+
+/* 上传音频标题的额外间距 */
+.left-section h2:nth-child(3) {
+    margin-top: 36px;  /* 增加与上方模型详情模块的间距 */
+}
+
+/* 上传音频标题的额外间距 */
+.left-section h2:nth-child(3) {
+    margin-top: 36px;  /* 增加与上方模型详情模块的间距 */
+}
+
+/* 模型详情 */
+.model-details {
+    background: #f5f6fa;
+    border-radius: 12px;
+    padding: 24px;
+    min-height: 138px;
+    display: flex;
+    flex-direction: column;
+}
+
+.model-form {
+    display: flex;
+    gap: 16px;
+    height: 100%; /* 让表单占满整个模型详情区域 */
+}
+
+/* 图片上传区域 */
+.image-upload {
+    border: 2px dashed #d9dbe6;
+    border-radius: 8px;
+    min-width: 100px;
+    min-height: 100px;
+    max-width: 140px;
+    max-height: 140px;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: white;
+    flex-shrink: 0;
+    transition: border-color 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.image-upload:hover {
+    border-color: #6b5cff;
+}
+
+.image-upload:active {
+    border-color: #5346d8;
+}
+
+.image-upload i {
+    font-size: 32px;
+    color: #6b5cff;
+    transition: color 0.3s;
+}
+
+.image-upload:hover i {
+    color: #8677ff;
+}
+
+.image-upload:active i {
+    color: #5346d8;
+}
+
+.image-upload span {
+    color: #666;
+    transition: color 0.3s;
+}
+
+.image-upload:hover span {
+    color: #6b5cff;
+}
+
+.image-upload:active span {
+    color: #5346d8;
+}
+
+/* 模型预览图片 */
+.preview-image {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    z-index: 1;
+    margin-bottom: 8px;
+}
+
+/* 上传后的图片样式 */
+.image-upload.has-image .preview-image {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-bottom: 0;
+}
+
+/* 上传提示文本和图标 */
+.upload-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+}
+
+/* 当有图片时隐藏上传提示 */
+.image-upload.has-image .upload-text {
+    display: none;
+}
+
+/* 右侧表单区域 */
+.form-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+/* 表单组件 */
+.form-group {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+}
+
+/* 模型名称输入框 */
+.model-name {
+    flex: 1;
+    padding: 0 12px; /* 移除垂直内边距 */
+    border: 1px solid #d9dbe6;
+    border-radius: 6px;
+    font-size: 14px;
+    height: 36px; /* 保持固定高度 */
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+/* 公开/私有切换按钮 */
+.visibility-toggle {
+    display: flex;
+    flex-shrink: 0;
+    height: 36px; /* 确保按钮组容器高度一致 */
+}
+
+.visibility-toggle button {
+    padding: 0 12px; /* 移除垂直内边距 */
+    border: 1px solid #d9dbe6;
+    background: white;
+    font-size: 14px;
+    cursor: pointer;
+    height: 100%; /* 使用100%而不是固定高度 */
+    box-sizing: border-box;
+    display: flex;
+    align-items: center; /* 确保文字垂直居中 */
+    justify-content: center; /* 确保文字水平居中 */
+}
+
+.visibility-toggle .btn-public {
+    border-radius: 6px 0 0 6px;
+}
+
+.visibility-toggle .btn-private {
+    border-radius: 0 6px 6px 0;
+}
+
+.visibility-toggle button.active {
+    background: #6b5cff;
+    color: white;
+    border-color: #6b5cff;
+}
+
+/* 模型描述输入框 */
+.model-description {
+    width: 100%;
+    min-height: 36px;
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #d9dbe6;
+    border-radius: 6px;
+    resize: none;
+    font-size: 14px;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: all 0.3s;
+}
+
+/* 右侧我的声音列表 */
+.right-section {
+    width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 75px - 48px); /* 减去顶部导航高度和上下内边距 */
+}
+
+.voice-list {
+    background: #f5f6fa;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* 让列表占满剩余空间 */
+    overflow: hidden;
+}
+
+.voice-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* 美化滚动条样式 */
+.voice-items::-webkit-scrollbar {
+    width: 4px;
+}
+
+.voice-items::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.voice-items::-webkit-scrollbar-thumb {
+    background: #d9dbe6;
+    border-radius: 2px;
+}
+
+.voice-items::-webkit-scrollbar-thumb:hover {
+    background: #b3b5c6;
+}
+
+.no-voice-tip {
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    margin-top: 100px;
+}
+
+.voice-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    gap: 12px;
+}
+
+.voice-avatar {
+    width: 56px;  /* 增加宽度 */
+    height: 56px;  /* 增加高度，与右侧内容高度一致 */
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f5f5f5;  /* 灰色背景 */
+}
+
+.voice-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.voice-info {
+    flex: 1;
+}
+
+.voice-info h3 {
+    font-size: 16px;
+    margin: 0 0 2px 0;
+    color: #333;
+}
+
+.voice-desc {
+    font-size: 12px;
+    color: #999;
+    margin: 0 0 4px 0;
+}
+
+.date-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.time-icon {
+    width: 12px;
+    height: 12px;
+    object-fit: contain;
+    position: relative;
+    top: 1px;  /* 下移1px */
+}
+
+.date {
+    font-size: 14px;
+    color: #999;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+.delete-btn:hover .delete-icon {
+    opacity: 0.8;
+}
+
+/* 音频上传区域 */
+.audio-upload-section {
+    background: #f5f6fa;
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    min-height: 200px;  /* 从250px减少到248px */
+}
+
+/* 上传区域容器 */
+.upload-area {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;  /* 允许换行 */
+    margin-top: 30px; /* 添加顶部间距 */
+}
+
+/* 上传音频和录音区域 */
+.upload-box, 
+.record-box {
+    flex: 1;
+    min-width: 300px;
+    height: 158.5px;
+    border: 2px dashed #d9dbe6;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: white;
+    transition: border-color 0.3s;
+    padding: 16px;
+    gap: 8px;
+}
+
+.upload-box:hover, 
+.record-box:hover {
+    border-color: #6b5cff;
+}
+
+.upload-box i, 
+.record-box i {
+    font-size: 32px;
+    color: #6b5cff;
+    margin-bottom: 8px;
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 900px) {
+    .upload-area {
+        gap: 16px;
+    }
+
+    .upload-box, 
+    .record-box {
+        padding: 12px;
+        min-width: 200px; /* 减小最小宽度，但保持横向排列 */
+        height: auto;
+        min-height: 120px;
+    }
+
+    /* 调整图片大小 */
+    .audio-preview {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 8px;
+    }
+
+    /* 调整图标大小 */
+    .upload-box i, 
+    .record-box i {
+        font-size: 24px;
+        margin-bottom: 4px;
+    }
+
+    /* 调整文字大小和间距 */
+    .upload-box h3, 
+    .record-box h3 {
+        font-size: 14px;
+        margin-bottom: 4px;
+        text-align: center;
+    }
+
+    .upload-box p, 
+    .record-box p {
+        font-size: 12px;
+        text-align: center;
+    }
+}
+
+/* 上传音频部分 */
+.audio-upload-section {
+    background: #f5f6fa;
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    min-height: 200px;  /* 从250px减少到248px */
+}
+
+.upload-area {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;  /* 允许换行 */
+}
+
+.upload-box:hover, .record-box:hover {
+    border-color: #6b5cff;
+}
+
+.upload-box i, .record-box i {
+    font-size: 32px;
+    color: #6b5cff;
+    margin-bottom: 2px;  /* 保持一致的间距 */
+}
+
+.upload-box h3, .record-box h3 {
+    font-size: 16px;
+    margin: 0 0 8px 0;
+    color: #333;
+}
+
+.upload-box p, .record-box p {
+    font-size: 14px;
+    color: #999;
+    margin: 0;
+}
+
+/* 上传提示文本 */
+.upload-tip {
+    color: #999;
+    font-size: 14px;
+    margin-bottom: 30px;  /* 从40px减少到30px */
+    margin-top: 30px; /* 与虚线框保持一致的间距 */
+}
+
+/* 提交按钮 */
+.submit-btn {
+    display: block;
+    width: 200px;
+    margin: 0 auto;
+    padding: 12px 0;
+    background: linear-gradient(to right, #6b5cff, #8677ff);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+    margin-top: 40px;
+}
+
+.submit-btn:hover {
+    opacity: 0.9;
+}
+
+/* 音频预览图片 */
+.audio-preview {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 8px;  /* 缩小与下方文本的间距 */
+}
+
+/* 删除确认弹窗样式 */
+.delete-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    padding: 24px;
+    z-index: 1001;
+}
+
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.dialog-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.dialog-content {
+    margin-bottom: 24px;
+}
+
+.dialog-content p {
+    margin: 0;
+    color: #666;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* 录音界面样式 */
+.record-interface {
+    background: #f5f6fa;
+    border-radius: 12px;
+    padding: 20px;
+    height: 250px;  /* 从255px减少到250px */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.record-interface > h2:first-child {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+}
+
+.record-interface .back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+}
+
+.record-interface h2 {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+}
+
+.record-interface .record-timer {
+    font-size: 18px;
+    color: #333;
+    margin: 0;
+}
+
+.record-interface .start-record-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #6b5cff;
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0;
+    line-height: 80px;
+    text-align: center;
+    min-width: 80px;
+    min-height: 80px;
+}
+
+.record-interface .start-record-btn.recording {
+    background: #ff4d4f;
+    border-radius: 5px;  /* 缩小圆角为5px */
+}
+
+.record-interface .record-tips {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.record-interface .record-tip-default {
+    font-size: 14px;
+    color: #999;
+    margin: 0;
+}
+
+.record-interface .record-tip-recording {
+    font-size: 14px;
+    color: #ff4d4f;
+    margin: 0;
+}
+
+.record-complete {
+    background: #f5f6fa;
+    border-radius: 12px;
+    padding: 20px;
+    height: 250px;  /* 从255px减少到250px */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+
+.record-complete .back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+}
+
+.record-complete h2 {
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+}
+
+.record-complete .audio-wave {
+    width: 100%;
+    height: 80px;
+    position: absolute;
+    top: 80px;  /* 上移10px */
+    display: flex;
+    justify-content: center;
+}
+
+.record-complete .audio-wave img {
+    width: 80%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.record-complete .audio-controls {
+    width: 100%;
+    position: absolute;
+    top: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.record-complete .controls-left {
+    margin-left: 20px;  /* 与返回按钮左对齐 */
+}
+
+.record-complete .controls-center {
+    margin-left: -10px;  /* 播放按钮向左移动3px */
+}
+
+.record-complete .controls-right {
+    margin-right: 20px;
+}
+
+.record-complete .record-duration {
+    font-size: 14px;
+    color: #666;
+}
+
+.record-complete .play-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.record-complete .play-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.record-complete .reset-btn {
+    color: #6b5cff;
+    background: none;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.record-complete .submit-record-btn {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    padding: 12px 0;
+    border-radius: 12px;
+    background: linear-gradient(to right, #6b5cff, #8677ff);
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.upload-box.has-file h3 {
+    font-size: 14px;
+    color: #666;
+    word-break: break-all;
+    padding: 0 20px;
+    text-align: center;
+}
+
+/* Toast 消息样式 */
+.toast-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.9);  /* 白色半透明背景 */
+    color: #333;
+    padding: 12px 24px;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: none;
+    animation: fadeInOut 2s ease-in-out;  /* 添加淡入淡出动画 */
+}
+
+/* 添加淡入淡出动画 */
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.toast-text {
+    font-size: 14px;
+}
+
+.image-upload.dragging,
+.upload-box.dragging {
+    border-color: #6b5cff;
+    background-color: rgba(107, 92, 255, 0.05);
+}
+
+/* 修改页面滚动容器样式 */
+.scroll-container {
+    position: fixed;
+    top: 75px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    min-width: 672px;
+    max-width: 1440px;
+    height: calc(100vh - 90px);  /* 75px顶部 + 15px底部 */
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
+    bottom: 15px;
+}
+
+/* 美化滚动条样式 */
+.scroll-container::-webkit-scrollbar {
+    width: 4px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+    background: #d9dbe6;
+    border-radius: 2px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #b3b5c6;
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 672px) {
+    .scroll-container {
+        min-width: auto;
+        padding: 15px;
+    }
+}
+
+/* 当页面高度小于750px时的样式 */
+@media screen and (max-height: 750px) {
+    .upload-box, .record-box {
+        flex-direction: row;  /* 改为横向排列 */
+        justify-content: flex-start;  /* 左对齐 */
+        padding: 16px 24px;  /* 调整内边距 */
+    }
+
+    .upload-box i, .record-box i {
+        margin-right: 16px;  /* 图标和文字之间的间距 */
+        margin-bottom: 0;  /* 移除底部间距 */
+    }
+
+    .upload-box .text-content, .record-box .text-content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;  /* 文字左对齐 */
+        gap: 4px;
+    }
+
+    .upload-box h3, .record-box h3 {
+        margin: 0;
+    }
+
+    .upload-box p, .record-box p {
+        margin: 0;
+    }
+
+    .audio-preview {
+        margin-right: 16px;  /* 预览图和文字之间的间距 */
+        margin-bottom: 0;  /* 移除底部间距 */
+    }
+
+    .model-description {
+        height: 36px; /* 缩小到最小高度 */
+    }
+
+}
+
+/* 在较窄屏幕下调整布局 */
+@media screen and (max-width: 1024px) {
+    .clone-content {
+        flex-direction: column;  /* 内容改为纵向排列 */
+        gap: 20px;
+    }
+
+    .right-section {
+        width: 100%;  /* 右侧区域占满宽度 */
+        max-width: none;  /* 移除最大宽度限制 */
+    }
+
+    .voice-list {
+        height: 300px;  /* 固定高度，避免占用过多空间 */
+    }
+}
+
+/* 在更窄的屏幕下调整布局 */
+@media screen and (max-width: 900px) {
+    .upload-box, .record-box {
+        flex: none;  /* 取消flex布局 */
+        width: 100%;  /* 占满容器宽度 */
+    }
+
+    .upload-area {
+        flex-direction: column;  /* 改为纵向排列 */
+        gap: 16px;
+    }
+}
+
+.container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.clone-content {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+}
+
+.left-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    margin-right: 20px;
+}
+
+.right-section {
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.audio-upload-section {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.model-description {
+    min-height: 40px;
+    overflow-y: hidden;
+}
+
+.upload-default {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.left-section::-webkit-scrollbar,
+.right-section::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+}
+
+/* 修改后的响应式CSS */
+.scroll-container {
+    width: 95%;
+    min-width: auto;
+    max-width: 1440px;
+    padding: 15px;
+    top: 60px;
+    height: calc(100vh - 90px);
+}
+
+.clone-content {
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 通用响应式调整 */
+.audio-upload-section,
+.voice-list {
+    min-height: auto;
+    padding: 15px;
+}
+
+/* 左侧区域 */
+.left-section {
+    margin-right: 0;
+    flex: none;
+}
+
+/* 右侧区域 */
+.right-section {
+    width: 100%;
+    height: 400px;
+}
+
+/* 表单元素响应式 */
+.form-group {
+    flex-wrap: wrap;
+}
+.model-name {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* 上传区域响应式 */
+.upload-area {
+    flex-direction: column;
+}
+
+.upload-box, 
+.record-box {
+    width: 100%;
+    height: auto;
+    padding: 20px;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+.upload-box .text-content,
+.record-box .text-content {
+    text-align: left;
+}
+
+/* 响应式媒体查询 */
+@media (min-width: 672px) {
+    .scroll-container {
+        padding: 24px;
+        top: 75px;
+        height: calc(100vh - 75px);
+    }
+    .clone-content {
+        flex-direction: row;
+    }
+    .left-section {
+        flex: 1;
+        margin-right: 24px;
+    }
+    .right-section {
+        width: 280px;
+        height: auto;
+    }
+    .upload-area {
+        flex-direction: row;
+    }
+    .upload-box, 
+    .record-box {
+        width: calc(50% - 12px);
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-menu {
+        display: none; /* 移动端隐藏导航菜单 */
+    }
+    .model-form {
+        flex-direction: column;
+    }
+    .form-right {
+        margin-left: 0;
+        margin-top: 15px;
+    }
+    .visibility-toggle {
+        width: 100%;
+    }
+    .visibility-toggle button {
+        flex: 1;
+        padding: 8px;
+    }
+}
+
+

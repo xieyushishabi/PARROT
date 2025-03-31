@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parrot Sound - 声音克隆</title>
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/clone.css">
+    <link rel="stylesheet" href="assets/css/iconfont.css">
+
+</head>
+<body class="clone-page">
+    <!-- 提示消息 -->
+    <div class="toast-message" style="display: none;">
+        <span class="toast-text"></span>
+    </div>
+
+    <nav class="nav-bar">
+        <div class="nav-left">
+            <div class="logo">
+                <img src="assets/images/logo.png" alt="Parrot Sound">
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html">首页</a></li>
+                <li class="nav-item"><a href="dub.html">智能配音</a></li>
+                <li class="nav-item"><a href="clone.html" class="active">声音克隆</a></li>
+                <li class="nav-item"><a href="teaching.html">教育教学</a></li>
+                <li class="nav-item"><a href="community.html">社区资源</a></li>
+                <li class="nav-item"><a href="help.html">帮助中心</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <a href="user.html" class="nav-user">
+                <img src="assets/images/avatar-default.png" alt="用户头像">
+            </a>
+        </div>
+    </nav>
+
+    <div class="scroll-container">
+        <div class="container">
+            <div class="clone-content">
+                <!-- 左侧区域 -->
+                <div class="left-section">
+                    <h2>模型详情</h2>
+                    <!-- 左上角模型详情部分 -->
+                    <div class="model-details">
+                        <div class="model-form">
+                            <div class="image-upload">
+                                <input type="file" class="file-input" accept="image/*" hidden>
+                                <img src="assets/images/model-preview.png" alt="模型预览" class="preview-image">
+                                <div class="upload-text">
+                                    <i class="icon-image"></i>
+                                    <span>添加图片</span>
+                                </div>
+                            </div>
+                            <div class="form-right">
+                                <div class="form-group">
+                                    <input type="text" placeholder="输入模型名称" class="model-name">
+                                    <div class="visibility-toggle">
+                                        <button class="btn-public active">公开</button>
+                                        <button class="btn-private">私有</button>
+                                    </div>
+                                </div>
+                                <textarea placeholder="描述（选填）" class="model-description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h2>上传音频</h2>
+                    <!-- 上传音频部分 -->
+                    <div class="audio-upload-section">
+                        <!-- 默认的上传区域 -->
+                        <div class="upload-default">
+                            <div class="upload-area">
+                                <div class="upload-box">
+                                    <input type="file" class="file-input" accept="audio/mp3" hidden>
+                                    <img src="assets/images/upload-preview.png" alt="上传预览" class="audio-preview" style="display: block;">
+                                    <i class="icon-upload"></i>
+                                    <div class="text-content">
+                                        <h3>上传音频文件</h3>
+                                        <p>时长: 10-45秒 最大大小: 50MB</p>
+                                    </div>
+                                </div>
+                                <div class="record-box">
+                                    <img src="assets/images/record-preview.png" alt="录音预览" class="audio-preview">
+                                    <i class="icon-mic"></i>
+                                    <div class="text-content">
+                                        <h3>录音</h3>
+                                        <p>录制音频样本以进行语音克隆</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="upload-tip">*提示: 音频时长最佳为30秒，最短为10秒，最长为45秒</p>
+                            <button class="submit-btn">提 交</button>
+                        </div>
+                        <!-- 录音界面 -->
+                        <div class="record-interface" style="display: none;">
+                            <button class="back-btn">
+                                <i class="icon-back"></i>
+                                返回
+                            </button>
+                            <h2 class="record-title">请录制30秒左右的音频</h2>
+                            <button class="start-record-btn">开始录制</button>
+                            <div class="record-tips">
+                                <p class="record-tip-default">*提示：音频时长最佳为30秒，最短为10秒，最长为45秒</p>
+                                <p class="record-tip-recording" style="display: none;">注意：录制正在进行中，请不要刷新或关闭浏览器。</p>
+                            </div>
+                        </div>
+                        <!-- 录音完成界面 -->
+                        <div class="record-complete" style="display: none;">
+                            <button class="back-btn">
+                                <i class="icon-back"></i>
+                                返回
+                            </button>
+                            <h2>录制音频</h2>
+                            <div class="audio-wave">
+                                <img src="assets/images/audio-wave.png" alt="音频波形">
+                            </div>
+                            <div class="audio-controls">
+                                <div class="controls-left">
+                                    <span class="record-duration">00:00</span>
+                                </div>
+                                <div class="controls-center">
+                                    <button class="play-btn" onclick="handlePlayClick(this)">
+                                        <img src="assets/icons/play.png" alt="播放">
+                                    </button>
+                                </div>
+                                <div class="controls-right">
+                                    <button class="reset-btn">重置</button>
+                                </div>
+                            </div>
+                            <button class="submit-record-btn">提 交</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧我的声音部分 -->
+                <div class="right-section">
+                    <h2>我的声音</h2>
+                    <div class="voice-list">
+                        <div class="voice-items">
+                            <p class="no-voice-tip">暂无我的声音</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/libs/axios.min.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/clone.js"></script>
+    <!-- 删除确认弹窗 -->
+    <div class="overlay" id="deleteOverlay">
+        <div class="dialog delete-dialog">
+            <div class="dialog-header">
+                <h3>删除提示</h3>
+                <button class="close-btn" onclick="hideDeleteDialog()">×</button>
+            </div>
+            <div class="dialog-content">
+                <p>确定要删除该声音吗？</p>
+            </div>
+            <div class="dialog-footer">
+                <button class="btn btn-secondary" onclick="hideDeleteDialog()">取消</button>
+                <button class="btn btn-primary" onclick="confirmDelete()">确定</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

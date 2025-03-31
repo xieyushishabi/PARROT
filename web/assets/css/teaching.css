@@ -1,0 +1,873 @@
+/* 教育教学页面样式 */
+.teaching-content {
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.course-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+/* 其他教育教学特定样式... */
+
+/* ... 其他教育教学页面样式 ... */
+
+/* 主要内容区域 */
+.main-content {
+    padding-top: 60px;
+    padding-left: 24px;
+    padding-right: 24px;
+    height: calc(100vh - 15px);
+    display: flex;
+    flex-direction: column;
+}
+
+/* 顶部工具栏 */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.left-tools {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.tool-btn {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+}
+
+.tool-btn:hover {
+    background: #f5f5f5;
+}
+
+.tool-btn.generate {
+    background: #4A7DFF;
+    color: white;
+    border: none;
+}
+
+.aspect-ratio,
+.resolution,
+.bitrate {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+select {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+}
+
+/* 编辑区域 */
+.editor-container {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+    min-height: 0;
+    
+    gap: 16px;
+}
+
+/* 左侧资源栏 */
+.resource-panel {
+    width: 180px;
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.import-btn {
+    padding: 8px;
+    background: #4A7DFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.resource-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.resource-item {
+    position: relative;
+    height: 100px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.resource-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.item-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 4px;
+}
+
+.delete-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.add-resource {
+    height: 100px;
+    border: 2px dashed #ddd;
+    background: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+}
+
+/* 中间编辑区域 */
+.center-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: padding-right 0.3s ease;
+}
+
+/* 预览区域 */
+.preview-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 8px;
+    overflow: hidden;
+}
+
+.video-container {
+    width: 100%;
+    max-width: 1280px;
+    height: 720px;
+    background: white;
+    border-radius: 8px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.watermark {
+    color: #999;
+    font-size: 18px;
+}
+
+/* 右侧工具栏 */
+.tools-panel {
+    width: 80px;
+    background: white;
+    padding: 16px 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    transition: border-radius 0.3s ease;
+    border-left: 1px solid #eee;
+}
+
+/* 数字人或声音面板展开时的工具栏样式 */
+.editor-container .avatar-panel.show ~ .tools-panel,
+.editor-container .voice-panel.show ~ .tools-panel,
+.editor-container .background-panel.show ~ .tools-panel {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+/* 修改面板样式，移除多余的边框 */
+.avatar-panel,
+.voice-panel,
+.background-panel {
+    border-right: 1px solid #eee;
+}
+
+.tool-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.tool-item {
+    width: 60px;
+    height: auto;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.tool-item i {
+    display: none;
+}
+
+.tool-item span {
+    font-size: 12px;
+    color: #666;
+}
+
+.tool-item:hover {
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+
+.tool-icon-wrapper {
+    position: relative;
+    width: 24px;
+    height: 24px;
+}
+
+.tool-icon {
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 0.2s;
+}
+
+.tool-icon.default {
+    opacity: 1;
+}
+
+.tool-icon.active {
+    opacity: 0;
+}
+
+.tool-item.active .tool-icon.default {
+    opacity: 0;
+}
+
+.tool-item.active .tool-icon.active {
+    opacity: 1;
+}
+
+/* 底部时间轴 */
+.timeline {
+    height: 200px;
+    margin-top: 8px;
+    margin-left: 8px;
+    margin-right: 8px;
+    
+    display: flex;
+    flex-direction: column;
+}
+
+.timeline-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    padding-bottom: 8px;
+    
+}
+
+.control-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.time-display {
+    font-family: monospace;
+    color: #666;
+}
+
+.timeline-tracks {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #eee;
+    background: white;
+    border-top: none;
+}
+
+.track-labels {
+    height: 40px;
+    width: 100%;
+    border-bottom: 1px solid #eee;
+    
+    display: flex;
+    align-items: center;
+}
+
+.track-label {
+    height: 100%;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    color: #666;
+    border-right: 1px solid #eee;
+    
+    min-width: 80px;
+    justify-content: center;
+}
+
+.track-content {
+    flex: 1;
+    position: relative;
+    
+    
+}
+
+.timeline-ruler {
+    height: 24px;
+    
+    position: relative;
+    background: white;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.tool-icon {
+    width: 24px;
+    height: 24px;
+    display: block;
+}
+
+/* 移除原有的图标样式 */
+.tool-item i {
+    display: none;
+}
+
+/* 数字人选择面板 */
+.avatar-panel {
+    width: 0;
+    background: white;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    overflow: hidden;
+    transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: absolute;
+    right: 80px;  /* 右侧工具栏宽度 */
+    top: 0;
+    opacity: 0;
+}
+
+.avatar-panel.show {
+    width: 280px;
+    opacity: 1;
+}
+
+/* 当数字人面板显示时，调整中间区域的样式 */
+.center-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: padding-right 0.3s ease;
+}
+
+.center-panel.narrow {
+    padding-right: 280px;  /* 与数字人面板宽度相同 */
+}
+
+.panel-header {
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.search-box {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.search-btn {
+    padding: 8px 16px;
+    background: #4A7DFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.filter-options {
+    display: flex;
+    gap: 8px;
+}
+
+.filter-btn {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    color: #666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.avatar-list {
+    flex: 1;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    overflow-y: auto;
+}
+
+.avatar-item {
+    aspect-ratio: 3/4;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.avatar-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 声音控制面板 */
+.voice-panel {
+    width: 0;
+    background: white;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    overflow: hidden;
+    transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: absolute;
+    right: 80px;
+    top: 0;
+    opacity: 0;
+}
+
+.voice-panel.show {
+    width: 280px;
+    opacity: 1;
+}
+
+.voice-controls {
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.voice-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.voice-item label {
+    color: #666;
+    font-size: 14px;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.slider {
+    flex: 1;
+    height: 2px;
+    background: #E5E7EB;
+    
+    border-radius: 2px;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #4A7DFF;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.value-display {
+    min-width: 40px;
+    text-align: right;
+    color: #666;
+    font-size: 14px;
+}
+
+.emotion-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.emotion-btn {
+    padding: 6px 12px;
+    border: 1px solid #E5E7EB;
+    border-radius: 4px;
+    background: white;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.emotion-btn i {
+    display: none;
+}
+
+.emotion-btn.active {
+    border-color: #4A7DFF;
+    color: #4A7DFF;
+}
+
+.emotion-btn.active i {
+    display: block;
+}
+
+/* 背景控制面板 */
+.background-panel {
+    width: 0;
+    background: white;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    overflow: hidden;
+    transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: absolute;
+    right: 80px;
+    top: 0;
+    opacity: 0;
+    border-right: 1px solid #eee;
+}
+
+.background-panel.show {
+    width: 280px;
+    opacity: 1;
+}
+
+.background-list {
+    flex: 1;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    overflow-y: auto;
+}
+
+.background-item {
+    aspect-ratio: 16/9;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+}
+
+.background-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.background-item:hover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(74, 125, 255, 0.1);
+    border: 2px solid #4A7DFF;
+    border-radius: 4px;
+}
+
+/* 字幕控制面板 */
+.subtitle-panel {
+    width: 0;
+    background: white;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    overflow: hidden;
+    transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: absolute;
+    right: 80px;
+    top: 0;
+    opacity: 0;
+    border-right: 1px solid #eee;
+}
+
+.subtitle-panel.show {
+    width: 280px;
+    opacity: 1;
+}
+
+.subtitle-settings {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow: hidden;
+}
+
+.setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.setting-group h4 {
+    font-size: 14px;
+    color: #333;
+    margin: 0;
+}
+
+.style-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.style-item {
+    aspect-ratio: 1;
+    background: #f5f5f5;
+    border-radius: 4px;
+    cursor: pointer;
+    height: 36px;
+}
+
+.style-item:hover {
+    background: #e5e7eb;
+}
+
+.font-settings,
+.stroke-settings,
+.position-settings {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.font-select,
+.color-input,
+.size-input,
+.position-input {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.font-select {
+    flex: 1;
+}
+
+.font-select select,
+.color-input input,
+.size-input input,
+.position-input input {
+    padding: 6px 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.color-input input {
+    width: 80px;
+}
+
+.size-input input,
+.position-input input {
+    width: 60px;
+}
+
+.stroke-toggle {
+    display: flex;
+    align-items: center;
+    padding-top: 22px;
+}
+
+.stroke-toggle input[type="checkbox"] {
+    width: 40px;
+    height: 20px;
+    appearance: none;
+    background: #e5e7eb;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+.stroke-toggle input[type="checkbox"]:checked {
+    background: #4A7DFF;
+}
+
+.stroke-toggle input[type="checkbox"]::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s;
+}
+
+.stroke-toggle input[type="checkbox"]:checked::before {
+    transform: translateX(20px);
+}
+
+/* 音乐控制面板 */
+.music-panel {
+    width: 0;
+    background: white;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    overflow: hidden;
+    transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    position: absolute;
+    right: 80px;
+    top: 0;
+    opacity: 0;
+    border-right: 1px solid #eee;
+}
+
+.music-panel.show {
+    width: 280px;
+    opacity: 1;
+}
+
+.music-list {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+}
+
+.music-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.music-item:hover {
+    background: #e5e7eb;
+}
+
+.music-icon {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.music-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.music-name {
+    font-size: 14px;
+    color: #333;
+}
+
+.music-duration {
+    font-size: 12px;
+    color: #666;
+}
+
+.music-controls {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-top: 1px solid #eee;
+}
+
+.control-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-item label {
+    font-size: 14px;
+    color: #666;
+} 

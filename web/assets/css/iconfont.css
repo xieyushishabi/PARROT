@@ -1,0 +1,29 @@
+@font-face {
+  font-family: 'iconfont';
+  src: url('iconfont.woff2') format('woff2'),
+       url('iconfont.woff') format('woff'),
+       url('iconfont.ttf') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-text:before { content: "\e6ab"; }
+.icon-settings:before { content: "\e78e"; }
+.icon-font:before { content: "\e7c6"; }
+.icon-number:before { content: "\e7f8"; }
+.icon-group:before { content: "\e7ef"; }
+.icon-volume:before { content: "\e7dc"; }
+.icon-pitch:before { content: "\e606"; }
+.icon-speed:before { content: "\e651"; }
+.icon-multi:before { content: "\e7b6"; }
+.icon-effect:before { content: "\e6fc"; }
+.icon-music:before { content: "\e680"; }
+.icon-edit:before { content: "\e612"; }
+.icon-undo:before { content: "\e613"; }
+.icon-redo:before { content: "\e614"; } 

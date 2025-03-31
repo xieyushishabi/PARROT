@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parrot Sound - 文本编辑器</title>
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/dub.css">
+    <link rel="stylesheet" href="assets/css/iconfont.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            position: fixed;
+            top: 75px;
+            left: 0;
+            width: calc(100% - 300px);
+            height: calc(100vh - 75px);
+            overflow-y: auto;
+            padding-top: 0;
+            margin-top: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .text-area-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .text-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .text-area textarea {
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* 隐藏滚动条但保持滚动功能 */
+        .container::-webkit-scrollbar,
+        .control-panel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .control-panel {
+            position: fixed;
+            top: 60px;
+            right: 0;
+            width: 300px;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .input-section {
+            height: 40px;  /* 从50px减小到40px */
+        }
+
+        .input-section .input-wrapper {
+            height: 100%;
+            line-height: 40px;  /* 相应调整行高 */
+        }
+
+        .input-section input {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- 添加导航栏 -->
+    <nav class="nav-bar">
+        <div class="nav-left">
+            <div class="logo">
+                <img src="assets/images/logo.png" alt="Parrot Sound">
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html">首页</a></li>
+                <li class="nav-item"><a href="dub.html" class="active">智能配音</a></li>
+                <li class="nav-item"><a href="clone.html">声音克隆</a></li>
+                <li class="nav-item"><a href="teaching.html">教育教学</a></li>
+                <li class="nav-item"><a href="community.html">社区资源</a></li>
+                <li class="nav-item"><a href="help.html">帮助中心</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <a href="#" class="nav-user">
+                <img src="assets/images/avatar-default.png" alt="用户头像">
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 顶部输入框 -->
+        <div class="input-section">
+            <div class="input-wrapper">
+                <img src="assets/icons/icon-edit.png" alt="编辑" class="edit-icon">
+                <input type="text" placeholder="描述您的需求，让AI帮您智能生成文案">
+                <button class="create-btn">创作文章</button>
+            </div>
+        </div>
+
+        <div class="text-area-container">
+            <!-- 工具栏 -->
+            <div class="toolbar">
+                <div class="tools-left">
+                    <div class="tools-group-1">
+                        <button class="tool-btn">
+                            <img src="assets/icons/icon-text.png" alt="短读" class="tool-icon">
+                            <span>连读</span>
+                        </button>
+                        <button class="tool-btn">
+                            <img src="assets/icons/icon-settings.png" alt="设置停顿" class="tool-icon">
+                            <span>设置停顿</span>
+                        </button>
+                        <button class="tool-btn">
+                            <img src="assets/icons/icon-font.png" alt="多音字" class="tool-icon">
+                            <span>多音字</span>
+                        </button>
+                        <button class="tool-btn">
+                            <img src="assets/icons/icon-number.png" alt="数字" class="tool-icon">
+                            <span>数字</span>
+                        </button>
+                        <button class="tool-btn">
+                            <img src="assets/icons/icon-group.png" alt="单词组组" class="tool-icon">
+                            <span>单词词组</span>
+                        </button>
+                    </div>
+                    <div class="tools-group-2">
+                        <button class="tool-btn">
+                            <img src="assets/icons/icon-volume.png" alt="局部音量" class="tool-icon">
+                            <span>局部音量</span>
+                        </button>
+                        <button class="tool-btn">
+                            <img src="assets/icons/icon-pitch.png" alt="局部变调" class="tool-icon">
+                            <span>局部变调</span>
+                        </button>
+                        <button class="tool-btn">
+                            <img src="assets/icons/icon-speed.png" alt="局部变速" class="tool-icon">
+                            <span>局部变速</span>
+                        </button>
+                        <button class="tool-btn">
+                            <img src="assets/icons/icon-multi.png" alt="多人配音" class="tool-icon">
+                            <span>多人配音</span>
+                        </button>
+                        <button class="tool-btn">
+                            <img src="assets/icons/icon-effect.png" alt="插入音效" class="tool-icon">
+                            <span>插入音效</span>
+                        </button>
+                    </div>
+                    <div class="tools-group-3">
+                        <button class="tool-btn">
+                            <img src="assets/icons/icon-music.png" alt="添加配乐" class="tool-icon">
+                            <span>添加配乐</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="tools-right">
+                    <button class="voice-btn">
+                        <img src="assets/images/avatar-xiaoyu.png" alt"谈小语">
+                        谈小语
+                    </button>
+                </div>
+            </div>
+
+            <!-- 编辑区域 -->
+            <div class="text-area">
+                <div class="highlight-layer"></div>
+                <div class="text-editor-container">
+                    <textarea placeholder="请输入文章内容" maxlength="8000"></textarea>
+                </div>
+                <div class="text-stats">
+                    <span class="word-count">字数统计 0/8000</span>
+                    <span class="duration">预估时长 00:00:00</span>
+                </div>
+                <div class="word-limit-tip">已达最高字数</div>
+                <div class="operation-tip"></div>
+            </div>
+
+            <!-- 底部工具栏 -->
+            <div class="bottom-toolbar">
+                <div class="left-tools">
+                    <button class="btn-undo">
+                        <img src="assets/icons/icon-undo.png" alt="撤回" class="icon-undo">
+                        <span>撤回</span>
+                    </button>
+                    <button class="btn-redo">
+                        <img src="assets/icons/icon-redo.png" alt="重做" class="icon-redo">
+                        <span>重做</span>
+                    </button>
+                    <button class="btn-clear">一键清空</button>
+                    <button class="btn-smart">智能分段</button>
+                    <button class="btn-batch">查找替换</button>
+                    <button class="btn-guide" onclick="document.getElementById('file-input').click()">导入文件</button>
+                    <input type="file" id="file-input" accept=".txt" style="display: none;">
+                </div>
+                <div class="right-tools">
+                    <button class="btn-preview">试听</button>
+                    <button class="btn-export">导出音频</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 右侧控制面板 -->
+    <div class="control-panel">
+        <div class="voice-search-section">
+            <!-- 搜索区域 -->
+            <div class="search-section">
+                <input type="text" placeholder="请输入关键词">
+                <button class="search-btn">搜索</button>
+            </div>
+            
+            <!-- 标签切换 -->
+            <div class="tabs">
+                <button class="filter-btn">
+                    <img src="assets/icons/icon-filter.png" alt="筛选">
+                </button>
+                <button class="tab active">全部</button>
+                <button class="tab">收藏</button>
+                <button class="tab">热门</button>
+            </div>
+
+            <!-- 语音角色列表 -->
+            <div class="voice-list">
+                <div class="voice-card">
+                    <img src="assets/images/avatar-3.png" alt="谈小语">
+                    <div class="voice-info">
+                        <h3>谈小语</h3>
+                        <div class="tag-wrapper">
+                            <span class="tag">多情感</span>
+                        </div>
+                        <p>阳光开朗<br>富有激情</p>
+                    </div>
+                </div>
+                <div class="voice-card">
+                    <img src="assets/images/avatar-4.png" alt="谈小语">
+                    <div class="voice-info">
+                        <h3>谈小语</h3>
+                        <div class="tag-wrapper">
+                            <span class="tag">多情感</span>
+                        </div>
+                        <p>清新脱俗<br>婉转动听</p>
+                    </div>
+                </div>
+                <div class="voice-card">
+                    <img src="assets/images/avatar-5.png" alt="谈小语">
+                    <div class="voice-info">
+                        <h3>谈小语</h3>
+                        <div class="tag-wrapper">
+                            <span class="tag">多情感</span>
+                        </div>
+                        <p>活泼可爱<br>青春洋溢</p>
+                    </div>
+                </div>
+                <div class="voice-card">
+                    <img src="assets/images/avatar-6.png" alt="谈小语">
+                    <div class="voice-info">
+                        <h3>谈小语</h3>
+                        <div class="tag-wrapper">
+                            <span class="tag">多情感</span>
+                        </div>
+                        <p>沉稳大气<br>富有磁性</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="voice-settings-section">
+            <!-- 控制面板 -->
+            <div class="voice-controls">
+                <div class="control-item">
+                    <label>音量：</label>
+                    <input type="range" min="0" max="2" step="0.1" value="1">
+                    <input type="text" class="value-input" value="1">
+                </div>
+                <div class="control-item">
+                    <label>音调：</label>
+                    <input type="range" min="-500" max="500" value="0">
+                    <input type="text" class="value-input" value="0">
+                </div>
+                <div class="control-item">
+                    <label>语速：</label>
+                    <input type="range" min="0.5" max="2" step="0.1" value="1">
+                    <input type="text" class="value-input" value="1">
+                </div>
+            </div>
+        </div>
+
+        <!-- 情感选择 -->
+        <div class="emotion-section">
+            <label>情感：</label>
+            <div class="emotion-tags">
+                <button class="emotion-tag">
+                    默认
+                    <img src="assets/icons/icon-play.png" alt="播放">
+                </button>
+                <button class="emotion-tag">
+                    热情
+                    <img src="assets/icons/icon-play.png" alt="播放">
+                </button>
+                <button class="emotion-tag">
+                    兴奋
+                    <img src="assets/icons/icon-play.png" alt="播放">
+                </button>
+                <button class="emotion-tag">
+                    友好
+                    <img src="assets/icons/icon-play.png" alt="播放">
+                </button>
+                <button class="emotion-tag">
+                    轻松
+                    <img src="assets/icons/icon-play.png" alt="播放">
+                </button>
+                <button class="emotion-tag">
+                    愉快
+                    <img src="assets/icons/icon-play.png" alt="播放">
+                </button>
+                <button class="emotion-tag">
+                    严肃
+                    <img src="assets/icons/icon-play.png" alt="播放">
+                </button>
+                <button class="emotion-tag">
+                    生气
+                    <img src="assets/icons/icon-play.png" alt="播放">
+                </button>
+                <button class="emotion-tag">
+                    悲伤
+                    <img src="assets/icons/icon-play.png" alt="播放">
+                </button>
+                <button class="emotion-tag">
+                    温柔
+                    <img src="assets/icons/icon-play.png" alt="播放">
+                </button>
+                <button class="emotion-tag">
+                    激动
+                    <img src="assets/icons/icon-play.png" alt="播放">
+                </button>
+                <button class="emotion-tag">
+                    平静
+                    <img src="assets/icons/icon-play.png" alt="播放">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 确认弹窗 -->
+    <div class="confirm-dialog">
+        <h3>是否清空全部内容？</h3>
+        <div class="buttons">
+            <button class="cancel-btn">取消</button>
+            <button class="confirm-btn">确定</button>
+        </div>
+    </div>
+
+    <!-- 查找替换弹窗 -->
+    <div class="search-replace-dialog">
+        <div class="dialog-header">
+            <h3>查找替换</h3>
+            <button class="close-btn">×</button>
+        </div>
+        <div class="search-box">
+            <div class="search-input-group">
+                <input type="text" class="search-input" placeholder="查找的文字">
+                <div class="search-controls">
+                    <button class="prev-btn">∧</button>
+                    <button class="next-btn">∨</button>
+                </div>
+            </div>
+            <div class="search-count">第 1 处/共 3 处</div>
+        </div>
+        <div class="replace-box">
+            <div class="replace-input-group">
+                <input type="text" class="replace-input" placeholder="替换为">
+            </div>
+            <div class="replace-controls">
+                <button class="replace-btn">替换</button>
+                <button class="replace-all-btn">全部替换</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 修改筛选弹窗的内容 -->
+    <div class="filter-dialog" style="display: none;">
+        <div class="dialog-header">
+            <button class="close-btn">×</button>
+            <h3>筛选条件</h3>
+        </div>
+        <div class="filter-content">
+            <!-- 添加标签切换 -->
+            <div class="filter-tabs">
+                <button class="filter-tab active">系统声音</button>
+                <button class="filter-tab">我的声音</button>
+            </div>
+            
+            <!-- 系统声音的筛选选项 -->
+            <div class="filter-panel system-panel active">
+                <div class="filter-section">
+                    <h4>性别</h4>
+                    <div class="filter-options">
+                        <label><input type="radio" name="gender" value="all" checked> 全部性别</label>
+                        <label><input type="radio" name="gender" value="male"> 男生</label>
+                        <label><input type="radio" name="gender" value="female"> 女生</label>
+                    </div>
+                </div>
+                <div class="filter-section">
+                    <h4>年龄</h4>
+                    <div class="filter-options">
+                        <label><input type="checkbox" value="child"> 儿童</label>
+                        <label><input type="checkbox" value="teen"> 少年</label>
+                        <label><input type="checkbox" value="youth"> 青年</label>
+                        <label><input type="checkbox" value="middle"> 中年</label>
+                        <label><input type="checkbox" value="elder"> 老年</label>
+                    </div>
+                </div>
+                <div class="filter-section">
+                    <h4>语言</h4>
+                    <div class="filter-options">
+                        <label><input type="checkbox" value="chinese"> 中文</label>
+                        <label><input type="checkbox" value="english"> 英文</label>
+                        <label><input type="checkbox" value="french"> 法语</label>
+                        <label><input type="checkbox" value="japanese"> 日语</label>
+                        <label><input type="checkbox" value="korean"> 韩语</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 我的声音的筛选选项 -->
+            <div class="filter-panel my-panel">
+                <!-- 可以根据需要添加我的声音的筛选选项 -->
+                <div class="empty-state">
+                    暂无自定义声音
+                </div>
+            </div>
+        </div>
+        <div class="dialog-footer">
+            <button class="reset-btn">重置</button>
+            <button class="confirm-btn">确定</button>
+        </div>
+    </div>
+
+    <!-- 遮罩层 -->
+    <div class="overlay"></div>
+
+    <script src="assets/js/libs/axios.min.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/dub.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+/* 文本标注样式 */
+.annotation {
+    display: inline-block;
+    position: relative;
+    padding: 0 2px;
+    margin: 0 1px;
+    border-radius: 3px;
+    background-color: rgba(76, 175, 80, 0.2);
+}
+
+.annotation:hover::after {
+    content: attr(data-type);
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4CAF50;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+.highlight-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: transparent;
+}
+
+/* 编辑器样式 */
+.editor {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    line-height: 1.6;
+    outline: none;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background: white;
+}
+
+.editor:empty:before {
+    content: attr(placeholder);
+    color: #999;
+    pointer-events: none;
+}

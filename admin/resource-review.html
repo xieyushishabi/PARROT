@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>语音资源审核 - Parrot Sound</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="resource-review.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="logo">Parrot Sound</div>
+            <div class="subtitle">管理平台</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="icon-home"></i>首页</a></li>
+                    <li><a href="manage.html"><i class="icon-user"></i>用户信息管理</a></li>
+                    <li class="active"><a href="resource-review.html"><i class="icon-language"></i>语音资源审核</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 主要内容区 -->
+        <main class="main-content">
+            <!-- 用户信息区域 -->
+            <div class="user-info">
+                <img src="avatar.jpg" alt="用户头像" class="avatar">
+                <span>Leslie Alexander</span>
+                <button class="logout-btn"></button>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="content-wrapper">
+                <!-- 搜索区域 -->
+                <div class="search-area">
+                    <div class="search-item">
+                        <label>用户名</label>
+                        <input type="text" placeholder="请输入">
+                    </div>
+                    <div class="search-item">
+                        <label>上传时间</label>
+                        <input type="text" placeholder="请选择" class="date-picker">
+                    </div>
+                    <button class="search-btn">
+                        <img src="images/icons/search-icon.png" alt="搜索图标" class="search-icon">
+                    </button>
+                </div>
+
+                <!-- 表格区域 -->
+                <div class="table-container">
+                    <table class="resource-table">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>用户名</th>
+                                <th>语音资源标题</th>
+                                <th>上传时间</th>
+                                <th>播放</th>
+                                <th>任务状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 表格数据将由 JavaScript 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分页区域 -->
+                <div class="pagination">
+                    <div class="total">共 400 条</div>
+                    <div class="page-size">
+                        8条/页
+                        <i class="arrow-down"></i>
+                    </div>
+                    <div class="page-nav">
+                        <button class="prev-btn">&lt;</button>
+                        <button class="page-btn active">1</button>
+                        <span class="ellipsis">...</span>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn">4</button>
+                        <button class="next-btn">&gt;</button>
+                    </div>
+                    <div class="goto">
+                        前往
+                        <input type="text" value="1">
+                        页
+                    </div>
+                    <button class="save-btn">保存修改</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="libs/axios.min.js"></script>
+    <script src="resource-review.js"></script>
+</body>
+</html> 

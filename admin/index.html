@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parrot Sound 管理平台</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="logo">Parrot Sound</div>
+            <div class="subtitle">管理平台</div>
+            <nav>
+                <ul>
+                    <li class="active"><a href="index.html"><i class="icon-home"></i>首页</a></li>
+                    <li><a href="manage.html"><i class="icon-user"></i>用户信息管理</a></li>
+                    <li><a href="resource-review.html"><i class="icon-language"></i>语音资源审核</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 主要内容区 -->
+        <main class="main-content">
+            <!-- 顶部栏 -->
+            <header class="top-bar">
+                <div class="welcome">
+                    <h1>Hello, 你好, Leslie Alexander~</h1>
+                    <p>欢迎使用Parrot Sound管理平台！</p>
+                </div>
+                <div class="user-info">
+                    <img src="avatar.jpg" alt="用户头像" class="avatar">
+                    <span>Leslie Alexander</span>
+                    <button class="logout-btn"></button>
+                </div>
+            </header>
+
+            <!-- 添加内容包装层 -->
+            <div class="content-wrapper">
+                <!-- 数据卡片区域 -->
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <img src="images/icons/view-icon.png" alt="查看图标">
+                        <div class="stat-content">
+                            <div class="stat-label">网站浏览量</div>
+                            <div class="stat-value">32654</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <img src="images/icons/user-icon.png" alt="用户图标">
+                        <div class="stat-content">
+                            <div class="stat-label">用户数量</div>
+                            <div class="stat-value">32654</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <img src="images/icons/content-icon.png" alt="内容图标">
+                        <div class="stat-content">
+                            <div class="stat-label">内容生产量</div>
+                            <div class="stat-value">1654</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 图表区域 -->
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>各功能使用人数占比</h3>
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>近一周活跃用户人数</h3>
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="libs/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="main.js"></script>
+</body>
+</html> 

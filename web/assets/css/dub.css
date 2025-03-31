@@ -1,0 +1,1081 @@
+/* 智能配音页面特定样式 */
+.container {
+    width: calc(100% - 290px);
+    padding: 0 10px;
+    margin-top: 80px;
+    margin-right: 280px;
+    min-height: calc(100vh - 70px);
+}
+
+/* 输入框样式 */
+.input-section {
+    margin-bottom: 13px;
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 8px;
+    padding: 8px;
+    height: 48px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    width: 100%;
+}
+
+.input-wrapper .edit-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    opacity: 0.8;
+}
+
+.input-wrapper input {
+    flex: 1;
+    border: none;
+    padding: 8px;
+    font-size: 14px;
+    outline: none;  /* 移除焦点时的描边 */
+}
+
+.create-btn {
+    background: #6b5cff;
+    color: white;
+    border: none;
+    padding: 0 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    height: 32px;
+    line-height: 32px;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(107,92,255,0.3);
+    white-space: nowrap;
+}
+
+/* 工具栏样式 */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.tools-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 50px;  /* 组间距 */
+}
+
+/* 第一组工具按钮 */
+.tools-group-1 {
+    display: flex;
+    gap: 9px;  /* 组内间距 */
+}
+
+/* 第二组工具按钮 */
+.tools-group-2 {
+    display: flex;
+    gap: 9px;  /* 组内间距 */
+}
+
+/* 第三组工具按钮（单个按钮） */
+.tools-group-3 {
+    display: flex;
+}
+
+.tool-btn {
+    border: none;
+    background: none;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    transition: color 0.3s;
+}
+
+.tool-btn:hover {
+    color: #6b5cff;
+}
+
+.tool-btn .tool-icon {
+    width: 29px;
+    height: 29px;
+    object-fit: contain;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.tool-btn:hover .tool-icon {
+    opacity: 1;
+}
+
+.tool-btn span {
+    font-size: 12px;
+    color: #666;
+    margin-top: 2px;
+}
+
+.tools-right {
+    display: flex;
+    align-items: flex-start;  /* 将内容对齐到顶部 */
+    padding-top: 6px;  /* 与左侧工具栏的 padding 一致 */
+}
+
+/* 编辑区域样式 */
+.text-area {
+    padding: 20px;
+    height: calc(100% - 130px);
+    border-bottom: 1px solid #e5e7eb;
+    position: relative;
+}
+
+.highlight-layer {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    pointer-events: none;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    color: transparent;
+    overflow: auto;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.highlight-layer .highlight {
+    background-color: #fff2d6;
+    border-radius: 2px;
+    padding: 2px 0;
+}
+
+.highlight-layer .current-highlight {
+    background-color: #ffd591;
+    border-radius: 2px;
+    padding: 2px 0;
+}
+
+.text-area textarea {
+    width: 100%;
+    height: 100%;
+    border: none;
+    resize: none;
+    outline: none;
+    font-size: 14px;
+    color: #333;
+    position: relative;
+    background: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* 文本统计信息样式 */
+.text-stats {
+    position: absolute;
+    bottom: 2px;  /* 将整个统计信息区域下移5px */
+    right: 20px;
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: #999;
+}
+
+/* 设置 placeholder 的样式 */
+.text-area textarea::placeholder {
+    color: #999;
+    font-size: 14px;
+}
+
+/* 底部工具栏样式 */
+.bottom-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 20px;  /* 增加上内边距，使工具栏下移 */
+    height: 50px;  /* 设置固定高度 */
+}
+
+.left-tools {
+    display: flex;
+    gap: 12px;  /* 按钮之间的间距 */
+}
+
+.right-tools {
+    display: flex;
+    gap: 12px;
+}
+
+/* 底部工具栏按钮通用样式 */
+.bottom-toolbar button {
+    padding: 4px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    background: white;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 28px;
+    transition: all 0.2s;
+}
+
+.bottom-toolbar button:hover {
+    background: #f5f5f5;
+    border-color: #ddd;
+}
+
+.bottom-toolbar button:active {
+    background: #eee;
+    transform: translateY(1px);
+}
+
+.bottom-toolbar button.active {
+    background: #eef1ff;
+    border-color: #6b5cff;
+    color: #6b5cff;
+}
+
+/* 撤回和重做按钮样式 */
+.btn-undo, .btn-redo {
+    padding: 0 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    border: none !important;
+    background: none !important;
+    height: 28px;
+    margin-top: -5px;
+}
+
+/* 图标样式 */
+.icon-undo, .icon-redo {
+    width: 16px;
+    height: 16px;
+}
+
+/* 撤回重做按钮的文字样式 */
+.btn-undo span, .btn-redo span {
+    font-size: 12px;
+    color: #666;
+    line-height: 1;
+}
+
+/* 右侧控制面板样式 */
+.control-panel {
+    position: absolute;
+    right: 10px;  /* 恢复原来的右侧间距 */
+    top: 80px;
+    width: 280px;
+    height: 804px;  /* 恢复原高度 */
+    background: white;
+    padding: 20px;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+/* 搜索和角色列表模块 */
+.voice-search-section {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+/* 搜索区域样式 */
+.search-section {
+    display: flex;
+    gap: 8px;  /* 减小间距 */
+    margin-bottom: 16px;
+    padding: 0 10px;  /* 增加左右内边距，进一步缩小整体宽度 */
+}
+
+.search-section input {
+    flex: 1;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    padding: 6px 10px;  /* 减小内边距 */
+    font-size: 14px;
+    outline: none;
+    width: 160px;  /* 限制输入框宽度 */
+}
+
+.search-section button {
+    border: none;
+    background: #6b5cff;
+    color: white;
+    border-radius: 20px;
+    padding: 6px 10px;  /* 减小内边距 */
+    cursor: pointer;
+    font-size: 14px;
+    min-width: 60px;  /* 设置最小宽度 */
+}
+
+/* 标签切换样式 */
+.tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    padding: 0 10px;
+    position: relative;  /* 为筛选按钮定位提供参考 */
+}
+
+.tab {
+    padding: 4px 8px;  /* 减小内边距 */
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 16px;
+    font-size: 14px;
+    color: #666;
+    transition: all 0.3s;
+}
+
+.tab:hover {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.tab.active {
+    background: #6b5cff;
+    color: white;
+}
+
+/* 控制面板中间模块 */
+.voice-settings-section {
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    padding-left: 10px;  /* 添加左侧内边距，与第三个模块对齐 */
+}
+
+/* 情感选择模块 */
+.emotion-section {
+    flex: 1;
+    padding: 0 0 0 10px;
+    display: flex;
+    flex-direction: column;
+    height: auto;  /* 移除固定高度 */
+}
+
+.emotion-section > label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 12px;
+    flex-shrink: 0;  /* 防止标签被压缩 */
+}
+
+/* 控制面板样式 */
+.control-item {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 6px;  /* 减小间距 */
+}
+
+.control-item label {
+    width: 42px;  /* 减小标签宽度 */
+    flex-shrink: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.control-item input[type="range"] {
+    flex: 1;
+    margin: 0;
+    height: 2px;  /* 减小滑动条高度 */
+}
+
+.control-item .value-input {
+    width: 42px;  /* 减小输入框宽度 */
+    height: 24px;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 13px;
+    color: #333;
+    padding: 0 2px;
+}
+
+/* 情感标签样式 */
+.emotion-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;  /* 增加间距使布局更加均匀 */
+    padding: 0 10px 0 0;
+    margin-top: 4px;
+    overflow: visible;  /* 移除滚动 */
+}
+
+.emotion-tag {
+    padding: 4px 6px;
+    border: 1px solid #e5e7eb;
+    border-radius: 5px;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    width: calc((100% - 16px) / 3);  /* 调整宽度计算，考虑新的间距 */
+    justify-content: center;
+    margin-bottom: 4px;  /* 增加底部间距 */
+    background: white;
+    transition: all 0.2s;
+}
+
+.emotion-tag:hover {
+    background: #f5f5f5;
+    border-color: #e5e7eb;
+}
+
+.emotion-tag:active {
+    background: #eee;
+    transform: translateY(1px);
+}
+
+.emotion-tag.active {
+    background: #eef1ff;
+    border-color: #6b5cff;
+    color: #6b5cff;
+}
+
+.emotion-tag img {
+    width: 14px;
+    height: 14px;
+    opacity: 0.6;
+}
+
+/* 移除滚动条相关样式 */
+.emotion-tags::-webkit-scrollbar {
+    display: none;
+}
+
+/* 添加到现有的 CSS 文件中 */
+.voice-btn {
+    display: flex;
+    align-items: center;
+    background: #f5f5f5;
+    border: none;
+    border-radius: 36px;
+    padding: 0 12px 0 0;
+    cursor: pointer;
+    height: 52px;
+    width: 115px;
+}
+
+.voice-btn img {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    margin-right: 4px;
+    border: 2px solid white;
+}
+
+.voice-btn span {
+    font-size: 14px;
+    color: #333;
+    line-height: 52px;
+}
+
+.voice-card img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-bottom: 6px;
+    position: relative;
+    z-index: 1;
+}
+
+/* 标签容器样式 */
+.tag-wrapper {
+    background: #eef1ff;
+    border-radius: 12px;
+    padding: 2px;
+    display: inline-block;
+    margin-bottom: 6px;
+    width: 60px;  /* 设置固定宽度 */
+    text-align: center;  /* 文字居中 */
+}
+
+.voice-info {
+    width: 100%;
+}
+
+.voice-info h3 {
+    font-size: 16px;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+.voice-info .tag {
+    padding: 0 6px;
+    font-size: 12px;
+    color: #333;  /* 改为黑色 */
+    font-weight: 500;  /* 稍微加粗一点 */
+}
+
+.voice-info p {
+    font-size: 12px;
+    color: #999;
+    line-height: 1.4;
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+}
+
+/* 添加一个包裹容器 */
+.text-area-container {
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    height: 746px;
+}
+
+/* 语音角色列表样式 */
+.voice-list {
+    height: 350px;  /* 减小10px */
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 0 10px;
+    margin-top: 16px;
+}
+
+/* 语音角色卡片样式 */
+.voice-card {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 8px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    position: relative;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.voice-card:hover {
+    background: #f0f0f0;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.voice-card.active {
+    background: #eef1ff;
+    border-color: #6b5cff;
+}
+
+/* 头像背景圆形 */
+.voice-card::before {
+    content: '';
+    position: absolute;
+    top: 8px;  /* 调整头像背景位置 */
+    width: 46px;
+    height: 46px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 0;
+}
+
+/* 自定义滚动条样式 */
+.voice-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.voice-list::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+
+.voice-list::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 2px;
+}
+
+/* 筛选按钮样式 */
+.filter-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 10px;  /* 放置在最右侧 */
+}
+
+.filter-btn img {
+    width: 16px;
+    height: 16px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.filter-btn:hover img {
+    opacity: 0.8;
+}
+
+/* 字数超限提示样式 */
+.word-limit-tip {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateY(10px);
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.word-limit-tip.show {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+}
+
+/* 确认弹窗样式 */
+.confirm-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    display: none;
+    width: 300px;
+    text-align: center;
+}
+
+.confirm-dialog.show {
+    display: block;
+}
+
+.confirm-dialog h3 {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.confirm-dialog .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.confirm-dialog button {
+    padding: 6px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.confirm-dialog .confirm-btn {
+    background: #6b5cff;
+    color: white;
+    border: none;
+}
+
+.confirm-dialog .cancel-btn {
+    background: white;
+    color: #666;
+    border: 1px solid #ddd;
+}
+
+/* 遮罩层样式 */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+/* 修改筛选弹窗样式 */
+.filter-dialog {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    width: 400px;
+    z-index: 1001;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 标签切换样式 */
+.filter-tabs {
+    display: flex;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 20px;
+}
+
+.filter-tab {
+    padding: 8px 16px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+    position: relative;
+}
+
+.filter-tab.active {
+    color: #4a90e2;
+}
+
+.filter-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #4a90e2;
+}
+
+/* 筛选面板样式 */
+.filter-panel {
+    display: none;
+}
+
+.filter-panel.active {
+    display: block;
+}
+
+/* 空状态样式 */
+.empty-state {
+    text-align: center;
+    padding: 40px 0;
+    color: #999;
+    font-size: 14px;
+}
+
+/* 修改筛选选项样式 */
+.filter-section {
+    margin-bottom: 20px;
+}
+
+.filter-section h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.filter-options label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+}
+
+.filter-options input[type="radio"],
+.filter-options input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* 修改底部按钮样式 */
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.dialog-footer button {
+    padding: 8px 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.reset-btn {
+    background-color: white;
+    border: 1px solid #ddd;
+    color: #666;
+}
+
+.confirm-btn {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+}
+
+/* 操作提示样式 */
+.operation-tip {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) translateY(10px);
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.operation-tip.show {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+}
+
+/* 查找替换弹窗样式 */
+.search-replace-dialog {
+    position: fixed;
+    top: 80px;
+    right: 300px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    display: none;
+    width: 320px;
+    pointer-events: auto;
+}
+
+/* 显示弹窗 */
+.search-replace-dialog.show {
+    display: block;
+}
+
+.search-count {
+    font-size: 14px;
+    color: #666;
+    white-space: nowrap;
+    cursor: pointer;  /* 指示可点击 */
+}
+
+.search-controls {
+    display: flex;
+    gap: 2px;
+    align-items: center;  /* 确保按钮垂直居中 */
+}
+
+.prev-btn, .next-btn {
+    border: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;  /* 移除内边距 */
+    line-height: 1;  /* 确保箭头垂直居中 */
+}
+
+.replace-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.replace-btn, .replace-all-btn {
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.replace-btn {
+    background: white;
+    border: 1px solid #e5e7eb;
+    color: #333;
+}
+
+.replace-all-btn {
+    background: #6b5cff;
+    color: white;
+    border: none;
+}
+
+.search-box, .replace-box {
+    padding: 12px 0;  /* 移除左右内边距 */
+    margin: 0 16px;   /* 改用外边距控制整体间距 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: white;
+}
+
+.search-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.replace-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.search-input, .replace-input {
+    flex: 1;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 14px;
+    outline: none;
+    background: white;
+    text-align: center;
+}
+
+.search-count {
+    font-size: 14px;
+    color: #666;
+    white-space: nowrap;
+    cursor: pointer;
+    margin: 0 auto;
+}
+
+.search-controls {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+}
+
+.prev-btn, .next-btn {
+    border: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+}
+
+.replace-controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+}
+
+.replace-btn, .replace-all-btn {
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* 修改对话框标题和关闭按钮的样式 */
+.dialog-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.dialog-header .close-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    border: none;
+    background: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    color: #999;
+}
+
+.dialog-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+    padding-top: 5px;
+}
+
+/* 修改标题区域的样式 */
+.search-replace-dialog .dialog-header {
+    padding: 12px 16px;  /* 使用与搜索框相同的左右间距 */
+    margin-bottom: 0;    /* 移除底部间距 */
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;       /* 改为水平布局 */
+    flex-direction: row; /* 改为水平布局 */
+    justify-content: space-between; /* 两端对齐 */
+    align-items: center; /* 垂直居中 */
+}
+
+/* 调整标题和关闭按钮的位置 */
+.search-replace-dialog .dialog-header h3 {
+    padding-top: 0;  /* 移除顶部内边距 */
+    margin: 0;       /* 移除外边距 */
+}
+
+.search-replace-dialog .dialog-header .close-btn {
+    position: static; /* 取消绝对定位 */
+    padding: 0;      /* 移除内边距 */
+    height: 20px;    /* 设置固定高度 */
+    line-height: 20px; /* 文字垂直居中 */
+    width: 20px;     /* 设置固定宽度 */
+    text-align: center; /* 文字水平居中 */
+}
+
+/* 强制统一导航栏位置 */
+body .nav-left {
+    padding-left: 15px !important;
+}
+
+body .logo {
+    margin-left: 10px !important;
+}
+
+.logo img {
+    height: 50px;
+    width: 148px;
+    object-fit: contain;
+} 

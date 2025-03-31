@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加用户信息 - Parrot Sound</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="add-user.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="logo">Parrot Sound</div>
+            <div class="subtitle">管理平台</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="icon-home"></i>首页</a></li>
+                    <li class="active"><a href="manage.html"><i class="icon-user"></i>用户信息管理</a></li>
+                    <li><a href="resource-review.html"><i class="icon-language"></i>语音资源审核</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 主要内容区 -->
+        <main class="main-content">
+            <!-- 用户信息区域 -->
+            <div class="user-info">
+                <img src="avatar.jpg" alt="用户头像" class="avatar">
+                <span>Leslie Alexander</span>
+                <button class="logout-btn"></button>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="content-wrapper">
+                <div class="add-user-form">
+                    <div class="form-header">
+                        <h2>添加用户信息</h2>
+                        <a href="manage.html" class="back-btn">返回</a>
+                    </div>
+                    <div class="form-content">
+                        <div class="form-item">
+                            <label>用户名</label>
+                            <input type="text" placeholder="请输入">
+                        </div>
+                        <div class="form-item">
+                            <label>密码</label>
+                            <input type="password" placeholder="请输入">
+                        </div>
+                        <div class="form-item">
+                            <label>邮箱</label>
+                            <input type="email" placeholder="请输入">
+                        </div>
+                        <div class="form-item">
+                            <label>手机号</label>
+                            <input type="tel" placeholder="请输入">
+                        </div>
+                        <div class="form-item">
+                            <label>年龄</label>
+                            <input type="number" placeholder="请输入">
+                        </div>
+                        <div class="form-item">
+                            <label>性别</label>
+                            <div>
+                                <label><input type="radio" name="gender" value="男"> 男</label>
+                                <label><input type="radio" name="gender" value="女"> 女</label>
+                            </div>
+                        </div>
+                        <!-- 删除注册时间的form-item -->
+                    </div>
+                    <div class="form-footer">
+                        <button class="save-btn">添加用户</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="libs/axios.min.js"></script>
+    <script src="add-user.js"></script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+/* 搜索区域样式 */
+.search-area {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 60px;
+}
+
+.search-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-item label {
+    color: #333;
+    font-size: 14px;
+}
+
+.search-item input {
+    padding: 8px 12px;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    outline: none;
+    width: 200px;
+}
+
+.search-btn {
+    width: 40px;
+    height: 40px;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 表格样式 */
+.table-container {
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.resource-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.resource-table th,
+.resource-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.resource-table th {
+    color: #666;
+    font-weight: normal;
+    background-color: #F9FAFB;
+}
+
+.resource-table td {
+    color: #333;
+}
+
+.resource-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* 操作按钮样式 */
+.action-btns {
+    display: flex;
+    gap: 16px;
+}
+
+.action-btn {
+    color: var(--primary-color);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* 播放按钮样式 */
+.play-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 任务状态样式 */
+.task-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.status-pending {
+    color: #666;
+}
+
+.status-passed {
+    color: #34D399;
+}
+
+.status-failed {
+    color: #EF4444;
+}
+
+/* 分页样式 */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: white;
+    border-radius: 12px;
+}
+
+.page-size {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.page-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.page-btn,
+.prev-btn,
+.next-btn {
+    min-width: 32px;
+    height: 32px;
+    border: 1px solid #E5E7EB;
+    background: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.page-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.goto {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.goto input {
+    width: 48px;
+    padding: 4px 8px;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    text-align: center;
+}
+
+/* ... 其他分页样式保持不变 ... */
+
+.save-btn {
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.play-icon {
+    width: 26px;
+    height: 26px;
+    vertical-align: middle;
+} 

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户信息管理 - Parrot Sound</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="manage.css">
+    <!-- 添加flatpickr的CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="logo">Parrot Sound</div>
+            <div class="subtitle">管理平台</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="icon-home"></i>首页</a></li>
+                    <li class="active"><a href="manage.html"><i class="icon-user"></i>用户信息管理</a></li>
+                    <li><a href="resource-review.html"><i class="icon-language"></i>语音资源审核</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 主要内容区 -->
+        <main class="main-content">
+            <!-- 用户信息区域 -->
+            <div class="user-info">
+                <img src="avatar.jpg" alt="用户头像" class="avatar">
+                <span>Leslie Alexander</span>
+                <button class="logout-btn"></button>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="content-wrapper">
+                <!-- 搜索区域 -->
+                <div class="search-area">
+                    <div class="search-item">
+                        <label>用户名</label>
+                        <input type="text" id="username-search" placeholder="请输入">
+                    </div>
+                    <div class="search-item">
+                        <label>手机号</label>
+                        <input type="text" id="phone-search" placeholder="请输入">
+                    </div>
+                    <div class="search-item">
+                        <label>注册时间</label>
+                        <input type="text" id="date-search" placeholder="请选择" class="date-picker">
+                    </div>
+                    <button class="search-btn" id="search-button">
+                        <img src="images/icons/search-icon.png" alt="搜索图标" class="search-icon">
+                    </button>
+                </div>
+
+                <!-- 表格区域 -->
+                <div class="table-container">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>用户名</th>
+                                <th>手机号</th>
+                                <th>密码</th>
+                                <th>性别</th>
+                                <th>注册时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 表格数据将由 JavaScript 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分页区域 -->
+                <div class="pagination">
+                    <div class="total">共 400 条</div>
+                    <div class="page-size">
+                        8条/页
+                        <i class="arrow-down"></i>
+                    </div>
+                    <div class="page-nav">
+                        <button class="prev-btn">&lt;</button>
+                        <button class="page-btn active">1</button>
+                        <span class="ellipsis">...</span>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn">4</button>
+                        <button class="next-btn">&gt;</button>
+                    </div>
+                    <div class="goto">
+                        前往
+                        <input type="text" value="1">
+                        页
+                    </div>
+                    <button class="add-user-btn">
+                        添加用户
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- 在底部添加flatpickr的JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh.js"></script>
+    <script src="libs/axios.min.js"></script>
+    <script src="manage.js"></script>
+</body>
+</html>

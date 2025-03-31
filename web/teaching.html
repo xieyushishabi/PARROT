@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parrot Sound - 教育教学</title>
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/teaching.css">
+    <link rel="stylesheet" href="assets/css/iconfont.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="nav-left">
+            <div class="logo">
+                <img src="assets/images/logo.png" alt="Parrot Sound">
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html">首页</a></li>
+                <li class="nav-item"><a href="dub.html">智能配音</a></li>
+                <li class="nav-item"><a href="clone.html">声音克隆</a></li>
+                <li class="nav-item"><a href="teaching.html" class="active">教育教学</a></li>
+                <li class="nav-item"><a href="community.html">社区资源</a></li>
+                <li class="nav-item"><a href="help.html">帮助中心</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <a href="#" class="nav-user">
+                <img src="assets/images/avatar-default.png" alt="用户头像">
+            </a>
+        </div>
+    </nav>
+
+    <!-- 主要内容区域 -->
+    <div class="main-content">
+        <!-- 顶部工具栏 -->
+        <div class="toolbar">
+            <div class="left-tools">
+                <button class="tool-btn switch-mode">
+                    切换至视频模式
+                </button>
+                <div class="aspect-ratio">
+                    <span>尺寸</span>
+                    <select>
+                        <option>16: 9</option>
+                        <option>4: 3</option>
+                        <option>1: 1</option>
+                    </select>
+                </div>
+                <div class="resolution">
+                    <span>分辨率</span>
+                    <select>
+                        <option>1080P</option>
+                        <option>720P</option>
+                        <option>480P</option>
+                    </select>
+                </div>
+                <div class="bitrate">
+                    <span>视频码率</span>
+                    <select>
+                        <option>默认</option>
+                        <option>高质量</option>
+                        <option>低质量</option>
+                    </select>
+                </div>
+            </div>
+            <div class="right-tools">
+                <button class="tool-btn save">保存</button>
+                <button class="tool-btn preview">预览</button>
+                <button class="tool-btn generate">生成视频</button>
+            </div>
+        </div>
+
+        <!-- 编辑区域 -->
+        <div class="editor-container">
+            <!-- 左侧资源栏 -->
+            <div class="resource-panel">
+                <button class="import-btn">导入ppt</button>
+                <div class="resource-list">
+                    <div class="resource-item">
+                        <img src="assets/images/slide1.jpg" alt="幻灯片1">
+                        <div class="item-overlay">
+                            <button class="delete-btn">×</button>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <img src="assets/images/slide2.jpg" alt="幻灯片2">
+                        <div class="item-overlay">
+                            <button class="delete-btn">×</button>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <img src="assets/images/slide3.jpg" alt="幻灯片3">
+                        <div class="item-overlay">
+                            <button class="delete-btn">×</button>
+                        </div>
+                    </div>
+                    <button class="add-resource">+</button>
+                </div>
+                <button class="show-all-btn">应用全部</button>
+            </div>
+
+            <!-- 数字人选择面板 -->
+            <div class="avatar-panel">
+                <div class="panel-header">
+                    <div class="search-box">
+                        <input type="text" placeholder="请输入关键词" class="search-input">
+                        <button class="search-btn">搜索</button>
+                    </div>
+                    <div class="filter-options">
+                        <button class="filter-btn">全部性别 <i class="icon-arrow-down"></i></button>
+                        <button class="filter-btn">全部姿势 <i class="icon-arrow-down"></i></button>
+                    </div>
+                </div>
+                <div class="avatar-list">
+                    <!-- 这里是数字人列表，可以根据需要添加更多 -->
+                    <div class="avatar-item">
+                        <img src="assets/images/avatar1.jpg" alt="数字人1">
+                    </div>
+                    <div class="avatar-item">
+                        <img src="assets/images/avatar2.jpg" alt="数字人2">
+                    </div>
+                    <!-- 更多数字人... -->
+                </div>
+            </div>
+
+            <!-- 在avatar-panel后添加声音控制面板 -->
+            <div class="voice-panel">
+                <div class="voice-controls">
+                    <div class="voice-item">
+                        <label>音量:</label>
+                        <div class="slider-container">
+                            <input type="range" min="0" max="100" value="50" class="slider">
+                            <div class="value-display">1</div>
+                        </div>
+                    </div>
+                    <div class="voice-item">
+                        <label>音调:</label>
+                        <div class="slider-container">
+                            <input type="range" min="-500" max="500" value="-250" class="slider">
+                            <div class="value-display">-250</div>
+                        </div>
+                    </div>
+                    <div class="voice-item">
+                        <label>语速:</label>
+                        <div class="slider-container">
+                            <input type="range" min="0.5" max="2" value="1.6" step="0.1" class="slider">
+                            <div class="value-display">1.6x</div>
+                        </div>
+                    </div>
+                    <div class="voice-item">
+                        <label>情感:</label>
+                        <div class="emotion-buttons">
+                            <button class="emotion-btn active">默认<i class="icon-check"></i></button>
+                            <button class="emotion-btn">热情<i class="icon-check"></i></button>
+                            <button class="emotion-btn">兴奋<i class="icon-check"></i></button>
+                            <button class="emotion-btn">友好<i class="icon-check"></i></button>
+                            <button class="emotion-btn">轻松<i class="icon-check"></i></button>
+                            <button class="emotion-btn">愉快<i class="icon-check"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 背景控制面板 -->
+            <div class="background-panel">
+                <div class="panel-header">
+                    <div class="search-box">
+                        <input type="text" placeholder="请输入关键词" class="search-input">
+                        <button class="search-btn">搜索</button>
+                    </div>
+                    <div class="filter-options">
+                        <button class="filter-btn">系统背景</button>
+                        <button class="filter-btn">我的背景</button>
+                    </div>
+                </div>
+                <div class="background-list">
+                    <div class="background-item">
+                        <img src="assets/images/bg1.jpg" alt="背景1">
+                    </div>
+                    <div class="background-item">
+                        <img src="assets/images/bg2.jpg" alt="背景2">
+                    </div>
+                    <!-- 更多背景图片... -->
+                </div>
+            </div>
+
+            <!-- 字幕控制面板 -->
+            <div class="subtitle-panel">
+                <div class="panel-header">
+                    <h3>字幕设置</h3>
+                </div>
+                <div class="subtitle-settings">
+                    <div class="setting-group">
+                        <h4>预设样式</h4>
+                        <div class="style-grid">
+                            <div class="style-item"></div>
+                            <div class="style-item"></div>
+                            <div class="style-item"></div>
+                            <div class="style-item"></div>
+                            <div class="style-item"></div>
+                            <div class="style-item"></div>
+                            <div class="style-item"></div>
+                            <div class="style-item"></div>
+                            <div class="style-item"></div>
+                            <div class="style-item"></div>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <h4>字符</h4>
+                        <div class="font-settings">
+                            <div class="font-select">
+                                <label>字体</label>
+                                <select>
+                                    <option>Arial</option>
+                                </select>
+                            </div>
+                            <div class="color-input">
+                                <label>颜色</label>
+                                <input type="text" value="FFFFFF">
+                            </div>
+                            <div class="size-input">
+                                <label>字号</label>
+                                <input type="number" value="40">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <h4>描边</h4>
+                        <div class="stroke-settings">
+                            <div class="stroke-toggle">
+                                <input type="checkbox" id="strokeToggle" checked>
+                                <label for="strokeToggle"></label>
+                            </div>
+                            <div class="color-input">
+                                <label>颜色</label>
+                                <input type="text" value="FFFFFF">
+                            </div>
+                            <div class="size-input">
+                                <label>粗细</label>
+                                <input type="number" value="4">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <h4>位置</h4>
+                        <div class="position-settings">
+                            <div class="position-input">
+                                <label>X</label>
+                                <input type="number" value="-5">
+                            </div>
+                            <div class="position-input">
+                                <label>Y</label>
+                                <input type="number" value="-5">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 音乐控制面板 -->
+            <div class="music-panel">
+                <div class="panel-header">
+                    <div class="search-box">
+                        <input type="text" placeholder="请输入关键词" class="search-input">
+                        <button class="search-btn">搜索</button>
+                    </div>
+                    <div class="filter-options">
+                        <button class="filter-btn active">全部</button>
+                        <button class="filter-btn">放松</button>
+                        <button class="filter-btn">紧张</button>
+                    </div>
+                </div>
+                <div class="music-list">
+                    <div class="music-item">
+                        <div class="music-icon">
+                            <i class="icon-music"></i>
+                        </div>
+                        <div class="music-info">
+                            <div class="music-name">无背景音乐</div>
+                        </div>
+                    </div>
+                    <div class="music-item">
+                        <div class="music-icon">
+                            <i class="icon-music"></i>
+                        </div>
+                        <div class="music-info">
+                            <div class="music-name">安静</div>
+                            <div class="music-duration">00:00</div>
+                        </div>
+                    </div>
+                    <!-- 更多音乐项... -->
+                </div>
+                <div class="music-controls">
+                    <div class="control-item">
+                        <label>音量:</label>
+                        <div class="slider-container">
+                            <input type="range" min="0" max="100" value="50" class="slider">
+                            <div class="value-display">1</div>
+                        </div>
+                    </div>
+                    <div class="control-item">
+                        <label>速度:</label>
+                        <div class="slider-container">
+                            <input type="range" min="0.5" max="2" value="1.6" step="0.1" class="slider">
+                            <div class="value-display">1.6x</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 中间编辑区域 -->
+            <div class="center-panel">
+                <!-- 预览区域 -->
+                <div class="preview-area">
+                    <div class="video-container">
+                        <div class="watermark">字幕在此显示</div>
+                    </div>
+                </div>
+
+                <!-- 底部时间轴 -->
+                <div class="timeline">
+                    <div class="timeline-controls">
+                        <button class="control-btn rewind">
+                            <i class="icon-rewind"></i>
+                        </button>
+                        <button class="control-btn play">
+                            <i class="icon-play"></i>
+                        </button>
+                        <button class="control-btn forward">
+                            <i class="icon-forward"></i>
+                        </button>
+                        <div class="time-display">00:00:00:00/00:00:00:00</div>
+                    </div>
+                    <div class="timeline-tracks">
+                        <div class="track-labels">
+                            <div class="track-label">连读</div>
+                            <div class="track-label">多音字</div>
+                            <div class="track-label">数字</div>
+                            <div class="track-label">单词切分</div>
+                            <div class="track-label">上传文件</div>
+                            <div class="track-label">AI转写</div>
+                            <div class="track-label">添加动作</div>
+                        </div>
+                        <div class="track-content">
+                            <!-- 时间轴内容区域 -->
+                        </div>
+                    </div>
+                    <div class="timeline-ruler">
+                        <div class="ruler-scale">
+                            <!-- 时间刻度 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧工具栏 -->
+            <div class="tools-panel">
+                <div class="tool-group">
+                    <button class="tool-item" title="数字人">
+                        <div class="tool-icon-wrapper">
+                            <img src="assets/icons/teaching/avatar.png" alt="数字人" class="tool-icon default">
+                            <img src="assets/icons/teaching/avatar-active.png" alt="数字人" class="tool-icon active">
+                        </div>
+                        <span>数字人</span>
+                    </button>
+                    <button class="tool-item" title="声音">
+                        <div class="tool-icon-wrapper">
+                            <img src="assets/icons/teaching/voice.png" alt="声音" class="tool-icon default">
+                            <img src="assets/icons/teaching/voice-active.png" alt="声音" class="tool-icon active">
+                        </div>
+                        <span>声音</span>
+                    </button>
+                    <button class="tool-item" title="背景">
+                        <div class="tool-icon-wrapper">
+                            <img src="assets/icons/teaching/background.png" alt="背景" class="tool-icon default">
+                            <img src="assets/icons/teaching/background-active.png" alt="背景" class="tool-icon active">
+                        </div>
+                        <span>背景</span>
+                    </button>
+                    <button class="tool-item" title="字幕">
+                        <div class="tool-icon-wrapper">
+                            <img src="assets/icons/teaching/subtitle.png" alt="字幕" class="tool-icon default">
+                            <img src="assets/icons/teaching/subtitle-active.png" alt="字幕" class="tool-icon active">
+                        </div>
+                        <span>字幕</span>
+                    </button>
+                    <button class="tool-item" title="音乐">
+                        <div class="tool-icon-wrapper">
+                            <img src="assets/icons/teaching/music.png" alt="音乐" class="tool-icon default">
+                            <img src="assets/icons/teaching/music-active.png" alt="音乐" class="tool-icon active">
+                        </div>
+                        <span>音乐</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="assets/js/libs/axios.min.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/teaching.js"></script>
+</body>
+</html>

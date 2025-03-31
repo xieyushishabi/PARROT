@@ -1,0 +1,630 @@
+/* 首页样式 */
+.hero-section {
+    padding: 60px 0;
+    text-align: center;
+}
+
+/* ... 其他首页样式 ... */
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1;
+    padding: 75px 0 0;  /* 顶部留出导航栏的高度 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.posters-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.poster-item {
+    width: 100%;
+    height: calc((100vh - 75px - 60px - 120px) / 6);  /* 减去导航栏、页脚和间距的高度，平均分配给6张海报 */
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.poster-item:hover {
+    transform: scale(1.02);
+}
+
+.poster-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.footer {
+    background: white;
+    color: #333;
+    padding: 12px 0;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;  /* 添加垂直间距 */
+}
+
+.footer-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer-section h4 {
+    font-size: 18px;
+    margin: 0;
+    min-width: 80px;  /* 确保标题有固定宽度 */
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.footer-section ul li {
+    margin: 0;
+}
+
+.footer-section ul li a {
+    color: #999;
+    text-decoration: none;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #eee;
+    color: #999;
+}
+
+/* 登录弹窗样式 */
+.login-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.login-modal {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    width: 460px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+}
+
+.login-modal h2 {
+    text-align: center;
+    margin: 0 0 32px;
+    font-size: 24px;
+    color: #333;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+}
+
+.form-group label {
+    font-size: 14px;
+    color: #333;
+}
+
+.form-input {
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    padding-right: 32px;  /* 为图标留出空间 */
+}
+
+.form-input::placeholder {
+    color: #999;
+}
+
+.forgot-password {
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 14px;
+    color: #999;
+    text-decoration: none;
+}
+
+.login-btn {
+    height: 44px;
+    background: #3B82F6;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.login-btn:hover {
+    background: #2563EB;
+}
+
+.register-link {
+    text-align: center;
+    font-size: 14px;
+}
+
+.register-link span {
+    color: #666;
+}
+
+.register-link a {
+    color: #3B82F6;
+    text-decoration: none;
+    margin-left: 4px;
+}
+
+/* 注册按钮样式 */
+.register-btn {
+    height: 44px;
+    background: #4A7DFF;  /* 使用蓝色 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.register-btn:hover {
+    opacity: 0.9;
+}
+
+.login-link {
+    text-align: center;
+    font-size: 14px;
+}
+
+.login-link span {
+    color: #666;
+}
+
+.login-link a {
+    color: #003366;
+    text-decoration: none;
+    margin-left: 4px;
+}
+
+/* 登录和注册视图的通用样式 */
+.login-view, .register-view {
+    width: 100%;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;  /* 减小表单项之间的间距 */
+}
+
+.register-form .form-group {
+    margin-bottom: 0;  /* 移除底部间距 */
+}
+
+.register-form .form-input {
+    height: 36px;  /* 稍微减小输入框高度 */
+}
+
+.register-btn {
+    margin-top: 8px;  /* 添加顶部间距 */
+}
+
+/* 调整弹窗大小以适应更多内容 */
+.login-modal {
+    width: 460px;  /* 增加宽度 */
+    max-height: 90vh;  /* 限制最大高度 */
+    overflow-y: auto;  /* 添加滚动条 */
+}
+
+/* 美化滚动条 */
+.login-modal::-webkit-scrollbar {
+    width: 6px;
+}
+
+.login-modal::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.login-modal::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 3px;
+}
+
+.login-modal::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+}
+
+/* 添加验证图标样式 */
+.validation-icon {
+    position: absolute;
+    right: -24px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 12px;
+}
+
+.validation-icon.success {
+    background: #22C55E;
+    color: white;
+}
+
+.validation-icon.error {
+    background: #EF4444;
+    color: white;
+}
+
+/* 重置密码视图样式 */
+.reset-password-view {
+    width: 100%;
+}
+
+/* 确保所有视图使用相同的基础样式 */
+.login-view, .register-view, .reset-password-view {
+    width: 100%;
+}
+
+/* 调整表单间距 */
+.reset-password-view .register-form {
+    gap: 24px;  /* 增加表单项之间的间距 */
+}
+
+/* 调整按钮样式 */
+.reset-password-view .register-btn {
+    margin-top: 16px;  /* 增加按钮上方间距 */
+}
+
+/* 主要内容区域 */
+section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0;  /* 移除内边距 */
+    position: relative;
+}
+
+/* 头部横幅 */
+.banner {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;  /* 移除内边距 */
+}
+
+.banner-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.banner-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;  /* 确保图片覆盖整个区域 */
+}
+
+.banner-content {
+    position: relative;
+    z-index: 2;
+    text-align: left;
+    max-width: 600px;
+    padding: 0 24px;
+    transform: translate(-400px,-100px);  /* 向左移动300px，向上移动100px */
+}
+
+.banner-content h1 {
+    font-size: 48px;
+    margin-bottom: 24px;
+    color: #333;  /* 深色标题 */
+    text-shadow: none;
+}
+
+.banner-content p {
+    font-size: 18px;
+    margin-bottom: 32px;
+    color: #666;  /* 深灰色副标题 */
+    text-shadow: none;
+}
+
+.start-btn {
+    padding: 12px 32px;
+    background: #4A7DFF;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: inline-block;  /* 保持按钮宽度适应内容 */
+}
+
+.start-btn:hover {
+    background: #3B66CC;
+}
+
+/* 核心技术 */
+.core-tech {
+    background: #F5F7FB;
+    text-align: center;
+    padding: 0;
+    position: relative;  /* 添加相对定位 */
+    
+}
+
+.core-tech h2 {
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 16px;
+    position: absolute;
+    top: 450px;          /* 原来的48px + 400px */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+.section-desc {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 48px;
+    max-width: 800px;
+    position: absolute;
+    top: 500px;         /* 原来的100px + 400px */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+.tech-grid {
+    display: flex;
+    gap: 24px;
+    max-width: none;
+    width: max-content;
+    padding: 10px 0;
+    margin-top: 50px;  /* 将间距从600px改为50px */
+    animation: scroll 20s linear infinite;
+}
+
+.tech-item {
+    background: #F5F7FB;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    width: 300px;
+    position: relative;  /* 添加相对定位 */
+    cursor: pointer;
+}
+
+.tech-item img {
+    width: 100%;
+    height: auto;
+}
+
+.tech-item h3 {
+    padding: 16px;
+    font-size: 18px;
+    color: #333;
+}
+
+/* 提示文本样式 */
+.tech-item .tech-desc {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: #F5F7FB;
+    padding: 15px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* 显示提示文本的状态 */
+.tech-item.show-desc .tech-desc {
+    transform: translateY(0);
+}
+
+/* 核心技术横幅图片 */
+.tech-banner {
+    width: 100%;
+    margin: 0;
+    position: relative;  /* 添加相对定位 */
+    z-index: 1;         /* 确保在文字下方 */
+}
+
+.tech-banner img {
+    width: 100%;
+    height: auto;  /* 高度自适应 */
+    display: block;  /* 移除图片底部间隙 */
+}
+
+/* 课件制作 */
+.course-making {
+    background: #F5F7FB;
+    text-align: center;
+    padding: 0px 0;  /* 从48px减小到24px */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.course-making h2 {
+    font-size: 36px;
+    color: #333;
+    margin: -24px;  /* 从48px减小到24px */
+}
+
+/* 课件项目容器 */
+.course-items {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 1400px;
+    padding: 0 24px;
+    height: 500px;
+    position: relative;
+    overflow: hidden;  /* 防止内容溢出 */
+}
+
+/* 单个课件项目 */
+.course-item {
+    flex: 1;
+    height: 100%;
+    position: relative;
+    transition: all 0.5s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* 课件内容 */
+.item-content {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 100%;
+    height: 65%;
+    position: relative;
+    transition: all 0.5s ease;
+    transform-origin: center;
+}
+
+.item-content img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.item-content h3 {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: white;
+    font-size: 18px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.item-content p {
+    position: absolute;
+    bottom: 60px;
+    left: 20px;
+    right: 20px;
+    color: white;
+    font-size: 14px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+/* 悬停效果 */
+.course-item:hover .item-content {
+    transform: scale(1.2);
+    height: 75%;
+    z-index: 2;
+}
+
+.course-item:hover .item-content p {
+    opacity: 1;
+}
+
+/* 添加滚动动画 */
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-1296px);  /* (300px + 24px) * 4 */
+    }
+}
+
+/* 添加容器来控制显示区域 */
+.tech-grid-container {
+    width: 100%;
+    overflow: hidden;
+    padding: 0 24px;
+}
+
+.tech-grid:hover {
+    animation-play-state: paused;
+} 
