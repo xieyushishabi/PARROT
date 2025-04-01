@@ -1,0 +1,110 @@
+.detail-header {
+    padding: 0px;
+    border-bottom: 1px solid #E5E7EB;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.detail-header h2 {
+    font-size: 18px;
+    color: #333;
+}
+
+.back-btn {
+    color: #666;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.main-content {
+    background-color: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin-top: 84px;
+    margin-bottom: 24px; /* 确保底部边距 */
+    margin-left: 264px;
+    margin-right: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative; /* 确保定位不受影响 */
+}
+
+.detail-content {
+    background-color: #f0f0f0;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.resource-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.resource-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.resource-info {
+    flex-grow: 1;
+}
+
+.info-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.info-row .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.resource-info h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.resource-info p {
+    margin: 4px 0;
+    color: #666;
+}
+
+.listen-btn {
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.resource-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.approve-btn,
+.reject-btn {
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+} 

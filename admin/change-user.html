@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>修改用户信息 - Parrot Sound</title>
-    <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="add-user.css">
+    <link rel="stylesheet" href="assets/css/index.css">
+    <link rel="stylesheet" href="assets/css/add-user.css">
 </head>
 <body>
     <div class="container">
@@ -26,7 +26,17 @@
         <main class="main-content">
             <!-- 用户信息区域 -->
             <div class="user-info">
-                <img src="avatar.jpg" alt="用户头像" class="avatar">
+                <svg class="avatar" width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="avatarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#3b82f6" />
+                            <stop offset="100%" stop-color="#0ea5e9" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="15" cy="15" r="15" fill="url(#avatarGradient)"/>
+                    <circle cx="15" cy="12" r="4.5" fill="#ffffff" opacity="0.9"/>
+                    <path d="M7 25 C7 18 23 18 23 25" fill="#ffffff" opacity="0.9"/>
+                </svg>
                 <span>Leslie Alexander</span>
                 <button class="logout-btn"></button>
             </div>
@@ -46,6 +56,7 @@
                         <div class="form-item">
                             <label>密码</label>
                             <input type="password" placeholder="请输入">
+                            <p class="password-tip">* 密码必须重新输入，原密码因加密存储无法显示</p>
                         </div>
                         <div class="form-item">
                             <label>年龄</label>
@@ -72,6 +83,6 @@
         </main>
     </div>
     <script src="libs/axios.min.js"></script>
-    <script src="change-user.js"></script>
+    <script src="assets/js/change-user.js"></script>
 </body>
 </html>

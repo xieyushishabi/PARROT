@@ -25,7 +25,7 @@ class AdminLogin(BaseModel):
     password: str = Field(..., description="管理员密码")
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "username": "admin",
                 "password": "admin123"
@@ -54,7 +54,7 @@ class UserLogin(BaseModel):
     password: str = Field(..., description="用户密码")
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "email": "user@example.com",
                 "password": "password123"
