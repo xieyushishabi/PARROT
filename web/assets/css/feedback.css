@@ -1,0 +1,27 @@
+/* 反馈表单消息提示样式 */
+.submit-btn:disabled {
+    background: #9baee4;
+    cursor: not-allowed;
+}
+
+/* 反馈消息提示样式 */
+.feedback-message {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: center;
+    transition: opacity 0.5s ease;
+}
+
+.feedback-message.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.feedback-message.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+}

@@ -2,53 +2,77 @@
 document.addEventListener('DOMContentLoaded', function() {
     // 导航栏交互
     const navItems = document.querySelectorAll('.nav-item a');
-    navItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            navItems.forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
+    if (navItems && navItems.length > 0) {
+        navItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                navItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
         });
-    });
+    }
 
     // 切换到注册视图
-    document.querySelector('.switch-to-register').addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation(); // 阻止事件冒泡
-        document.querySelector('.login-view').style.display = 'none';
-        document.querySelector('.register-view').style.display = 'block';
-    });
+    const switchToRegisterBtn = document.querySelector('.switch-to-register');
+    if (switchToRegisterBtn) {
+        switchToRegisterBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // 阻止事件冒泡
+            const loginView = document.querySelector('.login-view');
+            const registerView = document.querySelector('.register-view');
+            if (loginView) loginView.style.display = 'none';
+            if (registerView) registerView.style.display = 'block';
+        });
+    }
 
     // 切换到登录视图
-    document.querySelector('.switch-to-login').addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation(); // 阻止事件冒泡
-        document.querySelector('.register-view').style.display = 'none';
-        document.querySelector('.login-view').style.display = 'block';
-    });
+    const switchToLoginBtn = document.querySelector('.switch-to-login');
+    if (switchToLoginBtn) {
+        switchToLoginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // 阻止事件冒泡
+            const registerView = document.querySelector('.register-view');
+            const loginView = document.querySelector('.login-view');
+            if (registerView) registerView.style.display = 'none';
+            if (loginView) loginView.style.display = 'block';
+        });
+    }
 
     // 登录按钮点击事件
-    document.querySelector('.login-btn').addEventListener('click', function(e) {
-        e.stopPropagation(); // 阻止事件冒泡
-        // 这里添加登录逻辑
-        console.log('登录按钮被点击');
-    });
+    const loginBtn = document.querySelector('.login-btn');
+    if (loginBtn) {
+        loginBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // 阻止事件冒泡
+            // 这里添加登录逻辑
+            console.log('登录按钮被点击');
+        });
+    }
 
     // 注册按钮点击事件
-    document.querySelector('.register-btn').addEventListener('click', function(e) {
-        e.stopPropagation(); // 阻止事件冒泡
-        // 这里添加注册逻辑
-        console.log('注册按钮被点击');
-    });
+    const registerBtn = document.querySelector('.register-btn');
+    if (registerBtn) {
+        registerBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // 阻止事件冒泡
+            // 这里添加注册逻辑
+            console.log('注册按钮被点击');
+        });
+    }
 
     // 关闭按钮点击事件
-    document.querySelector('.close-btn').addEventListener('click', function(e) {
-        e.stopPropagation(); // 阻止事件冒泡
-        hideLoginModal();
-    });
+    const closeBtn = document.querySelector('.close-btn');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // 阻止事件冒泡
+            hideLoginModal();
+        });
+    }
 
     // 阻止登录弹窗内的点击事件冒泡
-    document.querySelector('.login-modal').addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
+    const loginModal = document.querySelector('.login-modal');
+    if (loginModal) {
+        loginModal.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
 });
 
 // 检查登录状态
@@ -61,13 +85,18 @@ function checkLoginStatus() {
 // 显示登录弹窗
 function showLoginModal() {
     const overlay = document.querySelector('.login-overlay');
-    overlay.style.display = 'flex';
-    // 确保显示登录视图，隐藏注册视图
-    document.querySelector('.login-view').style.display = 'block';
-    document.querySelector('.register-view').style.display = 'none';
+    if (overlay) {
+        overlay.style.display = 'flex';
+        // 确保显示登录视图，隐藏注册视图
+        const loginView = document.querySelector('.login-view');
+        const registerView = document.querySelector('.register-view');
+        if (loginView) loginView.style.display = 'block';
+        if (registerView) registerView.style.display = 'none';
+    }
 }
 
 // 隐藏登录弹窗
 function hideLoginModal() {
-    document.querySelector('.login-overlay').style.display = 'none';
-} 
+    const overlay = document.querySelector('.login-overlay');
+    if (overlay) overlay.style.display = 'none';
+}
