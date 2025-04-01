@@ -12,3 +12,7 @@ uvicorn backend.main:app --reload
 ```
 默认运行在 http://127.0.0.1:8000
 fastapi接口文档 http://127.0.0.1:8000/docs
+
+## TODOLIST
+
+- [x] AI生成配音文案
