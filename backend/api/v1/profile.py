@@ -19,6 +19,9 @@ async def profile(
     age: Optional[int] = Form(None),
     gender: Optional[str] = Form(None),
     avatar: Optional[UploadFile] = File(None),
+    security_question1_answer: Optional[str] = Form(None),
+    security_question2_answer: Optional[str] = Form(None),
+    security_question3_answer: Optional[str] = Form(None),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -38,6 +41,16 @@ async def profile(
     
     if profile_data.gender:
         current_user.gender = profile_data.gender
+    
+    # 处理密保问题
+    if security_question1_answer:
+        current_user.security_question1_answer = security_question1_answer
+    
+    if security_question2_answer:
+        current_user.security_question2_answer = security_question2_answer
+    
+    if security_question3_answer:
+        current_user.security_question3_answer = security_question3_answer
     
     # 处理头像
     if avatar:
@@ -66,7 +79,12 @@ async def profile(
             "phone_number": current_user.phone_number,
             "age": current_user.age,
             "gender": current_user.gender,
-            "avatar": current_user.avatar is not None
+            "avatar": current_user.avatar is not None,
+            "security_questions_set": all([
+                current_user.security_question1_answer,
+                current_user.security_question2_answer,
+                current_user.security_question3_answer
+            ])
         }
     )
 
@@ -94,6 +112,25 @@ async def get_profile(
         }
     )
 
+# 查询用户是否完善个人资料
+@router.get("/profile/status")
+async def check_profile_status(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # 检查用户是否已完善资料（以手机号是否设置为判断标准）
+    is_completed = current_user.phone_number is not None
+    print(current_user.phone_number,is_completed)
+
+    return APIResponse(
+        code=200,
+        msg="查询成功",
+        data={
+            "is_completed": is_completed,
+            "status": "已完善" if is_completed else "未完善"
+        }
+    )
+
 # 修改密码
 @router.post("/change-password")
 async def change_password(
@@ -111,24 +148,15 @@ async def change_password(
             detail={"msg": "密码长度必须在6-20个字符之间"}
         )
     
-    # 处理密保问题逻辑
-    if (current_user.security_question1_answer is None or 
-        current_user.security_question2_answer is None or 
-        current_user.security_question3_answer is None):
-        # 密保问题尚未设置，直接保存
-        current_user.security_question1_answer = security_question1_answer
-        current_user.security_question2_answer = security_question2_answer
-        current_user.security_question3_answer = security_question3_answer
-    else:
-        # 密保问题已设置，需要验证
-        if (current_user.security_question1_answer != security_question1_answer or
-            current_user.security_question2_answer != security_question2_answer or
-            current_user.security_question3_answer != security_question3_answer):
-            return APIResponse(
-                code=400,
-                msg="密保问题回答错误",
-                data={}
-            )
+    # 直接验证密保问题答案
+    if (current_user.security_question1_answer != security_question1_answer or
+        current_user.security_question2_answer != security_question2_answer or
+        current_user.security_question3_answer != security_question3_answer):
+        return APIResponse(
+            code=400,
+            msg="密保问题回答错误",
+            data={}
+        )
     
     # 更新密码
     current_user.hashed_password = get_password_hash(new_password)

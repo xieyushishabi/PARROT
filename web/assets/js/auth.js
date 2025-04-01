@@ -129,6 +129,9 @@ class Auth {
                 loginOverlay.style.display = 'none';
             }
             
+            // 修改：登录成功后直接跳转到用户信息页面
+            window.location.href = 'user.html';
+            
             return userData;
         } catch (error) {
             // 处理网络错误或服务器返回的错误
@@ -275,9 +278,7 @@ class Auth {
                     document.querySelector('.login-overlay').style.display = 'none';
                     // 更新用户头像和状态
                     this.updateUserUI(user);
-                    
-                    // 登录成功后重定向到首页
-                    window.location.href = 'index.html';
+
                 } catch (error) {
                     alert(error.message);
                 }

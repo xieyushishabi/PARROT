@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     // 初始化auth实例
     const auth = new Auth();
+    // 将auth实例保存为全局变量，以便其他函数访问
+    window.auth = auth;
 
     // 检查登录状态
     if (!auth.currentUser) {
@@ -44,6 +46,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // 确认修改密码按钮事件 - 确保页面加载时就绑定事件
+    const confirmPasswordButton = document.querySelector('.btn-confirm');
+    if (confirmPasswordButton) {
+        confirmPasswordButton.addEventListener('click', (e) => {
+            e.preventDefault(); // 阻止表单默认提交行为
+            if (!confirmPasswordButton.classList.contains('disabled-btn')) {
+                changePassword(auth);
+            } else {
+                preventPasswordChange(e);
+            }
+        });
+    }
+
     // 用户中心页面特定功能
 
     // 菜单切换
@@ -54,15 +69,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const interactionSection = document.querySelector('.interaction-section');
     
     menuItems.forEach(item => {
-        item.addEventListener('click', (e) => {
+        item.addEventListener('click', function(e) {
             e.preventDefault();
+            
+            // 如果是禁用状态，则不执行后续操作
+            if (this.classList.contains('disabled')) {
+                alert('请先完善您的账户信息，然后才能使用其他功能。');
+                return;
+            }
+            
+            // 如果是退出登录按钮，不执行下面的页面切换逻辑
+            if (this.classList.contains('logout-btn')) {
+                return;
+            }
+            
             // 移除所有active类
             menuItems.forEach(i => i.classList.remove('active'));
             // 添加当前点击项的active类
-            item.classList.add('active');
+            this.classList.add('active');
             
             // 根据点击的菜单项切换显示内容
-            if (item.textContent.includes('历史作品')) {
+            if (this.textContent.includes('历史作品')) {
                 infoSection.style.display = 'none';
                 passwordSection.style.display = 'none';
                 historySection.style.display = 'block';
@@ -73,13 +100,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 historyTabs.forEach(t => t.classList.remove('active'));
                 historyTabs[0].classList.add('active');  // 选中第一个标签（音频）
                 
-            } else if (item.textContent.includes('账号信息')) {
+            } else if (this.textContent.includes('账号信息')) {
                 infoSection.style.display = 'block';
                 passwordSection.style.display = 'block';
                 historySection.style.display = 'none';
                 interactionSection.style.display = 'none';
                 
-            } else if (item.textContent.includes('互动信息')) {
+            } else if (this.textContent.includes('互动信息')) {
                 infoSection.style.display = 'none';
                 passwordSection.style.display = 'none';
                 historySection.style.display = 'none';
@@ -413,15 +440,244 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 修改密码按钮事件
-    const changePasswordBtn = document.querySelector('.password-section .btn-confirm');
-    if (changePasswordBtn) {
-        changePasswordBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            changePassword(auth);
-        });
-    }
+    // 检查用户信息是否已完善
+    checkProfileStatusFromAPI(auth).then(isProfileComplete => {
+        lockFunctionality(isProfileComplete);
+        lockNavigation(isProfileComplete);
+    });
 });
+
+// 使用API检查用户信息是否已完善
+async function checkProfileStatusFromAPI(auth) {
+    try {
+        // 如果未登录，跳转到首页
+        if (!auth.currentUser) {
+            window.location.href = 'index.html';
+            return false;
+        }
+        
+        // 构建请求配置
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${auth.currentUser.token}`
+            }
+        };
+        
+        // 调用后端API检查用户资料状态
+        const response = await axios.get(`${auth.baseURL}/api/v1/user/profile/status`, config);
+        console.log('用户资料状态:', response.data);
+        if (response.data.code !== 200) {
+            console.error('获取用户资料状态失败:', response.data.msg);
+            return false;
+        }
+        
+        // 返回API响应中的is_completed状态
+        return response.data.data.is_completed;
+        
+    } catch (error) {
+        console.error('检查用户资料状态失败:', error);
+        const errorMsg = error.response?.data?.msg || 
+                      error.response?.data?.message || 
+                      error.message || 
+                      '检查用户资料状态失败';
+        console.error(errorMsg);
+        return false;
+    }
+}
+
+// 锁定其他功能，只允许完善个人信息
+function lockFunctionality(isProfileComplete) {
+    const menuItems = document.querySelectorAll('.menu-item:not(.active):not(.logout-btn)');
+    const infoSection = document.querySelector('.info-section');
+    const saveButton = document.querySelector('.btn-save');
+    const confirmPasswordButton = document.querySelector('.btn-confirm'); // 添加确认修改密码按钮
+    
+    // 当用户信息不完整时
+    if (!isProfileComplete) {
+        // 添加信息不完整的提示
+        const notificationEl = document.querySelector('.profile-incomplete-notice');
+        if (!notificationEl) {
+            const notification = document.createElement('div');
+            notification.className = 'profile-incomplete-notice';
+            notification.innerHTML = `
+                <div class="alert alert-warning">
+                    <span class="alert-icon">⚠️</span>
+                    <span class="alert-message">请完善您的账户信息才能使用其他功能</span>
+                </div>
+            `;
+            infoSection.insertBefore(notification, infoSection.firstChild);
+        }
+        
+        // 禁用其他菜单项
+        menuItems.forEach(item => {
+            item.classList.add('disabled');
+        });
+        
+        // 高亮保存按钮以提示用户
+        if (saveButton) {
+            saveButton.classList.add('highlight-save');
+        }
+        
+        // 禁用确认修改密码按钮
+        if (confirmPasswordButton) {
+            confirmPasswordButton.classList.add('disabled-btn');
+            confirmPasswordButton.disabled = true; // 添加HTML禁用属性
+            confirmPasswordButton.title = '请先完善您的账户信息，然后才能修改密码'; // 添加提示文本
+    
+        }
+        
+        // 确保只显示账号信息部分
+        document.querySelector('.info-section').style.display = 'block';
+        document.querySelector('.password-section').style.display = 'block';
+        document.querySelector('.history-section').style.display = 'none';
+        document.querySelector('.interaction-section').style.display = 'none';
+        
+        // 确保账号信息菜单项为活跃状态
+        const accountMenuItem = document.querySelector('.menu-item:nth-child(1)');
+        if (accountMenuItem) {
+            menuItems.forEach(item => item.classList.remove('active'));
+            accountMenuItem.classList.add('active');
+            accountMenuItem.classList.remove('disabled'); // 确保账号信息菜单不被禁用
+        }
+        
+        // 添加密保问题到账户信息表单
+        addSecurityQuestionsToInfoForm();
+        
+    } else {
+        // 如果信息已完善，移除警告信息
+        const notificationEl = document.querySelector('.profile-incomplete-notice');
+        if (notificationEl) {
+            notificationEl.remove();
+        }
+        
+        // 启用其他菜单项
+        menuItems.forEach(item => {
+            item.classList.remove('disabled');
+        });
+        
+        // 恢复保存按钮样式
+        if (saveButton) {
+            saveButton.classList.remove('highlight-save');
+        }
+        
+        // 启用确认修改密码按钮
+        if (confirmPasswordButton) {
+            confirmPasswordButton.classList.remove('disabled-btn');
+            confirmPasswordButton.disabled = false;
+            confirmPasswordButton.removeAttribute('title');
+
+        }
+        
+        // 移除账户信息表单中的密保问题
+        removeSecurityQuestionsFromInfoForm();
+    }
+}
+
+// 添加密保问题到账户信息表单
+function addSecurityQuestionsToInfoForm() {
+    const infoForm = document.querySelector('.info-form');
+    
+    // 如果表单中已经有密保问题，则不再添加
+    if (document.querySelector('.info-form .security-questions-wrapper')) {
+        return;
+    }
+    
+    // 创建密保问题容器
+    const securityQuestionsWrapper = document.createElement('div');
+    securityQuestionsWrapper.className = 'security-questions-wrapper';
+    
+    // 添加标题
+    const title = document.createElement('h3');
+    title.textContent = '请设置密保问题';
+    securityQuestionsWrapper.appendChild(title);
+    
+    // 添加三个密保问题
+    const securityQuestions = [
+        { label: '密保问题1：您的生日是？', name: 'securityQuestion1' },
+        { label: '密保问题2：您母亲的名字是？', name: 'securityQuestion2' },
+        { label: '密保问题3：您就读的小学是？', name: 'securityQuestion3' }
+    ];
+    
+    // 创建与修改密码部分相同的密保问题容器
+    const questionsContainer = document.createElement('div');
+    questionsContainer.className = 'security-questions';
+    
+    // 按顺序添加密保问题
+    securityQuestions.forEach(question => {
+        const questionGroup = document.createElement('div');
+        questionGroup.className = 'security-question';
+        
+        const questionLabel = document.createElement('label');
+        questionLabel.textContent = question.label;
+        
+        const questionInput = document.createElement('input');
+        questionInput.type = 'text';
+        questionInput.name = question.name;
+        questionInput.placeholder = '请输入答案';
+        questionInput.required = true;
+        
+        questionGroup.appendChild(questionLabel);
+        questionGroup.appendChild(questionInput);
+        questionsContainer.appendChild(questionGroup);
+    });
+    
+    securityQuestionsWrapper.appendChild(questionsContainer);
+    infoForm.appendChild(securityQuestionsWrapper);
+}
+
+// 从账户信息表单中移除密保问题
+function removeSecurityQuestionsFromInfoForm() {
+    const securityQuestionsWrapper = document.querySelector('.info-form .security-questions-wrapper');
+    if (securityQuestionsWrapper) {
+        securityQuestionsWrapper.remove();
+    }
+}
+
+// 新增：锁定导航栏功能
+function lockNavigation(isProfileComplete) {
+    const navItems = document.querySelectorAll('.nav-bar .nav-item a');
+    
+    if (!isProfileComplete) {
+        // 为导航栏项目添加提示和禁用效果
+        navItems.forEach(item => {
+            // 排除当前页面的链接
+            if (!item.href.includes('user.html')) {
+                const originalHref = item.getAttribute('href');
+                
+                // 存储原始href作为自定义属性
+                if (!item.hasAttribute('data-original-href')) {
+                    item.setAttribute('data-original-href', originalHref);
+                }
+                
+                // 移除href属性使链接不可点击
+                item.removeAttribute('href');
+                
+                // 添加禁用样式
+                item.classList.add('nav-disabled');
+                
+                // 添加点击事件
+                item.addEventListener('click', preventNavigation);
+            }
+        });
+    } else {
+        // 如果资料已完善，恢复导航功能
+        navItems.forEach(item => {
+            if (item.hasAttribute('data-original-href')) {
+                item.href = item.getAttribute('data-original-href');
+                item.removeAttribute('data-original-href');
+            }
+            
+            item.classList.remove('nav-disabled');
+            item.removeEventListener('click', preventNavigation);
+        });
+        
+        // 移除顶部通知，如果存在的话
+        const notification = document.querySelector('.top-notification');
+        if (notification) {
+            notification.remove();
+        }
+    }
+}
 
 // 添加一个性别转换函数
 function convertGender(gender, toEnglish = false) {
@@ -491,6 +747,12 @@ async function loadUserProfile(auth) {
                 avatarImg.src = "assets/images/avatar-default.png";
             }
         }
+
+        // 添加：通过API检查个人信息完整性并应用限制
+        const isProfileComplete = await checkProfileStatusFromAPI(auth);
+        lockFunctionality(isProfileComplete);
+        // 同时锁定导航
+        lockNavigation(isProfileComplete);
     } catch (error) {
         console.error('获取用户资料失败:', error);
         const errorMsg = error.response?.data?.msg || 
@@ -552,6 +814,23 @@ async function saveUserProfile(auth) {
             formData.append('avatar', avatarInput.files[0]);
         }
         
+        // 添加密保问题答案（如果存在）
+        const securityQuestion1 = document.querySelector('input[name="securityQuestion1"]');
+        const securityQuestion2 = document.querySelector('input[name="securityQuestion2"]');
+        const securityQuestion3 = document.querySelector('input[name="securityQuestion3"]');
+        
+        if (securityQuestion1 && securityQuestion2 && securityQuestion3) {
+            // 验证密保问题必填
+            if (!securityQuestion1.value || !securityQuestion2.value || !securityQuestion3.value) {
+                alert('请填写所有密保问题答案！');
+                return;
+            }
+            
+            formData.append('security_question1_answer', securityQuestion1.value);
+            formData.append('security_question2_answer', securityQuestion2.value);
+            formData.append('security_question3_answer', securityQuestion3.value);
+        }
+        
         // 构建请求配置
         const config = {
             headers: {
@@ -581,6 +860,12 @@ async function saveUserProfile(auth) {
         }
         
         alert('用户资料更新成功！');
+
+        // 添加：通过API检查信息是否完整并解锁功能
+        const isProfileComplete = await checkProfileStatusFromAPI(auth);
+        lockFunctionality(isProfileComplete);
+        // 同时解锁导航
+        lockNavigation(isProfileComplete);
         
     } catch (error) {
         console.error('更新用户资料失败:', error);
@@ -666,4 +951,16 @@ async function changePassword(auth) {
                       '修改密码失败，请稍后再试';
         alert(errorMsg);
     }
+}
+
+// 防止导航事件
+function preventNavigation(e) {
+    e.preventDefault();
+    alert('请先完善您的个人资料，然后才能使用其他功能。');
+}
+
+// 阻止修改密码的函数
+function preventPasswordChange(e) {
+    e.preventDefault();
+    alert('请先完善您的账户信息，然后才能修改密码。');
 }

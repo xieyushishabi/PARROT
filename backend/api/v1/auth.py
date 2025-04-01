@@ -68,7 +68,7 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
         return APIResponse(
             code=401, 
             msg="账号或密码错误",
-            data=None
+            data={}
         )
     
     # 创建访问令牌
