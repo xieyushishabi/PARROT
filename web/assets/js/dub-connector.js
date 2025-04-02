@@ -45,110 +45,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化选择处理
     setupSelectionHandlers();
     
-    // 处理试听按钮点击事件
-    if (previewButton) {
-        previewButton.addEventListener('click', async function() {
-            // 检查是否已在处理中
-            if (isProcessing) {
-                console.log('请求已在处理中，忽略重复点击');
-                return;
-            }
-            
-            // 检查是否有文本内容
-            if (!textarea || !textarea.value.trim()) {
-                showMessage('请先输入文本内容', 'error');
-                return;
-            }
-            
-            // 如果正在播放，则停止播放
-            if (dubbingService.isPlaying) {
-                dubbingService.stopAudio();
-                return;
-            }
-            
-            // 设置按钮为禁用状态
-            previewButton.classList.add('disabled');
-            isProcessing = true;
-
-            try {
-                // 移除现有通知
-                const notifications = document.querySelectorAll('.notification');
-                notifications.forEach(notification => notification.remove());
-                
-                // 准备参数
-                const params = {
-                    text: textarea.value,
-                    p_w: 2.0,  // 默认清晰度权重
-                    t_w: 3.0   // 默认相似度权重
-                };
-                
-                // 获取选中的音色
-                const selectedVoice = document.querySelector('.voice-item.selected');
-                if (selectedVoice && selectedVoice.dataset.voiceId) {
-                    params.voiceId = selectedVoice.dataset.voiceId;
-                }
-                
-                // 获取情感设置
-                const selectedEmotion = document.querySelector('.emotion-tag.selected');
-                if (selectedEmotion) {
-                    params.emotion = selectedEmotion.textContent.trim();
-                }
-                
-                // 获取其他控制参数(速度、音调等)
-                const speedControl = document.querySelector('.speed-control .value-input');
-                if (speedControl) {
-                    params.speed = parseFloat(speedControl.value) || 1.0;
-                }
-                
-                const pitchControl = document.querySelector('.pitch-control .value-input');
-                if (pitchControl) {
-                    params.pitch = parseFloat(pitchControl.value) || 0.0;
-                }
-                
-                // 根据情感调整清晰度和相似度权重
-                if (params.emotion) {
-                    // 对于更具表现力的情感，增加相似度权重
-                    if (['热情', '兴奋', '激动', '悲伤', '生气'].includes(params.emotion)) {
-                        params.t_w = 4.0;
-                    }
-                }
-                
-                // 生成配音
-                currentAudioData = await dubbingService.generateDubbing(params);
-                
-                // 只在成功生成音频时播放
-                if (currentAudioData) {
-                    console.log('音频数据生成成功，准备播放');
-                    await dubbingService.playAudio(currentAudioData);
-                } else {
-                    console.log('未生成音频数据，可能有其他任务正在运行');
-                }
-                
-            } catch (error) {
-                // 只有当确实发生错误时才进入这里
-                // 由于我们已经修改了generateDubbing返回null而不是抛出错误
-                // 所以这里应该只对真正的错误进行处理
-                if (error) {
-                    console.error('配音生成过程中发生错误:', error);
-                    // 如果是机器人预期的正常错误，不显示错误提示
-                    if (!error.message || (
-                        !error.message.includes('已有TTS任务正在处理中') && 
-                        !error.message.includes('CONCURRENT_TASK_SILENT_ERROR')
-                    )) {
-                        showMessage('配音生成失败，请重试', 'error');
-                    } else {
-                        console.log('任务冲突，继续等待当前任务完成...');
-                    }
-                }
-            } finally {
-                // 重置状态
-                setTimeout(() => {
-                    isProcessing = false;
-                    previewButton.classList.remove('disabled');
-                }, 2000); // 延迟2秒以防止过快重复点击
-            }
-        });
-    }
+    // 处理试听按钮点击事件 - 由dub.js中的handlePreviewClick统一处理，此处禁用
+    /* 
+    注意：此事件处理器已禁用，防止与dub.js中的处理器冲突，避免同时触发两个TTS任务
+    在测试中发现，当试听按钮被点击时，会同时启动两个TTS任务，这是因为:
+    1. dub.js中的handlePreviewClick函数
+    2. dub-connector.js中的事件监听器（此处）
+    都会处理同一个按钮点击事件，导致同时发送两个请求到后端
+    */
+    
+    // 为避免冲突，此处不再添加事件监听器
+    // if (previewButton) {
+    //     previewButton.addEventListener('click', async function() {
+    //         // 事件处理代码已移除
+    //     });
+    // }
     
     // 处理导出按钮点击事件
     if (exportButton) {

@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parrot Sound - 音频记录</title>
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/iconfont.css">
+    <style>
+        :root {
+            --primary-color: #6b5cff;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --info-color: #0d6efd;
+            --light-bg: #f8f9fa;
+            --dark-text: #333;
+            --medium-text: #666;
+            --light-text: #999;
+            --border-radius: 10px;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        .main-content {
+            padding-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+        
+        .history-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            box-sizing: border-box;
+        }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .history-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-color), #9d8fff);
+        }
+        
+        .history-title {
+            font-size: 24px;
+            color: var(--dark-text);
+            font-weight: 600;
+            margin: 0;
+            position: relative;
+        }
+        
+        .history-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 320px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #e0e4e9;
+            border-radius: 30px;
+            background-color: #f8f9fa;
+            font-size: 14px;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(107, 92, 255, 0.12);
+        }
+        
+        .search-btn {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+            padding: 0;
+            font-size: 16px;
+        }
+        
+        .search-box input::placeholder {
+            color: var(--light-text);
+            font-style: italic;
+        }
+        
+        .filter-dropdown {
+            position: relative;
+        }
+        
+        .filter-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background-color: #f8f9fa;
+            border: 1px solid #e0e4e9;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dark-text);
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .filter-menu {
+            position: fixed; /* 改为fixed定位 */
+            top: auto; /* 由JS动态设置 */
+            left: auto; /* 由JS动态设置 */
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            min-width: 180px;
+            z-index: 9999; /* 极高的z-index值 */
+            overflow: visible;
+            opacity: 1;
+            transform: none;
+            max-height: 200px;
+            border: 1px solid rgba(107, 92, 255, 0.1);
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .filter-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .filter-item:hover {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+        }
+        
+        .filter-item.active {
+            background-color: rgba(107, 92, 255, 0.1);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .history-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .history-item {
+            background-color: #fff;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .history-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-color), #9d8fff);
+        }
+        
+        .history-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(107, 92, 255, 0.18);
+            border-color: rgba(107, 92, 255, 0.3);
+        }
+        
+        .history-item:hover::before {
+            width: 7px;
+        }
+        
+        .history-item .status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .history-item .status.completed {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+        
+        .history-item .status.processing {
+            background-color: rgba(13, 110, 253, 0.1);
+            color: var(--info-color);
+        }
+        
+        .history-item .status.failed {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .history-title-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .history-voice {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark-text);
+            padding-right: 80px;
+        }
+        
+        .history-text {
+            font-size: 15px;
+            line-height: 1.6;
+            margin: 18px 0;
+            max-height: 6.4em; /* 限制高度相当于四行文本 */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: relative;
+            color: var(--dark-text);
+            background-color: var(--light-bg);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+            font-weight: 400;
+        }
+        
+        .history-text::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(to top, var(--light-bg), transparent);
+            pointer-events: none;
+        }
+        
+        .history-info {
+            display: flex;
+            justify-content: space-between;
+            color: var(--light-text);
+            font-size: 13px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .history-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .history-actions button {
+            background-color: #fff;
+            border: 1px solid #e0e4e9;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.25s ease;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .history-actions button:hover {
+            background-color: var(--light-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        .history-actions button i {
+            font-size: 16px;
+        }
+        
+        .history-actions button.play {
+            color: var(--primary-color);
+            border-color: rgba(107, 92, 255, 0.3);
+        }
+        
+        .history-actions button.play:hover {
+            background-color: rgba(107, 92, 255, 0.05);
+        }
+        
+        .history-actions button.download {
+            color: var(--success-color);
+            border-color: rgba(40, 167, 69, 0.3);
+        }
+        
+        .history-actions button.download:hover {
+            background-color: rgba(40, 167, 69, 0.05);
+        }
+        
+        .history-actions button.delete {
+            color: var(--danger-color);
+            border-color: rgba(220, 53, 69, 0.3);
+        }
+        
+        .history-actions button.delete:hover {
+            background-color: rgba(220, 53, 69, 0.05);
+        }
+        
+        .empty-history {
+            text-align: center;
+            padding: 80px 40px;
+            color: var(--medium-text);
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin: 40px auto;
+            max-width: 550px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(107, 92, 255, 0.1);
+        }
+        
+        .empty-history::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary-color), #9d8fff);
+        }
+        
+        .empty-history i {
+            font-size: 76px;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            display: block;
+            opacity: 0.8;
+        }
+        
+        .empty-history p {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--dark-text);
+            font-weight: 600;
+        }
+        
+        .empty-history p.desc {
+            font-size: 15px;
+            color: var(--medium-text);
+            margin-bottom: 30px;
+            font-weight: normal;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .empty-history .action-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 30px;
+            font-weight: 500;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(107, 92, 255, 0.3);
+            transition: all 0.25s ease;
+            font-size: 15px;
+        }
+        
+        .empty-history .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(107, 92, 255, 0.4);
+            background-color: #5a4de6;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: var(--medium-text);
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin: 30px auto;
+            max-width: 500px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(107, 92, 255, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            border-right: 4px solid transparent;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 15px rgba(107, 92, 255, 0.2);
+        }
+        
+        .loading p {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-top: 15px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            margin-bottom: 30px;
+            gap: 8px;
+        }
+        
+        .pagination button {
+            background-color: white;
+            border: 1px solid #e0e4e9;
+            border-radius: 30px;
+            min-width: 40px;
+            height: 40px;
+            padding: 0 15px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-weight: 500;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .pagination button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(107, 92, 255, 0.25);
+            transform: scale(1.05);
+        }
+        
+        .pagination button:hover:not(.active) {
+            border-color: var(--primary-color);
+            background-color: rgba(107, 92, 255, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(107, 92, 255, 0.15);
+        }
+        
+        /* 通知样式 */
+        .notification {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            padding: 18px 24px;
+            border-radius: 12px;
+            background-color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+            z-index: 1100;
+            font-size: 15px;
+            max-width: 380px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            overflow: hidden;
+        }
+        
+        .notification-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .notification-content {
+            flex: 1;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+        
+        .notification-close {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            opacity: 0.7;
+        }
+        
+        .notification-close:hover {
+            background-color: rgba(0,0,0,0.05);
+            color: #777;
+            opacity: 1;
+        }
+        
+        .notification::before {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--primary-color), #9d8fff);
+            border-radius: 4px 0 0 4px;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .notification.hide {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        
+        .notification.success {
+            border-left: 4px solid var(--success-color);
+            background-color: rgba(40, 167, 69, 0.05);
+        }
+        
+        .notification.error {
+            border-left: 4px solid var(--danger-color);
+            background-color: rgba(220, 53, 69, 0.05);
+        }
+        
+        .notification.info {
+            border-left: 4px solid var(--info-color);
+            background-color: rgba(23, 162, 184, 0.05);
+        }
+        
+        .notification.warning {
+            border-left: 4px solid #ffc107;
+            background-color: rgba(255, 193, 7, 0.05);
+        }
+        
+        .notification.success .notification-icon,
+        .notification.error .notification-icon,
+        .notification.info .notification-icon,
+        .notification.warning .notification-icon {
+            margin-left: 5px;
+        }
+        
+        /* 音频播放器样式 */
+        .audio-player {
+            position: fixed;
+            bottom: -100px;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #ffffff, #f8f9ff);
+            box-shadow: 0 -5px 20px rgba(107, 92, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            border-top: 1px solid rgba(107, 92, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .audio-player.visible {
+            bottom: 0;
+        }
+        
+        .audio-player-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .audio-player-info {
+            display: flex;
+            flex-direction: column;
+            margin-right: 20px;
+            max-width: 300px;
+        }
+        
+        .audio-player-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--dark-text);
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .audio-player-subtitle {
+            font-size: 14px;
+            color: var(--medium-text);
+            opacity: 0.8;
+        }
+        
+        .audio-player-controls button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: linear-gradient(to right bottom, var(--primary-color), #8579ff);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(107, 92, 255, 0.35);
+            transition: all 0.2s ease;
+            font-size: 18px;
+        }
+        
+        .audio-player-controls button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 18px rgba(107, 92, 255, 0.45);
+            background: linear-gradient(to right bottom, #7a6bff, #9d8fff);
+        }
+        
+        .audio-player-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .audio-player-actions button {
+            background-color: transparent;
+            border: 1px solid #e0e4e9;
+            color: var(--medium-text);
+            border-radius: 8px;
+            padding: 8px 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+        }
+        
+        .audio-player-actions button:hover {
+            background-color: var(--light-bg);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .audio-player audio {
+            display: none; /* 隐藏原生音频控件 */
+        }
+        
+        .audio-progress {
+            flex: 1;
+            margin: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: rgba(107, 92, 255, 0.15);
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+            margin: 5px 0;
+        }
+        
+        .progress-bar:hover {
+            height: 10px;
+        }
+        
+        .progress-current {
+            position: absolute;
+            height: 100%;
+            width: 0%; /* 动态更新 */
+            background: linear-gradient(to right, var(--primary-color), #9d8fff);
+            border-radius: 10px;
+            transition: width 0.1s linear;
+            box-shadow: 0 1px 5px rgba(107, 92, 255, 0.5);
+        }
+        
+        .progress-current::after {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background-color: #fff;
+            border-radius: 50%;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .progress-bar:hover .progress-current::after {
+            opacity: 1;
+        }
+        
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--medium-text);
+            margin-top: 8px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .history-container {
+                padding: 20px;
+            }
+            
+            .history-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .history-controls {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .history-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="nav-left">
+            <div class="logo">
+                <img src="assets/images/logo.png" alt="Parrot Sound">
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html">首页</a></li>
+                <li class="nav-item"><a href="dub.html">智能配音</a></li>
+                <li class="nav-item"><a href="history.html" class="active">音频记录</a></li>
+                <li class="nav-item"><a href="clone.html">声音克隆</a></li>
+                <li class="nav-item"><a href="teaching.html">教育教学</a></li>
+                <li class="nav-item"><a href="community.html">社区资源</a></li>
+                <li class="nav-item"><a href="help.html">帮助中心</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <a href="#" class="nav-user" id="userAvatar">
+                <img src="assets/images/avatar-default.png" alt="用户头像">
+            </a>
+        </div>
+    </nav>
+
+    <!-- 主体内容 -->
+    <main class="main-content">
+        <div class="history-container">
+            <div class="history-header">
+                <h1 class="history-title">音频记录</h1>
+                <div class="history-controls">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="搜索音频内容...">
+                        <button type="button" class="search-btn">
+                            <i class="iconfont icon-search"></i>
+                        </button>
+                    </div>
+                    <div class="filter-dropdown">
+                        <button class="filter-btn" id="filterButton">
+                            <i class="iconfont icon-filter"></i>
+                            <span>全部记录</span>
+                            <i class="iconfont icon-down"></i>
+                        </button>
+                        <div class="filter-menu" id="filterMenu" style="display: none; visibility: visible;">
+                            <div class="filter-item" data-filter="all">全部记录</div>
+                            <div class="filter-item" data-filter="completed">已完成</div>
+                            <div class="filter-item" data-filter="processing">处理中</div>
+                            <div class="filter-item" data-filter="failed">失败</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="loadingHistory" class="loading">
+                <div class="loading-spinner"></div>
+                <p>正在加载音频记录...</p>
+            </div>
+            
+            <div id="emptyHistory" class="empty-history" style="display: none;">
+                <i class="iconfont icon-sound-empty"></i>
+                <p>暂无音频生成记录</p>
+                <p class="desc">您可以前往智能配音页面生成你的第一个音频</p>
+                <a href="dub.html" class="action-btn">立即生成音频</a>
+            </div>
+            
+            <div id="historyList" class="history-list" style="display: none;">
+                <!-- 历史记录会通过JS动态添加 -->
+            </div>
+            
+            <div id="pagination" class="pagination">
+                <!-- 分页导航通过JS动态生成 -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 音频播放器 -->
+    <div id="audioPlayerContainer" class="audio-player">
+        <div class="audio-player-info">
+            <div class="audio-player-title" id="currentAudioTitle">正在播放...</div>
+            <div class="audio-player-subtitle" id="currentAudioVoice">音色: 标准</div>
+        </div>
+        
+        <div class="audio-player-controls">
+            <button id="playPauseButton" class="play-pause-btn">
+                <i class="iconfont icon-play"></i>
+            </button>
+            <audio id="audioPlayer"></audio>
+            <div class="audio-progress">
+                <div class="progress-bar">
+                    <div class="progress-current" id="progressCurrent"></div>
+                </div>
+                <div class="time-display">
+                    <span id="currentTime">0:00</span> / <span id="totalTime">0:00</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="audio-player-actions">
+            <button id="downloadCurrentAudio" class="download-btn">
+                <i class="iconfont icon-download"></i> 下载
+            </button>
+            <button id="closePlayer" class="close-btn">
+                <i class="iconfont icon-close"></i> 关闭
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="assets/js/history.js"></script>
+    
+    <!-- 图标字体加载检查脚本 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查图标字体是否正确加载
+            setTimeout(function() {
+                const iconElements = document.querySelectorAll('.iconfont');
+                if (iconElements.length > 0) {
+                    const computedStyle = window.getComputedStyle(iconElements[0]);
+                    if (computedStyle.fontFamily.indexOf('iconfont') === -1) {
+                        // 加载备用图标 (Unicode 字符)
+                        document.querySelectorAll('.icon-play').forEach(el => { el.textContent = '▶'; });
+                        document.querySelectorAll('.icon-pause').forEach(el => { el.textContent = '⏸'; });
+                        document.querySelectorAll('.icon-download').forEach(el => { el.textContent = '⬇'; });
+                        document.querySelectorAll('.icon-close').forEach(el => { el.textContent = '×'; });
+                        document.querySelectorAll('.icon-search').forEach(el => { el.textContent = '🔍'; });
+                        document.querySelectorAll('.icon-filter').forEach(el => { el.textContent = '⚙'; });
+                        document.querySelectorAll('.icon-down').forEach(el => { el.textContent = '▼'; });
+                        document.querySelectorAll('.icon-sound-empty').forEach(el => { el.textContent = '🔈'; });
+                    }
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

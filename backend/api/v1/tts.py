@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, BackgroundTasks
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 import os
 import uuid
 import time
 import shutil
-from typing import Optional
+from typing import Optional, List, Dict, Any
 import subprocess
 import logging
 import json
@@ -12,6 +12,7 @@ from pathlib import Path
 import sys
 import psutil
 import threading
+from datetime import datetime
 
 # 设置日志
 logging.basicConfig(level=logging.INFO)
@@ -27,11 +28,13 @@ MEGATTS3_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "storage", "uploads")
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "storage", "outputs")
 VOICE_SAMPLES_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "storage", "voice_samples")
+HISTORY_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "storage", "history")
 
 # 确保目录存在
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(VOICE_SAMPLES_DIR, exist_ok=True)
+os.makedirs(HISTORY_DIR, exist_ok=True)
 
 # 创建路由
 router = APIRouter(prefix="/tts", tags=["TTS"])
@@ -39,12 +42,85 @@ router = APIRouter(prefix="/tts", tags=["TTS"])
 # TTS生成任务队列
 tts_tasks = {}
 
+# 历史记录存储
+tts_history = {}
+tts_history_lock = threading.Lock()
+
 # 并发控制信号量 - 允许多个TTS任务同时运行
 tts_semaphore = threading.Semaphore(2)  # 允许2个TTS任务同时运行
 
 # 资源监控阈值 - 提高以允许更多CPU使用
 CPU_THRESHOLD = 95  # CPU使用率阈值(%)
 MEMORY_THRESHOLD = 90  # 内存使用率阈值(%)
+
+# 历史记录JSON文件路径
+HISTORY_FILE = os.path.join(HISTORY_DIR, "tts_history.json")
+
+# 加载历史记录
+def load_history():
+    global tts_history
+    try:
+        if os.path.exists(HISTORY_FILE):
+            with open(HISTORY_FILE, 'r', encoding='utf-8') as f:
+                tts_history = json.load(f)
+                logger.info(f"已加载{len(tts_history)}条TTS历史记录")
+        else:
+            tts_history = {}
+            logger.info("历史记录文件不存在，创建新的历史记录")
+            # 确保历史记录目录存在
+            os.makedirs(os.path.dirname(HISTORY_FILE), exist_ok=True)
+            # 创建空的历史记录文件
+            with open(HISTORY_FILE, 'w', encoding='utf-8') as f:
+                json.dump({}, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        logger.error(f"加载历史记录失败: {e}")
+        tts_history = {}
+
+# 保存历史记录
+def save_history():
+    try:
+        with tts_history_lock:
+            with open(HISTORY_FILE, 'w', encoding='utf-8') as f:
+                json.dump(tts_history, f, ensure_ascii=False, indent=2)
+        logger.info(f"已保存{len(tts_history)}条TTS历史记录")
+    except Exception as e:
+        logger.error(f"保存历史记录失败: {e}")
+
+# 添加历史记录
+def add_history_record(task_id, params, output_path=None, status="processing"):
+    try:
+        with tts_history_lock:
+            tts_history[task_id] = {
+                "task_id": task_id,
+                "created_at": datetime.now().isoformat(),
+                "text": params.get("text", ""),
+                "voice_id": params.get("voiceId", ""),
+                "emotion": params.get("emotion", "默认"),
+                "params": params,
+                "status": status,
+                "output_path": output_path
+            }
+        # 异步保存历史记录，避免阻塞主线程
+        threading.Thread(target=save_history).start()
+    except Exception as e:
+        logger.error(f"添加历史记录失败: {e}")
+
+# 更新历史记录状态
+def update_history_status(task_id, status, output_path=None):
+    try:
+        with tts_history_lock:
+            if task_id in tts_history:
+                tts_history[task_id]["status"] = status
+                if output_path:
+                    tts_history[task_id]["output_path"] = output_path
+                tts_history[task_id]["updated_at"] = datetime.now().isoformat()
+        # 异步保存历史记录，避免阻塞主线程
+        threading.Thread(target=save_history).start()
+    except Exception as e:
+        logger.error(f"更新历史记录状态失败: {e}")
+
+# 初始化时加载历史记录
+load_history()
 
 @router.post("/generate")
 async def generate_tts(
@@ -84,6 +160,14 @@ async def generate_tts(
     
     task_id = str(uuid.uuid4())
     
+    # 准备参数
+    params = {
+        "text": text,
+        "voice_sample": voice_sample.filename if voice_sample else "default",
+        "p_w": p_w,
+        "t_w": t_w
+    }
+    
     # 创建任务信息
     tts_tasks[task_id] = {
         "status": "pending",
@@ -94,6 +178,9 @@ async def generate_tts(
         "cpu_usage_start": cpu_percent,
         "memory_usage_start": memory_percent
     }
+    
+    # 添加到历史记录
+    add_history_record(task_id, params)
     
     try:
         # 处理上传的语音样本
@@ -496,6 +583,9 @@ def run_tts_generation(task_id, input_wav, text, output_path, p_w, t_w):
         tts_tasks[task_id]["memory_usage_end"] = memory_percent_end
         tts_tasks[task_id]["processing_time"] = time.time() - tts_tasks[task_id]["created_at"]
         
+        # 更新历史记录状态
+        update_history_status(task_id, "completed", output_file)
+        
         logger.info(f"TTS生成成功，任务ID: {task_id}, 处理时间: {tts_tasks[task_id]['processing_time']:.2f}秒")
         logger.info(f"资源使用: CPU从{tts_tasks[task_id]['cpu_usage_start']}%上升到{cpu_percent_end}%, "  
                   f"内存从{tts_tasks[task_id]['memory_usage_start']}%上升到{memory_percent_end}%")
@@ -504,6 +594,9 @@ def run_tts_generation(task_id, input_wav, text, output_path, p_w, t_w):
         logger.error(f"TTS生成过程中出错: {str(e)}")
         tts_tasks[task_id]["status"] = "failed"
         tts_tasks[task_id]["error"] = str(e)
+        
+        # 更新历史记录状态
+        update_history_status(task_id, "failed")
     finally:
         # 释放信号量
         tts_semaphore.release()
@@ -521,3 +614,70 @@ def run_tts_generation(task_id, input_wav, text, output_path, p_w, t_w):
             logger.info(f"任务成功完成: {task_completion_info}")
         else:
             logger.error(f"任务失败: {task_completion_info}")
+
+
+@router.get("/history")
+async def get_tts_history():
+    """
+    获取TTS生成历史记录
+    """
+    try:
+        # 转换历史记录为列表并按创建时间倒序排序
+        history_list = list(tts_history.values())
+        history_list.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+        return {"history": history_list}
+    except Exception as e:
+        logger.error(f"获取历史记录失败: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/history/{task_id}")
+async def get_tts_history_item(task_id: str):
+    """
+    获取指定ID的TTS历史记录
+    """
+    if task_id not in tts_history:
+        raise HTTPException(status_code=404, detail="记录不存在")
+    return tts_history[task_id]
+
+@router.get("/history/{task_id}/audio")
+async def get_tts_history_audio(task_id: str):
+    """
+    获取历史记录中的音频文件
+    """
+    if task_id not in tts_history:
+        raise HTTPException(status_code=404, detail="记录不存在")
+    
+    record = tts_history[task_id]
+    if record["status"] != "completed" or not record.get("output_path"):
+        raise HTTPException(status_code=404, detail="音频文件未生成或生成失败")
+    
+    output_path = record["output_path"]
+    if not os.path.exists(output_path):
+        raise HTTPException(status_code=404, detail="音频文件不存在")
+    
+    return FileResponse(output_path, media_type="audio/wav", filename=f"PARROT配音_{task_id}.wav")
+
+@router.delete("/history/{task_id}")
+async def delete_tts_history_item(task_id: str):
+    """
+    删除指定ID的TTS历史记录
+    """
+    if task_id not in tts_history:
+        raise HTTPException(status_code=404, detail="记录不存在")
+    
+    with tts_history_lock:
+        # 尝试删除音频文件
+        try:
+            output_path = tts_history[task_id].get("output_path")
+            if output_path and os.path.exists(output_path):
+                os.remove(output_path)
+        except Exception as e:
+            logger.error(f"删除音频文件失败: {e}")
+        
+        # 删除记录
+        del tts_history[task_id]
+    
+    # 保存历史记录
+    threading.Thread(target=save_history).start()
+    
+    return {"success": True, "message": "记录已删除"}

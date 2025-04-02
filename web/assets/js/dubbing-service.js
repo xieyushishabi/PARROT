@@ -481,7 +481,7 @@ class DubbingService {
         const notification = document.createElement('div');
         notification.className = `notification ${type}`;
         notification.id = notificationId;
-        notification.textContent = message;
+        notification.innerHTML = message; // 使用innerHTML支持HTML内容
         notification.dataset.type = type; // 添加数据属性以便识别类型
         
         // 记录到控制台，特别是对于错误

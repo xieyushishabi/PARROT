@@ -7,7 +7,14 @@ document.addEventListener('DOMContentLoaded', function() {
         speed: 1,
         emotion: 'default',
         currentAudioData: null,
-        isGenerating: false
+        isGenerating: false,
+        // 缓存机制
+        cache: {
+            text: '',
+            voiceId: null,
+            params: null,
+            audioData: null
+        }
     };
 
     // 初始化元素引用
@@ -271,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // 试听按钮事件处理
+    // 生成音频按钮事件处理
     async function handlePreviewClick() {
         if (!elements.textarea || !elements.textarea.value.trim()) {
             dubbingService.showNotification('请先输入文本内容', 'error');
@@ -297,14 +304,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 emotion: state.emotion
             };
             
-            // 生成配音
-            const audioData = await dubbingService.generateDubbing(params);
-            state.currentAudioData = audioData;
+            let audioData;
             
-            // 播放音频
-            await dubbingService.playAudio(audioData);
+            // 总是生成新音频并保存到历史记录中
+            console.log('生成新的音频数据');
+            dubbingService.showNotification('正在生成音频...', 'info');
+            
+            // 生成配音
+            audioData = await dubbingService.generateDubbing(params);
+            
+            // 更新缓存
+            if (audioData) {
+                state.cache.text = params.text;
+                state.cache.voiceId = params.voiceId;
+                state.cache.params = {...params};
+                state.cache.audioData = audioData;
+                
+                // 显示成功消息，并引导用户去音频记录页面
+                dubbingService.showNotification(
+                    '音频生成成功！已保存到音频记录，<a href="history.html">点击这里查看</a>', 
+                    'success', 
+                    6000
+                );
+                
+                // 自动播放生成的音频
+                await dubbingService.playAudio(audioData);
+            }
+            
+            state.currentAudioData = audioData;
         } catch (error) {
-            console.error('试听失败:', error);
+            console.error('音频生成失败:', error);
+            dubbingService.showNotification('音频生成失败，请稍后重试', 'error');
         } finally {
             state.isGenerating = false;
         }
