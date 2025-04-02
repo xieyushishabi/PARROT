@@ -44,3 +44,13 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+
+# Project specific
+MegaTTS3/
+checkpoints/
+logs/
+storage/
+outputs/
+*.wav
+*.mp3
+*.mp4

@@ -1,0 +1,5 @@
+127.0.0.1 - - [02/Apr/2025 19:30:10] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [02/Apr/2025 19:30:14] "GET /dub.html HTTP/1.1" 304 -
+127.0.0.1 - - [02/Apr/2025 19:30:14] "GET /assets/js/dubbing-service.js HTTP/1.1" 200 -
+127.0.0.1 - - [02/Apr/2025 19:30:14] code 404, message File not found
+127.0.0.1 - - [02/Apr/2025 19:30:14] "GET /assets/js/libs/axios.min.js.map HTTP/1.1" 404 -

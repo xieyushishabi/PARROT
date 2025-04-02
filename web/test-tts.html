@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TTS测试页面</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .container {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin: 10px 0;
+        }
+        
+        .result-container {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #4CAF50;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        #log {
+            height: 200px;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+            padding: 10px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>TTS系统测试页面</h1>
+    
+    <div class="container">
+        <h2>测试已有任务交互</h2>
+        <div>
+            <button id="checkTasksBtn">获取所有任务</button>
+            <button id="getLatestTaskBtn">获取最新任务</button>
+            <button id="playTaskBtn" disabled>播放音频</button>
+            <button id="downloadTaskBtn" disabled>下载音频</button>
+        </div>
+        <div id="tasksResult" class="result-container">
+            任务列表将显示在这里...
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>测试新建TTS任务</h2>
+        <div>
+            <textarea id="ttsText" placeholder="输入要转换成语音的文本...">这是一个测试文本，用于TTS系统生成语音。</textarea>
+            <button id="generateTtsBtn">生成语音</button>
+        </div>
+        <div id="generateResult" class="result-container">
+            生成结果将显示在这里...
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>调试日志</h2>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        // 全局变量
+        const API_BASE_URL = 'http://127.0.0.1:8000/api';
+        let currentTaskId = null;
+        let audioData = null;
+        let audioContext = null;
+        let audioSource = null;
+        let isPlaying = false;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 绑定按钮事件
+            document.getElementById('checkTasksBtn').addEventListener('click', getAllTasks);
+            document.getElementById('getLatestTaskBtn').addEventListener('click', getLatestTask);
+            document.getElementById('playTaskBtn').addEventListener('click', togglePlayAudio);
+            document.getElementById('downloadTaskBtn').addEventListener('click', downloadAudio);
+            document.getElementById('generateTtsBtn').addEventListener('click', generateTTS);
+            
+            // 初始化音频上下文
+            try {
+                window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioContext = new AudioContext();
+                logMessage('音频上下文初始化成功');
+            } catch (e) {
+                logMessage('Error: 音频上下文初始化失败 - ' + e.message, 'error');
+            }
+        });
+        
+        // 获取所有任务
+        async function getAllTasks() {
+            logMessage('正在获取所有任务...');
+            try {
+                const response = await fetch(`${API_BASE_URL}/v1/tts/tasks`);
+                if (!response.ok) {
+                    throw new Error(`获取任务失败: ${response.status}`);
+                }
+                
+                const tasks = await response.json();
+                logMessage(`获取到 ${tasks.length} 个任务`);
+                
+                // 显示任务列表
+                const tasksResult = document.getElementById('tasksResult');
+                if (tasks.length === 0) {
+                    tasksResult.innerHTML = '没有任务';
+                } else {
+                    const tasksList = tasks.map((task, index) => {
+                        const date = new Date(task.created_at * 1000).toLocaleString();
+                        return `
+                            <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                                <strong>任务 ${index + 1}:</strong><br>
+                                ID: ${task.task_id}<br>
+                                状态: ${task.status}<br>
+                                创建时间: ${date}<br>
+                                耗时: ${task.elapsed_seconds.toFixed(2)} 秒
+                                <button onclick="selectTask('${task.task_id}')" style="margin-top: 5px;">选择此任务</button>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    tasksResult.innerHTML = tasksList;
+                }
+            } catch (error) {
+                logMessage(`获取任务出错: ${error.message}`, 'error');
+                document.getElementById('tasksResult').innerHTML = `获取任务失败: ${error.message}`;
+            }
+        }
+        
+        // 获取最新任务
+        async function getLatestTask() {
+            logMessage('正在获取最新任务...');
+            try {
+                const response = await fetch(`${API_BASE_URL}/v1/tts/tasks`);
+                if (!response.ok) {
+                    throw new Error(`获取任务失败: ${response.status}`);
+                }
+                
+                const tasks = await response.json();
+                logMessage(`获取到 ${tasks.length} 个任务`);
+                
+                if (tasks.length === 0) {
+                    document.getElementById('tasksResult').innerHTML = '没有任务';
+                    return;
+                }
+                
+                // 查找最新的已完成任务
+                const completedTasks = tasks.filter(task => task.status === 'completed');
+                if (completedTasks.length === 0) {
+                    document.getElementById('tasksResult').innerHTML = '没有已完成的任务';
+                    return;
+                }
+                
+                // 按创建时间排序并获取最新的已完成任务
+                completedTasks.sort((a, b) => b.created_at - a.created_at);
+                const latestTask = completedTasks[0];
+                
+                // 选择此任务
+                selectTask(latestTask.task_id);
+                
+                // 显示任务信息
+                const date = new Date(latestTask.created_at * 1000).toLocaleString();
+                document.getElementById('tasksResult').innerHTML = `
+                    <div style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <strong>最新已完成任务:</strong><br>
+                        ID: ${latestTask.task_id}<br>
+                        状态: ${latestTask.status}<br>
+                        创建时间: ${date}<br>
+                        耗时: ${latestTask.elapsed_seconds.toFixed(2)} 秒
+                    </div>
+                `;
+            } catch (error) {
+                logMessage(`获取最新任务出错: ${error.message}`, 'error');
+                document.getElementById('tasksResult').innerHTML = `获取最新任务失败: ${error.message}`;
+            }
+        }
+        
+        // 选择任务
+        async function selectTask(taskId) {
+            logMessage(`选择任务: ${taskId}`);
+            currentTaskId = taskId;
+            
+            try {
+                // 检查任务状态
+                const statusResponse = await fetch(`${API_BASE_URL}/v1/tts/status/${taskId}`);
+                if (!statusResponse.ok) {
+                    throw new Error(`获取任务状态失败: ${statusResponse.status}`);
+                }
+                
+                const statusData = await statusResponse.json();
+                logMessage(`任务状态: ${statusData.status}`);
+                
+                if (statusData.status === 'completed') {
+                    // 获取音频数据
+                    logMessage('获取音频数据...');
+                    const audioResponse = await fetch(`${API_BASE_URL}/v1/tts/download/${taskId}`);
+                    
+                    if (!audioResponse.ok) {
+                        throw new Error(`获取音频失败: ${audioResponse.status}`);
+                    }
+                    
+                    audioData = await audioResponse.arrayBuffer();
+                    logMessage(`音频数据获取成功, 大小: ${audioData.byteLength} 字节`);
+                    
+                    // 启用播放和下载按钮
+                    document.getElementById('playTaskBtn').disabled = false;
+                    document.getElementById('downloadTaskBtn').disabled = false;
+                } else {
+                    audioData = null;
+                    document.getElementById('playTaskBtn').disabled = true;
+                    document.getElementById('downloadTaskBtn').disabled = true;
+                    throw new Error(`任务未完成，当前状态: ${statusData.status}`);
+                }
+            } catch (error) {
+                logMessage(`选择任务出错: ${error.message}`, 'error');
+                document.getElementById('tasksResult').innerHTML += `<p style="color: red;">错误: ${error.message}</p>`;
+            }
+        }
+        
+        // 播放/停止音频
+        async function togglePlayAudio() {
+            if (isPlaying) {
+                stopAudio();
+                return;
+            }
+            
+            if (!audioData) {
+                logMessage('没有可用的音频数据', 'error');
+                return;
+            }
+            
+            try {
+                // 如果音频上下文被挂起（浏览器策略），恢复它
+                if (audioContext.state === 'suspended') {
+                    await audioContext.resume();
+                }
+                
+                // 解码音频数据
+                const audioBuffer = await audioContext.decodeAudioData(audioData.slice(0));
+                
+                // 创建音频源
+                audioSource = audioContext.createBufferSource();
+                audioSource.buffer = audioBuffer;
+                audioSource.connect(audioContext.destination);
+                
+                // 播放完成的处理
+                audioSource.onended = function() {
+                    isPlaying = false;
+                    updatePlayButton();
+                    logMessage('音频播放完成');
+                };
+                
+                // 开始播放
+                audioSource.start();
+                isPlaying = true;
+                updatePlayButton();
+                logMessage('开始播放音频');
+            } catch (error) {
+                logMessage(`播放音频失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 停止音频播放
+        function stopAudio() {
+            if (audioSource && isPlaying) {
+                try {
+                    audioSource.stop();
+                    audioSource.disconnect();
+                    isPlaying = false;
+                    updatePlayButton();
+                    logMessage('停止播放音频');
+                } catch (error) {
+                    logMessage(`停止音频播放时出错: ${error.message}`, 'error');
+                }
+            }
+        }
+        
+        // 更新播放按钮状态
+        function updatePlayButton() {
+            const playBtn = document.getElementById('playTaskBtn');
+            playBtn.textContent = isPlaying ? '停止' : '播放音频';
+        }
+        
+        // 下载音频
+        function downloadAudio() {
+            if (!audioData) {
+                logMessage('没有可用的音频数据', 'error');
+                return;
+            }
+            
+            try {
+                const blob = new Blob([audioData], { type: 'audio/wav' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `tts_audio_${currentTaskId.slice(0, 8)}.wav`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                // 释放URL对象
+                setTimeout(() => {
+                    URL.revokeObjectURL(url);
+                }, 100);
+                
+                logMessage('音频下载开始');
+            } catch (error) {
+                logMessage(`下载音频失败: ${error.message}`, 'error');
+            }
+        }
+        
+        // 生成TTS
+        async function generateTTS() {
+            const text = document.getElementById('ttsText').value.trim();
+            if (!text) {
+                logMessage('请输入文本', 'error');
+                return;
+            }
+            
+            logMessage(`开始生成TTS，文本长度: ${text.length}`);
+            document.getElementById('generateResult').innerHTML = '<div class="loading"></div> 正在生成语音...';
+            
+            try {
+                // 创建表单数据
+                const formData = new FormData();
+                formData.append('text', text);
+                
+                // 发送TTS生成请求
+                const generateResponse = await fetch(`${API_BASE_URL}/v1/tts/generate`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                
+                if (!generateResponse.ok) {
+                    const errorData = await generateResponse.json();
+                    throw new Error(`生成TTS失败: ${errorData.detail || generateResponse.status}`);
+                }
+                
+                // 获取任务ID
+                const responseData = await generateResponse.json();
+                const taskId = responseData.task_id;
+                logMessage(`TTS任务创建成功，ID: ${taskId}`);
+                
+                // 轮询任务状态
+                let status = 'processing';
+                let maxAttempts = 60; // 最多等待60次 (2分钟)
+                let attempt = 0;
+                
+                document.getElementById('generateResult').innerHTML = `<div>正在处理TTS任务 (ID: ${taskId})...</div>`;
+                
+                while (status === 'processing' && attempt < maxAttempts) {
+                    // 等待2秒
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    // 检查任务状态
+                    const statusResponse = await fetch(`${API_BASE_URL}/v1/tts/status/${taskId}`);
+                    
+                    if (!statusResponse.ok) {
+                        logMessage(`检查任务状态返回非200状态: ${statusResponse.status}`, 'warn');
+                        document.getElementById('generateResult').innerHTML += `<div>检查状态: ${statusResponse.status}</div>`;
+                        continue;
+                    }
+                    
+                    const statusData = await statusResponse.json();
+                    status = statusData.status;
+                    attempt++;
+                    
+                    // 更新界面
+                    document.getElementById('generateResult').innerHTML = `
+                        <div>处理TTS任务 (ID: ${taskId})</div>
+                        <div>状态: ${status}</div>
+                        <div>尝试次数: ${attempt}/${maxAttempts}</div>
+                    `;
+                    
+                    logMessage(`任务 ${taskId} 状态: ${status}, 尝试次数: ${attempt}/${maxAttempts}`);
+                    
+                    // 如果任务失败，立即终止
+                    if (status === 'failed') {
+                        const errorMessage = statusData.error || '未知错误';
+                        throw new Error(`配音生成失败: ${errorMessage}`);
+                    }
+                    
+                    // 如果任务完成，退出循环
+                    if (status === 'completed') {
+                        logMessage(`任务 ${taskId} 已完成`);
+                        break;
+                    }
+                }
+                
+                // 检查最终状态
+                if (status !== 'completed') {
+                    throw new Error('TTS生成超时');
+                }
+                
+                // 下载音频
+                logMessage(`获取任务 ${taskId} 的音频数据`);
+                const audioResponse = await fetch(`${API_BASE_URL}/v1/tts/download/${taskId}`);
+                
+                if (!audioResponse.ok) {
+                    throw new Error(`获取音频失败: ${audioResponse.status}`);
+                }
+                
+                // 设置当前任务和音频数据
+                currentTaskId = taskId;
+                audioData = await audioResponse.arrayBuffer();
+                logMessage(`音频数据获取成功, 大小: ${audioData.byteLength} 字节`);
+                
+                // 启用播放和下载按钮
+                document.getElementById('playTaskBtn').disabled = false;
+                document.getElementById('downloadTaskBtn').disabled = false;
+                
+                // 更新结果
+                document.getElementById('generateResult').innerHTML = `
+                    <div style="color: green;">TTS生成成功!</div>
+                    <div>任务ID: ${taskId}</div>
+                    <div>状态: ${status}</div>
+                    <div>音频大小: ${audioData.byteLength} 字节</div>
+                    <button onclick="togglePlayAudio()">播放生成的音频</button>
+                    <button onclick="downloadAudio()">下载生成的音频</button>
+                `;
+            } catch (error) {
+                logMessage(`生成TTS失败: ${error.message}`, 'error');
+                document.getElementById('generateResult').innerHTML = `<div style="color: red;">错误: ${error.message}</div>`;
+            }
+        }
+        
+        // 记录日志
+        function logMessage(message, type = 'info') {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logClass = type === 'error' ? 'error' : (type === 'warn' ? 'warning' : 'info');
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<span style="color: #777;">[${timestamp}]</span> <span class="${logClass}" style="color: ${type === 'error' ? 'red' : (type === 'warn' ? 'orange' : 'green')};">${type.toUpperCase()}</span>: ${message}`;
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight;
+            
+            // 同时在控制台打印
+            console[type](message);
+        }
+        
+        // 暴露函数到全局，以便HTML onclick使用
+        window.selectTask = selectTask;
+        window.togglePlayAudio = togglePlayAudio;
+        window.downloadAudio = downloadAudio;
+    </script>
+</body>
+</html>

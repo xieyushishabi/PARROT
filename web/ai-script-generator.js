@@ -25,13 +25,50 @@ function setupEventListeners() {
     }
     
     // 为已有的创作文章按钮添加事件
-    createBtn.addEventListener('click', async function() {
+    // 使用防抖函数包装处理函数，防止频繁点击
+    const debounce = (func, delay) => {
+        let debounceTimer;
+        return function() {
+            const context = this;
+            const args = arguments;
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => func.apply(context, args), delay);
+        };
+    };
+    
+    // 使用节流函数，确保在一段时间内只执行一次
+    const throttle = (func, limit) => {
+        let inThrottle;
+        return function() {
+            const context = this;
+            const args = arguments;
+            if (!inThrottle) {
+                func.apply(context, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+            }
+        };
+    };
+    
+    // 标志位，用于跟踪TTS生成状态
+    let isTtsGenerating = false;
+    
+    createBtn.addEventListener('click', throttle(async function() {
         const prompt = aiPromptInput.value.trim();
         
         if (!prompt) {
             alert('请输入文案主题或关键内容描述');
             return;
         }
+        
+        // 检查是否已经在生成中
+        if (isTtsGenerating) {
+            alert('正在生成中，请稍候...');
+            return;
+        }
+        
+        // 设置生成状态
+        isTtsGenerating = true;
         
         // 显示加载状态
         const originalText = createBtn.textContent;
@@ -58,17 +95,21 @@ function setupEventListeners() {
                 }, 50);
             } catch (error) {
                 console.error('插入文本时出错:', error);
+                alert('插入文本时出错: ' + (error.message || '未知错误'));
             }
             
         } catch (error) {
             console.error('生成文案失败:', error);
-            alert('生成文案失败，请稍后重试');
+            alert('生成文案失败: ' + (error.message || '请稍后重试'));
         } finally {
             // 恢复按钮状态
             createBtn.textContent = originalText;
             createBtn.disabled = false;
+            
+            // 重置生成状态
+            isTtsGenerating = false;
         }
-    });
+    }, 2000)); // 2秒内只能点击一次
 }
 
 // 生成文案的主函数
