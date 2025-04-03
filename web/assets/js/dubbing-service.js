@@ -160,9 +160,17 @@ class DubbingService {
             const formData = new FormData();
             formData.append('text', params.text);
             
-            // 添加语音样本（如果有）
+            // 添加语音样本参数
             if (params.voiceSample) {
-                formData.append('voice_sample', params.voiceSample);
+                // 判断是文件还是字符串
+                if (params.voiceSample instanceof File) {
+                    console.log('使用上传的音色文件:', params.voiceSample.name);
+                    formData.append('voice_sample', params.voiceSample);
+                } else {
+                    // 如果是字符串，传递音色名称
+                    console.log('使用指定的音色名称:', params.voiceSample);
+                    formData.append('voice_name', params.voiceSample);
+                }
             }
             
             // 添加其他参数

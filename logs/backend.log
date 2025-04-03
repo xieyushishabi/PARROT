@@ -1,254 +1,69 @@
-INFO:backend.api.v1.tts:已加载0条TTS历史记录
-INFO:     Started server process [91451]
+INFO:backend.api.v1.tts:已加载6条TTS历史记录
+INFO:     Started server process [162481]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:51202 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59652 - "GET /api/v1/tts/history HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59652 - "GET /api/v1/tts/history HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59652 - "GET /api/v1/tts/history HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59982 - "GET /api/v1/tts/history HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59982 - "GET /api/v1/tts/history HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59982 - "GET /api/v1/tts/history HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59242 - "GET /api/v1/tts/history HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49034 - "GET /api/v1/tts/history HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:当前系统状态: CPU使用率=13.7%, 内存使用率=60.2%, 活动TTS任务=0
-INFO:     127.0.0.1:54116 - "POST /api/v1/tts/generate HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:已保存1条TTS历史记录
-INFO:backend.api.v1.tts:开始处理TTS任务: 4f8a0bc0-4872-4370-8530-f89d177cafea, 文本长度: 5字符
-INFO:backend.api.v1.tts:执行命令: python /home/hoey/桌面/PARROT-master/MegaTTS3/tts/infer_cli.py --input_wav /home/hoey/桌面/PARROT-master/MegaTTS3/assets/Chinese_prompt.wav --input_text 测试123 --output_dir /home/hoey/桌面/PARROT-master/storage/outputs --p_w 2.0 --t_w 3.0
+INFO:     127.0.0.1:49522 - "GET /api/v1/tts/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49524 - "GET / HTTP/1.1" 200 OK
+INFO:backend.api.v1.tts:当前系统状态: CPU使用率=17.5%, 内存使用率=50.3%, 活动TTS任务=0
+INFO:backend.api.v1.tts:根据音色名称选择样本文件: 女声
+INFO:backend.api.v1.tts:在默认样本目录找到音色(加扩展名): /home/hoey/桌面/PARROT-master/MegaTTS3/assets/女声.wav
+INFO:backend.api.v1.tts:最终选定的音色样本文件: /home/hoey/桌面/PARROT-master/MegaTTS3/assets/女声.wav
+INFO:     127.0.0.1:49522 - "POST /api/v1/tts/generate HTTP/1.1" 200 OK
+INFO:backend.api.v1.tts:已保存7条TTS历史记录
+INFO:backend.api.v1.tts:开始处理TTS任务: 8867b99e-5414-43ed-aee7-e5fb71d307a1, 文本长度: 15字符
+INFO:backend.api.v1.tts:执行命令: python /home/hoey/桌面/PARROT-master/MegaTTS3/tts/infer_cli.py --input_wav /home/hoey/桌面/PARROT-master/MegaTTS3/assets/女声.wav --input_text 111111111111111 --output_dir /home/hoey/桌面/PARROT-master/storage/outputs --p_w 2.0 --t_w 3.0
 INFO:backend.api.v1.tts:当前工作目录: /home/hoey/桌面/PARROT-master/MegaTTS3
 INFO:backend.api.v1.tts:环境变量PYTHONPATH: /home/hoey/桌面/PARROT-master/MegaTTS3:
-INFO:backend.api.v1.tts:开始执行MegaTTS3命令: python /home/hoey/桌面/PARROT-master/MegaTTS3/tts/infer_cli.py --input_wav /home/hoey/桌面/PARROT-master/MegaTTS3/assets/Chinese_prompt.wav --input_text 测试123 --output_dir /home/hoey/桌面/PARROT-master/storage/outputs --p_w 2.0 --t_w 3.0
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 2.00秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 4.01秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 6.01秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 8.02秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 10.02秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 12.03秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 14.03秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 16.04秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 18.04秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 20.06秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 22.10秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 24.15秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 26.21秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 28.24秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 30.27秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 32.30秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 34.34秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 36.37秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 38.40秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 40.42秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 42.42秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 44.44秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 46.48秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 48.51秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 50.53秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 52.57秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 54.61秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 56.64秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 58.67秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 60.71秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 62.75秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 64.77秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 66.79秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 68.81秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 70.83秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 72.87秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 74.90秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 76.94秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 79.00秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 81.02秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 83.05秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 85.10秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 87.11秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 89.14秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 91.16秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 93.20秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 95.25秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 97.29秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 99.32秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 101.35秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 103.39秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 105.42秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 107.46秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 109.50秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 111.54秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 113.56秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 115.59秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 117.61秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 119.65秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 121.69秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 123.72秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 125.76秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 127.81秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 129.85秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 131.87秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 133.90秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 135.94秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 137.98秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 140.02秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 142.06秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 144.08秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 146.12秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 148.18秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 150.22秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 152.26秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 154.29秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 156.33秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 158.36秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 160.39秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 162.42秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 164.44秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 166.47秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 168.50秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 170.54秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 172.60秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 174.63秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 176.67秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 178.71秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 180.75秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 182.79秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 184.82秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 186.84秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 188.87秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 190.90秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 192.91秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 194.94秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 196.98秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 199.03秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 201.09秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 203.15秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 205.18秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 207.21秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 209.22秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 211.25秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 213.29秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 215.34秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 217.35秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 219.36秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 221.36秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
-INFO:backend.api.v1.tts:任务状态请求: 4f8a0bc0-4872-4370-8530-f89d177cafea, 状态: processing, 已耗时: 223.38秒
-INFO:     127.0.0.1:54116 - "GET /api/v1/tts/status/4f8a0bc0-4872-4370-8530-f89d177cafea HTTP/1.1" 200 OK
+INFO:backend.api.v1.tts:开始执行MegaTTS3命令: python /home/hoey/桌面/PARROT-master/MegaTTS3/tts/infer_cli.py --input_wav /home/hoey/桌面/PARROT-master/MegaTTS3/assets/女声.wav --input_text 111111111111111 --output_dir /home/hoey/桌面/PARROT-master/storage/outputs --p_w 2.0 --t_w 3.0
+INFO:     127.0.0.1:48078 - "GET /api/v1/tts/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48078 - "OPTIONS /api/v1/tts/history/e15cf85d-88c0-4e98-8980-b3ff7ae900c5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48078 - "DELETE /api/v1/tts/history/e15cf85d-88c0-4e98-8980-b3ff7ae900c5 HTTP/1.1" 200 OK
+INFO:backend.api.v1.tts:已保存6条TTS历史记录
+INFO:     127.0.0.1:48078 - "OPTIONS /api/v1/tts/history/3a3392b0-fcab-4427-8e6c-47454ec160f2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48078 - "DELETE /api/v1/tts/history/3a3392b0-fcab-4427-8e6c-47454ec160f2 HTTP/1.1" 200 OK
+INFO:backend.api.v1.tts:已保存5条TTS历史记录
 INFO:backend.api.v1.tts:MegaTTS3命令执行完成
-INFO:backend.api.v1.tts:检查输出目录: /home/hoey/桌面/PARROT-master/storage/outputs
-INFO:backend.api.v1.tts:输出目录中的所有文件: ['49e598b6-889d-4d8c-84d6-7e10153767a5.wav', '31c28530-82fe-4f26-bdb5-d7d537bbc11a.wav', '[P]测试123.wav', 'f68fc43a-a62c-4906-8dad-038d8b2e42ca.wav', '0827086e-1147-4876-a54b-1cc77586fe83.wav']
-INFO:backend.api.v1.tts:删除原始文件: /home/hoey/桌面/PARROT-master/storage/outputs/[P]测试123.wav
-INFO:backend.api.v1.tts:TTS生成成功，任务ID: 4f8a0bc0-4872-4370-8530-f89d177cafea, 处理时间: 233.47秒
-INFO:backend.api.v1.tts:资源使用: CPU从13.7%上升到40.4%, 内存从60.2%上升到47.2%
-INFO:backend.api.v1.tts:任务成功完成: {"task_id": "4f8a0bc0-4872-4370-8530-f89d177cafea", "status": "completed", "processing_time": 233.4720380306244, "error": null}
-INFO:backend.api.v1.tts:已保存1条TTS历史记录
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [91451]
+ERROR:backend.api.v1.tts:TTS生成失败，返回码: 1
+ERROR:backend.api.v1.tts:标准输出: | loaded 'dur_model' from './checkpoints/duration_lm/model_only_last.ckpt'.
+| Missing keys: 0, Unexpected keys: 0
+| loaded 'dit' from './checkpoints/diffusion_transformer/model_only_last.ckpt'.
+| Missing keys: 0, Unexpected keys: 9
+| loaded 'model' from './checkpoints/aligner_lm/model_only_last.ckpt'.
+| Missing keys: 0, Unexpected keys: 0
+Loading G2P model from ./checkpoints/g2p
+G2P model loaded successfully
+| loaded 'model_gen' from './checkpoints/wavvae/decoder.ckpt'.
+| Missing keys: 74, Unexpected keys: 0
+| Start processing /home/hoey/桌面/PARROT-master/MegaTTS3/assets/女声.wav+111111111111111
+
+ERROR:backend.api.v1.tts:标准错误: /home/hoey/miniconda3/lib/python3.12/site-packages/torch/nn/utils/weight_norm.py:28: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.
+  warnings.warn("torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.")
+2025-04-03 16:23:28,015 WETEXT INFO found existing fst: /home/hoey/miniconda3/lib/python3.12/site-packages/tn/zh_tn_tagger.fst
+2025-04-03 16:23:28,015 WETEXT INFO                     /home/hoey/miniconda3/lib/python3.12/site-packages/tn/zh_tn_verbalizer.fst
+2025-04-03 16:23:28,015 WETEXT INFO skip building fst for zh_normalizer ...
+2025-04-03 16:23:28,641 WETEXT INFO found existing fst: /home/hoey/miniconda3/lib/python3.12/site-packages/tn/en_tn_tagger.fst
+2025-04-03 16:23:28,641 WETEXT INFO                     /home/hoey/miniconda3/lib/python3.12/site-packages/tn/en_tn_verbalizer.fst
+2025-04-03 16:23:28,642 WETEXT INFO skip building fst for en_normalizer ...
+/home/hoey/miniconda3/lib/python3.12/site-packages/torch/amp/autocast_mode.py:250: UserWarning: User provided device_type of 'cuda', but CUDA is not available. Disabling
+  warnings.warn(
+Traceback (most recent call last):
+  File "/home/hoey/桌面/PARROT-master/MegaTTS3/tts/infer_cli.py", line 283, in <module>
+    wav_bytes = infer_ins.forward(resource_context, input_text, time_step=time_step, p_w=p_w, t_w=t_w)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hoey/桌面/PARROT-master/MegaTTS3/tts/infer_cli.py", line 224, in forward
+    language_type = classify_language(input_text)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hoey/miniconda3/lib/python3.12/site-packages/langdetect/detector_factory.py", line 130, in detect
+    return detector.detect()
+           ^^^^^^^^^^^^^^^^^
+  File "/home/hoey/miniconda3/lib/python3.12/site-packages/langdetect/detector.py", line 136, in detect
+    probabilities = self.get_probabilities()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/hoey/miniconda3/lib/python3.12/site-packages/langdetect/detector.py", line 143, in get_probabilities
+    self._detect_block()
+  File "/home/hoey/miniconda3/lib/python3.12/site-packages/langdetect/detector.py", line 150, in _detect_block
+    raise LangDetectException(ErrorCode.CantDetectError, 'No features in text.')
+langdetect.lang_detect_exception.LangDetectException: No features in text.
+
+ERROR:backend.api.v1.tts:任务失败: {"task_id": "8867b99e-5414-43ed-aee7-e5fb71d307a1", "status": "failed", "processing_time": 0, "error": "/home/hoey/miniconda3/lib/python3.12/site-packages/torch/nn/utils/weight_norm.py:28: UserWarning: torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.\n  warnings.warn(\"torch.nn.utils.weight_norm is deprecated in favor of torch.nn.utils.parametrizations.weight_norm.\")\n2025-04-03 16:23:28,015 WETEXT INFO found existing fst: /home/hoey/miniconda3/lib/python3.12/site-packages/tn/zh_tn_tagger.fst\n2025-04-03 16:23:28,015 WETEXT INFO                     /home/hoey/miniconda3/lib/python3.12/site-packages/tn/zh_tn_verbalizer.fst\n2025-04-03 16:23:28,015 WETEXT INFO skip building fst for zh_normalizer ...\n2025-04-03 16:23:28,641 WETEXT INFO found existing fst: /home/hoey/miniconda3/lib/python3.12/site-packages/tn/en_tn_tagger.fst\n2025-04-03 16:23:28,641 WETEXT INFO                     /home/hoey/miniconda3/lib/python3.12/site-packages/tn/en_tn_verbalizer.fst\n2025-04-03 16:23:28,642 WETEXT INFO skip building fst for en_normalizer ...\n/home/hoey/miniconda3/lib/python3.12/site-packages/torch/amp/autocast_mode.py:250: UserWarning: User provided device_type of 'cuda', but CUDA is not available. Disabling\n  warnings.warn(\nTraceback (most recent call last):\n  File \"/home/hoey/桌面/PARROT-master/MegaTTS3/tts/infer_cli.py\", line 283, in <module>\n    wav_bytes = infer_ins.forward(resource_context, input_text, time_step=time_step, p_w=p_w, t_w=t_w)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/hoey/桌面/PARROT-master/MegaTTS3/tts/infer_cli.py\", line 224, in forward\n    language_type = classify_language(input_text)\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/hoey/miniconda3/lib/python3.12/site-packages/langdetect/detector_factory.py\", line 130, in detect\n    return detector.detect()\n           ^^^^^^^^^^^^^^^^^\n  File \"/home/hoey/miniconda3/lib/python3.12/site-packages/langdetect/detector.py\", line 136, in detect\n    probabilities = self.get_probabilities()\n                    ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/hoey/miniconda3/lib/python3.12/site-packages/langdetect/detector.py\", line 143, in get_probabilities\n    self._detect_block()\n  File \"/home/hoey/miniconda3/lib/python3.12/site-packages/langdetect/detector.py\", line 150, in _detect_block\n    raise LangDetectException(ErrorCode.CantDetectError, 'No features in text.')\nlangdetect.lang_detect_exception.LangDetectException: No features in text.\n"}

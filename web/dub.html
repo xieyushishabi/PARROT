@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="assets/css/common.css">
     <link rel="stylesheet" href="assets/css/dub.css">
     <link rel="stylesheet" href="assets/css/iconfont.css">
+    <link rel="stylesheet" href="assets/css/voice-cards-fix.css">
     <style>
         body {
             margin: 0;
@@ -212,7 +213,7 @@
                     <input type="file" id="file-input" accept=".txt" style="display: none;">
                 </div>
                 <div class="right-tools">
-                    <button class="btn-preview">生成音频</button>
+                    <button class="btn-preview" onclick="handleGenerateAudio()">生成音频</button>
                     
                 </div>
             </div>
@@ -461,10 +462,217 @@
     <script src="assets/js/libs/axios.min.js"></script>
     <script src="assets/js/common.js"></script>
     <script src="assets/js/auth.js"></script>
-    <script src="assets/js/dub.js"></script>
+    <script src="assets/js/dub.js?v=1711266945"></script>
     <script src="assets/js/text-area-fix.js"></script>
-    <script src="assets/js/dubbing-service.js"></script>
+    <script src="assets/js/dubbing-service.js?v=1711266945"></script>
     <script src="assets/js/dub-connector.js"></script>
     <script src="ai-script-generator.js"></script>
+    
+    <!-- 直接添加音色卡片处理和音频生成函数 -->
+    <script>
+    // 音色选择函数
+    function selectVoice(element) {
+        // 移除所有卡片的选中状态
+        document.querySelectorAll('.voice-card').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        // 添加选中状态到当前卡片
+        element.classList.add('selected');
+        
+        // 获取音色ID和名称
+        const voiceId = element.getAttribute('data-voice-id');
+        const voiceName = element.querySelector('h3').textContent;
+        
+        // 在控制面板上显示当前选择的音色
+        const currentVoiceInfo = document.querySelector('.current-voice-info') || document.createElement('div');
+        currentVoiceInfo.className = 'current-voice-info';
+        currentVoiceInfo.innerHTML = `当前选择的音色: <strong>${voiceName}</strong>`;
+        
+        // 如果元素不存在，添加到DOM
+        if (!document.querySelector('.current-voice-info')) {
+            const controlPanel = document.querySelector('.control-panel');
+            if (controlPanel) {
+                controlPanel.insertBefore(currentVoiceInfo, controlPanel.firstChild);
+            }
+        }
+        
+        // 仅记录日志，不再显示弹窗
+        console.log('选择音色:', voiceId, voiceName);
+    }
+    
+    // 初始化音色列表
+    async function initVoiceList() {
+        try {
+            // 获取音色列表容器
+            const voiceListContainer = document.querySelector('.voice-list');
+            if (!voiceListContainer) {
+                console.error('无法找到音色列表容器');
+                return;
+            }
+            
+            // 清空当前内容
+            voiceListContainer.innerHTML = '<div class="loading-voices">正在加载可用音色...</div>';
+            
+            // 从服务器获取音色列表
+            const response = await fetch('http://127.0.0.1:8000/api/v1/tts/voices');
+            if (!response.ok) {
+                throw new Error(`获取音色列表失败: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('获取音色列表成功:', data);
+            
+            // 设置不同音色的图标和标签
+            const voiceDetails = {
+                '蔡徐坤': {
+                    avatar: 'assets/images/avatar-4.png',
+                    tags: ['特色', '年轻'],
+                    description: '独特音色<br>高辨识度'
+                },
+                '女声': {
+                    avatar: 'assets/images/avatar-3.png',
+                    tags: ['女声', '温柔'],
+                    description: '温柔女性音色<br>适合生活配音'
+                },
+                '剑魔': {
+                    avatar: 'assets/images/avatar-5.png',
+                    tags: ['磁性', '低沉'],
+                    description: '低沉磁性男声<br>游戏影视配音'
+                },
+                'cctv播音腔': {
+                    avatar: 'assets/images/avatar-1.png',
+                    tags: ['权威', '正式'],
+                    description: '专业播音腔<br>标准普通话'
+                },
+                '英语听力男主播': {
+                    avatar: 'assets/images/avatar-6.png',
+                    tags: ['英语', '标准'],
+                    description: '标准英语发音<br>教学国际内容'
+                },
+                'English_prompt': {
+                    avatar: 'assets/images/avatar-2.png',
+                    tags: ['英文', '清晰'],
+                    description: '英语发音<br>国际化内容'
+                }
+            };
+            
+            // 生成HTML
+            let voiceCardsHTML = '';
+            
+            data.voice_samples.forEach(voice => {
+                // 获取音色详情，如果没有特定设置则使用默认值
+                const details = voiceDetails[voice.name] || {
+                    avatar: 'assets/images/avatar-2.png',
+                    tags: ['标准', '清晰'],
+                    description: '标准音色<br>适合各类场景'
+                };
+                
+                voiceCardsHTML += `
+                    <div class="voice-card" data-voice-id="${voice.id}" onclick="selectVoice(this)">
+                        <img src="${details.avatar}" alt="${voice.name}">
+                        <div class="voice-info">
+                            <h3>${voice.name}</h3>
+                            <div class="tag-wrapper">
+                                ${details.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
+                            <p>${details.description}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // 更新HTML
+            voiceListContainer.innerHTML = voiceCardsHTML;
+            
+            // 默认选择第一个音色
+            if (data.voice_samples.length > 0) {
+                const firstVoiceCard = voiceListContainer.querySelector('.voice-card');
+                if (firstVoiceCard) {
+                    selectVoice(firstVoiceCard);
+                }
+            }
+            
+        } catch (error) {
+            console.error('初始化音色列表失败:', error);
+            document.querySelector('.voice-list').innerHTML = `<div class="error-message">加载音色列表失败: ${error.message}</div>`;
+        }
+    }
+    
+    // 页面加载完成后执行
+    document.addEventListener('DOMContentLoaded', function() {
+        initVoiceList();
+    });
+    
+    // 全局音频生成处理函数
+    async function handleGenerateAudio() {
+        console.log('直接调用音频生成函数');
+        
+        // 获取必要元素和数据
+        const textArea = document.querySelector('.text-editor-container textarea');
+        if (!textArea || !textArea.value.trim()) {
+            alert('请先输入文本内容');
+            return;
+        }
+        
+        // 找到选中的音色（修复选择器，使用.voice-card.selected而不是.voice-item.selected）
+        const selectedVoice = document.querySelector('.voice-card.selected');
+        if (!selectedVoice) {
+            alert('请先选择一个音色');
+            return;
+        }
+        
+        // 不显示加载状态，省略等待遗置
+        
+        try {
+            // 创建表单数据
+            const formData = new FormData();
+            formData.append('text', textArea.value.trim());
+            
+            // 从音色卡片中获取音色ID和名称
+            const voiceId = selectedVoice.getAttribute('data-voice-id');
+            // 获取实际的音色显示名称
+            const voiceDisplayName = selectedVoice.querySelector('h3').textContent;
+            // 从音色ID中提取音色名称作为技术名称
+            const voiceName = voiceId.replace('default_', '');
+            // 添加技术音色名称
+            formData.append('voice_name', voiceName);
+            // 添加显示用的音色名称
+            formData.append('voice_display_name', voiceDisplayName);
+            
+            console.log('使用音色ID:', voiceId);
+            console.log('使用音色名称:', voiceName);
+            
+            // 添加其他参数
+            formData.append('p_w', '2.0');
+            formData.append('t_w', '3.0');
+            
+            // 发送请求
+            const response = await fetch('http://127.0.0.1:8000/api/v1/tts/generate', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                throw new Error(`API返回错误状态: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log('API响应:', data);
+            
+            // 显示提示消息，引导用户查看音频记录页面
+            alert(`音频生成任务已提交，任务ID: ${data.task_id}。\n\n请在"音频记录"页面查看生成的音频。`);
+            
+            // 不再轮询状态和等待音频生成完成
+            console.log('音频生成任务已提交:', data.task_id);
+        } catch (error) {
+            console.error('音频生成错误:', error);
+            alert('音频生成失败: ' + error.message);
+        } finally {
+            // 不需要移除加载状态，因为我们不再使用加载遗置
+            console.log('音频生成请求完成');
+        }
+    }
+    </script>
 </body>
 </html>

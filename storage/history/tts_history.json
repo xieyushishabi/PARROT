@@ -14,5 +14,70 @@
     "status": "completed",
     "output_path": "/home/hoey/桌面/PARROT-master/storage/outputs/4f8a0bc0-4872-4370-8530-f89d177cafea.wav",
     "updated_at": "2025-04-02T23:30:19.973874"
+  },
+  "acd94b56-bb5b-4173-a537-0ebe5a6f63aa": {
+    "task_id": "acd94b56-bb5b-4173-a537-0ebe5a6f63aa",
+    "created_at": "2025-04-03T15:12:29.693369",
+    "text": "测试文本",
+    "voice_id": "",
+    "emotion": "默认",
+    "params": {
+      "text": "测试文本",
+      "voice_sample": "default",
+      "p_w": 2.0,
+      "t_w": 3.0
+    },
+    "status": "completed",
+    "output_path": "/home/hoey/桌面/PARROT-master/storage/outputs/acd94b56-bb5b-4173-a537-0ebe5a6f63aa.wav",
+    "updated_at": "2025-04-03T15:14:02.361775"
+  },
+  "9fb81f31-87ac-48fb-9f7c-a6dfe90c6321": {
+    "task_id": "9fb81f31-87ac-48fb-9f7c-a6dfe90c6321",
+    "created_at": "2025-04-03T15:32:42.479190",
+    "text": "哈哈哈，我是剑魔",
+    "voice_id": "",
+    "emotion": "默认",
+    "params": {
+      "text": "哈哈哈，我是剑魔",
+      "voice_sample": "剑魔",
+      "p_w": 2.0,
+      "t_w": 3.0
+    },
+    "status": "completed",
+    "output_path": "/home/hoey/桌面/PARROT-master/storage/outputs/9fb81f31-87ac-48fb-9f7c-a6dfe90c6321.wav",
+    "updated_at": "2025-04-03T15:34:13.335460"
+  },
+  "5deb97e4-e70a-4c74-b92d-4e94c88b813f": {
+    "task_id": "5deb97e4-e70a-4c74-b92d-4e94c88b813f",
+    "created_at": "2025-04-03T15:51:47.226714",
+    "text": "下面进行英语四级听力考试",
+    "voice_id": "",
+    "emotion": "默认",
+    "params": {
+      "text": "下面进行英语四级听力考试",
+      "voice_sample": "英语听力男主播",
+      "p_w": 2.0,
+      "t_w": 3.0
+    },
+    "status": "completed",
+    "output_path": "/home/hoey/桌面/PARROT-master/storage/outputs/5deb97e4-e70a-4c74-b92d-4e94c88b813f.wav",
+    "updated_at": "2025-04-03T15:54:58.848758"
+  },
+  "8867b99e-5414-43ed-aee7-e5fb71d307a1": {
+    "task_id": "8867b99e-5414-43ed-aee7-e5fb71d307a1",
+    "created_at": "2025-04-03T16:23:10.790770",
+    "text": "111111111111111",
+    "voice_id": "女声",
+    "voice_name": "女声",
+    "emotion": "默认",
+    "params": {
+      "text": "111111111111111",
+      "voice_sample": "女声",
+      "voice_display_name": "女声",
+      "p_w": 2.0,
+      "t_w": 3.0
+    },
+    "status": "processing",
+    "output_path": null
   }
 }

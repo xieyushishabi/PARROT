@@ -399,8 +399,8 @@ function createHistoryItem(record) {
     // 格式化创建时间
     const createdAt = formatDate(record.created_at);
     
-    // 语音信息
-    const voiceInfo = record.voice_id || '默认';
+    // 语音信息 - 优先使用voice_name显示音色名称，如果不存在再回退到voice_id或默认值
+    const voiceInfo = record.voice_name || record.voice_id || '默认';
     
     // 创建历史记录HTML
     item.innerHTML = `

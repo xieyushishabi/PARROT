@@ -94,7 +94,8 @@ def add_history_record(task_id, params, output_path=None, status="processing"):
                 "task_id": task_id,
                 "created_at": datetime.now().isoformat(),
                 "text": params.get("text", ""),
-                "voice_id": params.get("voiceId", ""),
+                "voice_id": params.get("voice_sample", ""),
+                "voice_name": params.get("voice_display_name", ""),  # 添加音色显示名称
                 "emotion": params.get("emotion", "默认"),
                 "params": params,
                 "status": status,
@@ -127,6 +128,8 @@ async def generate_tts(
     background_tasks: BackgroundTasks,
     text: str = Form(...),
     voice_sample: Optional[UploadFile] = File(None),
+    voice_name: Optional[str] = Form(None),  # 音色技术名称参数
+    voice_display_name: Optional[str] = Form(None),  # 音色显示名称参数
     p_w: float = Form(2.0),  # 清晰度权重
     t_w: float = Form(3.0),  # 相似度权重
 ):
@@ -163,7 +166,8 @@ async def generate_tts(
     # 准备参数
     params = {
         "text": text,
-        "voice_sample": voice_sample.filename if voice_sample else "default",
+        "voice_sample": voice_sample.filename if voice_sample else voice_name or "default",
+        "voice_display_name": voice_display_name,
         "p_w": p_w,
         "t_w": t_w
     }
@@ -179,14 +183,22 @@ async def generate_tts(
         "memory_usage_start": memory_percent
     }
     
+    # 确保有音色显示名称
+    if 'voice_display_name' not in params or not params['voice_display_name']:
+        if voice_name:
+            # 如果没有提供显示名称，尝试使用音色名称作为显示名称
+            params['voice_display_name'] = voice_name.replace('default_', '').replace('.wav', '').replace('.mp3', '')
+        else:
+            params['voice_display_name'] = '默认'
+    
     # 添加到历史记录
     add_history_record(task_id, params)
     
     try:
-        # 处理上传的语音样本
+        # 处理语音样本
         input_wav = None
         if voice_sample:
-            # 生成唯一文件名
+            # 处理上传的文件
             file_extension = os.path.splitext(voice_sample.filename)[1]
             voice_sample_path = os.path.join(UPLOAD_DIR, f"{uuid.uuid4()}{file_extension}")
             
@@ -195,9 +207,42 @@ async def generate_tts(
                 shutil.copyfileobj(voice_sample.file, f)
             
             input_wav = voice_sample_path
-        else:
-            # 使用默认语音样本
-            input_wav = os.path.join(MEGATTS3_PATH, "assets", "Chinese_prompt.wav")
+        elif voice_name:
+            # 根据音色名称选择样本文件
+            logger.info(f"根据音色名称选择样本文件: {voice_name}")
+            
+            # 首先检查VOICE_SAMPLES_DIR目录
+            voice_path = os.path.join(VOICE_SAMPLES_DIR, voice_name)
+            if os.path.exists(voice_path):
+                logger.info(f"在用户样本目录找到音色: {voice_path}")
+                input_wav = voice_path
+            else:
+                # 然后检查默认样本目录
+                default_path = os.path.join(MEGATTS3_PATH, "assets", voice_name)
+                if os.path.exists(default_path):
+                    logger.info(f"在默认样本目录找到音色: {default_path}")
+                    input_wav = default_path
+                else:
+                    # 如果不以.wav或.mp3结尾，尝试添加扩展名
+                    for ext in [".wav", ".mp3"]:
+                        sample_path = os.path.join(VOICE_SAMPLES_DIR, voice_name + ext)
+                        if os.path.exists(sample_path):
+                            logger.info(f"在用户样本目录找到音色(加扩展名): {sample_path}")
+                            input_wav = sample_path
+                            break
+                        
+                        default_sample_path = os.path.join(MEGATTS3_PATH, "assets", voice_name + ext)
+                        if os.path.exists(default_sample_path):
+                            logger.info(f"在默认样本目录找到音色(加扩展名): {default_sample_path}")
+                            input_wav = default_sample_path
+                            break
+        
+        # 如果仍然没有找到音色文件，使用默认的
+        if not input_wav:
+            logger.warning(f"未找到指定音色，使用默认音色: 蔡徐坤.wav")
+            input_wav = os.path.join(MEGATTS3_PATH, "assets", "蔡徐坤.wav")
+        
+        logger.info(f"最终选定的音色样本文件: {input_wav}")
         
         # 生成输出路径
         output_filename = f"{task_id}.wav"
@@ -396,10 +441,12 @@ async def list_voice_samples():
         # 加入默认样本
         default_samples_dir = os.path.join(MEGATTS3_PATH, "assets")
         for filename in os.listdir(default_samples_dir):
-            if filename.endswith('.wav') and "prompt" in filename:
+            if filename.endswith('.wav') and os.path.exists(os.path.join(default_samples_dir, filename.replace('.wav', '.npy'))):
+                # 格式化名称，移除文件扩展名
+                display_name = filename.split('.')[0]
                 samples.append({
-                    "id": f"default_{filename.split('.')[0]}",
-                    "name": f"默认 - {filename}",
+                    "id": f"default_{display_name}",
+                    "name": display_name,
                     "path": os.path.join(default_samples_dir, filename),
                     "is_default": True
                 })

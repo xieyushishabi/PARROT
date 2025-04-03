@@ -1,0 +1,122 @@
+/* 音色卡片统一尺寸修复 - 修复文字错位问题 */
+.voice-card {
+    width: 105px !important;
+    height: 125px !important;
+    margin: 2px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    border: 1px solid transparent !important;
+    transition: all 0.3s ease !important;
+    padding: 5px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* 音色列表布局 */
+.voice-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-gap: 1px !important;
+    padding: 4px !important;
+    justify-items: center !important;
+    max-height: 450px !important;
+    overflow-y: auto !important;
+}
+
+.voice-card img {
+    width: 35px !important;
+    height: 35px !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+    margin-bottom: 4px !important;
+    z-index: 1 !important;
+    position: relative !important;
+    border: 1px solid #fff !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+}
+
+.voice-card .voice-info {
+    width: 100% !important;
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+}
+
+.voice-card .voice-info h3 {
+    font-size: 11px !important;
+    margin: 2px 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    width: 90% !important;
+    text-align: center !important;
+}
+
+.voice-card .voice-info p {
+    font-size: 9px !important;
+    margin: 2px 0 !important;
+    color: #666 !important;
+    line-height: 1.2 !important;
+    width: 90% !important;
+    text-align: center !important;
+}
+
+.tag-wrapper {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    margin: 2px 0 !important;
+    width: 90% !important;
+}
+
+.tag {
+    font-size: 7px !important;
+    padding: 1px 3px !important;
+    border-radius: 6px !important;
+    background: #eeeeff !important;
+    color: #6b5cff !important;
+    white-space: nowrap !important;
+    display: inline-block !important;
+}
+
+/* 高亮选中的卡片 */
+.voice-card.selected {
+    background: #eef1ff !important;
+    border: 1px solid #6b5cff !important;
+    box-shadow: 0 0 6px rgba(107, 92, 255, 0.3) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* 选中指示器 */
+.voice-card.selected::after {
+    content: "✓" !important;
+    position: absolute !important;
+    top: 2px !important;
+    right: 2px !important;
+    width: 14px !important;
+    height: 14px !important;
+    background: #6b5cff !important;
+    color: white !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    font-size: 8px !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2) !important;
+}
+
+/* 当前选择的音色信息 */
+.current-voice-info {
+    background: #eef1ff !important;
+    border-left: 2px solid #6b5cff !important;
+    padding: 5px 8px !important;
+    margin: 5px 0 !important;
+    font-size: 11px !important;
+    border-radius: 0 3px 3px 0 !important;
+    box-shadow: 0 1px 3px rgba(107, 92, 255, 0.1) !important;
+    text-align: center !important;
+}
