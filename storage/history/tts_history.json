@@ -1,0 +1,18 @@
+{
+  "4f8a0bc0-4872-4370-8530-f89d177cafea": {
+    "task_id": "4f8a0bc0-4872-4370-8530-f89d177cafea",
+    "created_at": "2025-04-02T23:26:26.501441",
+    "text": "测试123",
+    "voice_id": "",
+    "emotion": "默认",
+    "params": {
+      "text": "测试123",
+      "voice_sample": "default",
+      "p_w": 2.0,
+      "t_w": 3.0
+    },
+    "status": "completed",
+    "output_path": "/home/hoey/桌面/PARROT-master/storage/outputs/4f8a0bc0-4872-4370-8530-f89d177cafea.wav",
+    "updated_at": "2025-04-02T23:30:19.973874"
+  }
+}
