@@ -82,6 +82,164 @@
         .input-section input {
             height: 100%;
         }
+        
+        /* MegaTTS参数控制区域样式 */
+        .megatts-params-section {
+            background: #f9f9ff;
+            border-radius: 8px;
+            border: 1px solid #e0e0ff;
+            padding: 15px;
+            margin: 15px 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 100, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .megatts-params-section:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 100, 0.1);
+        }
+        
+        .megatts-params-section h3 {
+            font-size: 16px;
+            color: #333;
+            margin: 0 0 15px 0;
+            text-align: center;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #e0e0ff;
+        }
+        
+        .param-groups {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .param-group {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 6px;
+            padding: 10px;
+            border: 1px solid #f0f0ff;
+        }
+        
+        .param-group h4 {
+            font-size: 14px;
+            color: #555;
+            margin: 0 0 10px 0;
+            padding-left: 5px;
+            border-left: 3px solid #6366f1;
+        }
+        
+        .param-item {
+            margin-bottom: 15px;
+        }
+        
+        .param-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .param-header span {
+            font-weight: bold;
+            color: #6366f1;
+        }
+        
+        .param-slider {
+            width: 100%;
+            height: 6px;
+            background: #e0e0ff;
+            border-radius: 3px;
+            -webkit-appearance: none;
+            margin: 8px 0;
+            transition: background 0.2s;
+        }
+        
+        .param-slider:hover {
+            background: #d0d0ff;
+        }
+        
+        .param-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #6366f1;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s;
+        }
+        
+        .param-slider::-webkit-slider-thumb:hover {
+            background: #4f46e5;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .param-description {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        
+        .preset-buttons {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            gap: 5px;
+        }
+        
+        .preset-btn {
+            flex: 1;
+            min-width: calc(25% - 8px);
+            border: 1px solid #d0d0ff;
+            background: #f0f0ff;
+            border-radius: 4px;
+            padding: 6px 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .preset-btn:hover {
+            background: #e0e0ff;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preset-default {
+            background: #e0e0ff;
+            border-color: #b0b0ff;
+            font-weight: bold;
+        }
+        
+        /* 生成按钮样式优化 */
+        .btn-preview {
+            background-color: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-preview:hover {
+            background-color: #4f46e5;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 100, 0.2);
+        }
+        
+        .btn-preview:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
     </style>
 </head>
 <body>
@@ -284,79 +442,64 @@
             </div>
         </div>
 
-        <div class="voice-settings-section">
-            <!-- 控制面板 -->
-            <div class="voice-controls">
-                <div class="control-item">
-                    <label>音量：</label>
-                    <input type="range" min="0" max="2" step="0.1" value="1">
-                    <input type="text" class="value-input" value="1">
+        <!-- MegaTTS参数控制区域 -->
+        <div class="megatts-params-section">
+            <h3>模型参数控制</h3>
+            <div class="param-groups">
+                <div class="param-group">
+                    <h4>基础权重参数</h4>
+                    <div class="param-item">
+                        <div class="param-header">
+                            <label for="pwSlider">清晰度权重：</label>
+                            <span id="pwValue">2.0</span>
+                        </div>
+                        <input type="range" id="pwSlider" name="pwSlider" min="0.5" max="5.0" step="0.1" value="2.0" class="param-slider">
+                        <div class="param-description">提高此值增强语音清晰度，但可能影响自然度</div>
+                    </div>
+                    <div class="param-item">
+                        <div class="param-header">
+                            <label for="twSlider">相似度权重：</label>
+                            <span id="twValue">3.0</span>
+                        </div>
+                        <input type="range" id="twSlider" name="twSlider" min="0.5" max="5.0" step="0.1" value="3.0" class="param-slider">
+                        <div class="param-description">提高此值增强与原声的相似程度</div>
+                    </div>
                 </div>
-                <div class="control-item">
-                    <label>音调：</label>
-                    <input type="range" min="-500" max="500" value="0">
-                    <input type="text" class="value-input" value="0">
-                </div>
-                <div class="control-item">
-                    <label>语速：</label>
-                    <input type="range" min="0.5" max="2" step="0.1" value="1">
-                    <input type="text" class="value-input" value="1">
+                
+                <div class="param-group">
+                    <h4>高级参数</h4>
+                    <div class="param-item">
+                        <div class="param-header">
+                            <label for="noiseSlider">采样噪声：</label>
+                            <span id="noiseValue">0.6</span>
+                        </div>
+                        <input type="range" id="noiseSlider" name="noiseSlider" min="0.1" max="1.0" step="0.05" value="0.6" class="param-slider">
+                        <div class="param-description">控制生成语音的随机性，较大值增加表现力</div>
+                    </div>
+                    <div class="param-item">
+                        <div class="param-header">
+                            <label for="lengthSlider">语速控制：</label>
+                            <span id="lengthValue">1.0</span>
+                        </div>
+                        <input type="range" id="lengthSlider" name="lengthSlider" min="0.5" max="2.0" step="0.1" value="1.0" class="param-slider">
+                        <div class="param-description">调整语音的整体速度，小于1减速，大于1加速</div>
+                    </div>
+                    <div class="param-item">
+                        <div class="param-header">
+                            <label for="diffuseSlider">格式塑形：</label>
+                            <span id="diffuseValue">0.8</span>
+                        </div>
+                        <input type="range" id="diffuseSlider" name="diffuseSlider" min="0.0" max="1.0" step="0.1" value="0.8" class="param-slider">
+                        <div class="param-description">控制音频格式的塑形程度，提高清晰度</div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- 情感选择 -->
-        <div class="emotion-section">
-            <label>情感：</label>
-            <div class="emotion-tags">
-                <button class="emotion-tag">
-                    默认
-                    <img src="assets/icons/icon-play.png" alt="播放">
-                </button>
-                <button class="emotion-tag">
-                    热情
-                    <img src="assets/icons/icon-play.png" alt="播放">
-                </button>
-                <button class="emotion-tag">
-                    兴奋
-                    <img src="assets/icons/icon-play.png" alt="播放">
-                </button>
-                <button class="emotion-tag">
-                    友好
-                    <img src="assets/icons/icon-play.png" alt="播放">
-                </button>
-                <button class="emotion-tag">
-                    轻松
-                    <img src="assets/icons/icon-play.png" alt="播放">
-                </button>
-                <button class="emotion-tag">
-                    愉快
-                    <img src="assets/icons/icon-play.png" alt="播放">
-                </button>
-                <button class="emotion-tag">
-                    严肃
-                    <img src="assets/icons/icon-play.png" alt="播放">
-                </button>
-                <button class="emotion-tag">
-                    生气
-                    <img src="assets/icons/icon-play.png" alt="播放">
-                </button>
-                <button class="emotion-tag">
-                    悲伤
-                    <img src="assets/icons/icon-play.png" alt="播放">
-                </button>
-                <button class="emotion-tag">
-                    温柔
-                    <img src="assets/icons/icon-play.png" alt="播放">
-                </button>
-                <button class="emotion-tag">
-                    激动
-                    <img src="assets/icons/icon-play.png" alt="播放">
-                </button>
-                <button class="emotion-tag">
-                    平静
-                    <img src="assets/icons/icon-play.png" alt="播放">
-                </button>
+            
+            <div class="preset-buttons">
+                <button onclick="applyPreset('natural')" class="preset-btn">自然音色</button>
+                <button onclick="applyPreset('default')" class="preset-btn preset-default">默认平衡</button>
+                <button onclick="applyPreset('clear')" class="preset-btn">高清晰</button>
+                <button onclick="applyPreset('expressive')" class="preset-btn">高表现力</button>
             </div>
         </div>
     </div>
@@ -501,6 +644,116 @@
         console.log('选择音色:', voiceId, voiceName);
     }
     
+    // 权重参数值更新函数
+    function updateParamValue(sliderId, valueId) {
+        const slider = document.getElementById(sliderId);
+        const valueElement = document.getElementById(valueId);
+        if (slider && valueElement) {
+            valueElement.textContent = slider.value;
+        }
+    }
+    
+    // 应用预设函数
+    function applyPreset(preset) {
+        const pwSlider = document.getElementById('pwSlider');
+        const twSlider = document.getElementById('twSlider');
+        const noiseSlider = document.getElementById('noiseSlider');
+        const lengthSlider = document.getElementById('lengthSlider');
+        const diffuseSlider = document.getElementById('diffuseSlider');
+        
+        // 定义预设值
+        let values = {};
+        
+        switch(preset) {
+            case 'natural':
+                // 自然音色：高相似度，低清晰度，中等噪声
+                values = {
+                    pw: 1.0,
+                    tw: 5.0,
+                    noise: 0.5,
+                    length: 1.0,
+                    diffuse: 0.6
+                };
+                break;
+            case 'clear':
+                // 高清晰：高清晰度，低相似度，低噪声
+                values = {
+                    pw: 4.0,
+                    tw: 1.0,
+                    noise: 0.3,
+                    length: 1.0,
+                    diffuse: 1.0
+                };
+                break;
+            case 'expressive':
+                // 高表现力：中等清晰度和相似度，高噪声
+                values = {
+                    pw: 2.5,
+                    tw: 2.5,
+                    noise: 0.9,
+                    length: 1.1,
+                    diffuse: 0.8
+                };
+                break;
+            case 'default':
+            default:
+                // 默认平衡
+                values = {
+                    pw: 2.0,
+                    tw: 3.0,
+                    noise: 0.6,
+                    length: 1.0,
+                    diffuse: 0.8
+                };
+                break;
+        }
+        
+        // 设置滑块值并更新显示
+        if (pwSlider) {
+            pwSlider.value = values.pw;
+            updateParamValue('pwSlider', 'pwValue');
+        }
+        
+        if (twSlider) {
+            twSlider.value = values.tw;
+            updateParamValue('twSlider', 'twValue');
+        }
+        
+        if (noiseSlider) {
+            noiseSlider.value = values.noise;
+            updateParamValue('noiseSlider', 'noiseValue');
+        }
+        
+        if (lengthSlider) {
+            lengthSlider.value = values.length;
+            updateParamValue('lengthSlider', 'lengthValue');
+        }
+        
+        if (diffuseSlider) {
+            diffuseSlider.value = values.diffuse;
+            updateParamValue('diffuseSlider', 'diffuseValue');
+        }
+        
+        // 更新按钮选中状态
+        // 移除所有按钮的选中状态
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.classList.remove('preset-default');
+        });
+        
+        // 根据预设名称找到对应按钮并添加选中状态
+        const presetBtns = document.querySelectorAll('.preset-btn');
+        for (let i = 0; i < presetBtns.length; i++) {
+            const btn = presetBtns[i];
+            const btnPreset = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+            if (btnPreset === preset) {
+                btn.classList.add('preset-default');
+                break;
+            }
+        }
+        
+        console.log('已应用预设:', preset, values);
+    }
+    
     // 初始化音色列表
     async function initVoiceList() {
         try {
@@ -602,6 +855,46 @@
     // 页面加载完成后执行
     document.addEventListener('DOMContentLoaded', function() {
         initVoiceList();
+        
+        // 添加参数滑块事件监听
+        const pwSlider = document.getElementById('pwSlider');
+        if (pwSlider) {
+            pwSlider.addEventListener('input', function() {
+                updateParamValue('pwSlider', 'pwValue');
+            });
+        }
+        
+        const twSlider = document.getElementById('twSlider');
+        if (twSlider) {
+            twSlider.addEventListener('input', function() {
+                updateParamValue('twSlider', 'twValue');
+            });
+        }
+        
+        // 添加高级参数滑块事件监听
+        const noiseSlider = document.getElementById('noiseSlider');
+        if (noiseSlider) {
+            noiseSlider.addEventListener('input', function() {
+                updateParamValue('noiseSlider', 'noiseValue');
+            });
+        }
+        
+        const lengthSlider = document.getElementById('lengthSlider');
+        if (lengthSlider) {
+            lengthSlider.addEventListener('input', function() {
+                updateParamValue('lengthSlider', 'lengthValue');
+            });
+        }
+        
+        const diffuseSlider = document.getElementById('diffuseSlider');
+        if (diffuseSlider) {
+            diffuseSlider.addEventListener('input', function() {
+                updateParamValue('diffuseSlider', 'diffuseValue');
+            });
+        }
+        
+        // 默认应用默认预设
+        applyPreset('default');
     });
     
     // 全局音频生成处理函数
@@ -622,7 +915,13 @@
             return;
         }
         
-        // 不显示加载状态，省略等待遗置
+        // 显示生成中状态
+        const generateButton = document.querySelector('.btn-preview');
+        if (generateButton) {
+            generateButton.disabled = true;
+            generateButton.innerHTML = '生成中...';
+            generateButton.style.backgroundColor = '#ccc';
+        }
         
         try {
             // 创建表单数据
@@ -643,9 +942,38 @@
             console.log('使用音色ID:', voiceId);
             console.log('使用音色名称:', voiceName);
             
-            // 添加其他参数
-            formData.append('p_w', '2.0');
-            formData.append('t_w', '3.0');
+            // 获取用户设置的基础权重参数
+            const pwSlider = document.getElementById('pwSlider');
+            const twSlider = document.getElementById('twSlider');
+            const p_w = pwSlider ? pwSlider.value : '2.0';
+            const t_w = twSlider ? twSlider.value : '3.0';
+            
+            // 添加基础权重参数到表单
+            formData.append('p_w', p_w);
+            formData.append('t_w', t_w);
+            
+            console.log('使用清晰度权重:', p_w);
+            console.log('使用相似度权重:', t_w);
+            
+            // 获取用户设置的高级参数
+            const noiseSlider = document.getElementById('noiseSlider');
+            const lengthSlider = document.getElementById('lengthSlider');
+            const diffuseSlider = document.getElementById('diffuseSlider');
+            
+            const noise = noiseSlider ? noiseSlider.value : '0.6';
+            const length = lengthSlider ? lengthSlider.value : '1.0';
+            const diffuse = diffuseSlider ? diffuseSlider.value : '0.8';
+            
+            // 添加高级参数到表单
+            formData.append('noise', noise);
+            formData.append('length_scale', length);
+            formData.append('diffusion_steps', diffuse);
+            
+            console.log('使用高级参数:', {
+                noise: noise,
+                length_scale: length,
+                diffusion_steps: diffuse
+            });
             
             // 发送请求
             const response = await fetch('http://127.0.0.1:8000/api/v1/tts/generate', {
@@ -669,7 +997,12 @@
             console.error('音频生成错误:', error);
             alert('音频生成失败: ' + error.message);
         } finally {
-            // 不需要移除加载状态，因为我们不再使用加载遗置
+            // 恢复生成按钮状态
+            if (generateButton) {
+                generateButton.disabled = false;
+                generateButton.innerHTML = '生成音频';
+                generateButton.style.backgroundColor = '';
+            }
             console.log('音频生成请求完成');
         }
     }
