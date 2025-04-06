@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, BackgroundTasks
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 import os
 import uuid
 import time
@@ -13,6 +13,12 @@ import sys
 import psutil
 import threading
 from datetime import datetime
+from sqlalchemy.orm import Session
+
+from backend.database.database import get_db
+from backend.database.models import Voice
+from backend.core.security import get_current_user
+from backend.database.models import User
 
 # 设置日志
 logging.basicConfig(level=logging.INFO)
@@ -460,7 +466,13 @@ async def list_voice_samples():
 @router.post("/voice-samples/upload")
 async def upload_voice_sample(
     voice_file: UploadFile = File(...),
-    name: str = Form(...)
+    title: str = Form(...),
+    preview: str = Form(...),
+    avatar: Optional[UploadFile] = File(None),
+    is_public: bool = Form(True),
+    language: str = Form("zh"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """
     上传新的语音样本
@@ -473,18 +485,47 @@ async def upload_voice_sample(
         # 生成唯一文件名
         file_extension = os.path.splitext(voice_file.filename)[1]
         file_id = str(uuid.uuid4())
-        filename = f"{name.replace(' ', '_')}_{file_id}{file_extension}"
+        filename = f"{title.replace(' ', '_')}_{file_id}{file_extension}"
         file_path = os.path.join(VOICE_SAMPLES_DIR, filename)
         
-        # 保存上传的文件
+        # 保存上传的声音文件
         with open(file_path, "wb") as f:
             shutil.copyfileobj(voice_file.file, f)
         
+        # 处理头像/封面图片
+        avatar_data = None
+        if avatar:
+            # 验证图片格式
+            if not avatar.content_type.startswith('image/'):
+                raise HTTPException(status_code=400, detail="头像必须是图片格式")
+            
+            # 读取图片数据
+            avatar_data = await avatar.read()
+        
+        # 创建新的Voice记录
+        new_voice = Voice(
+            title=title,
+            preview=preview,
+            avatar=avatar_data,
+            language=language,
+            audio_data=file_path,  # 保存文件路径而非二进制数据
+            is_public=is_public,
+            user_id=current_user.id
+        )
+        
+        # 保存到数据库
+        db.add(new_voice)
+        db.commit()
+        db.refresh(new_voice)
+        
         return {
-            "id": file_id,
-            "name": name,
-            "filename": filename,
+            "id": new_voice.id,
+            "title": title,
+            "preview": preview,
+            "is_public": is_public,
+            "language": language,
             "path": file_path,
+            "has_avatar": avatar_data is not None,
             "message": "语音样本上传成功"
         }
     except HTTPException:
@@ -492,6 +533,104 @@ async def upload_voice_sample(
     except Exception as e:
         logger.error(f"上传语音样本时出错: {str(e)}")
         raise HTTPException(status_code=500, detail=f"上传语音样本时出错: {str(e)}")
+
+
+@router.get("/voice-samples/my")
+async def get_my_voice_samples(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    获取当前用户的所有声音样本
+    """
+    try:
+        # 查询当前用户的所有声音样本
+        voices = db.query(Voice).filter(Voice.user_id == current_user.id).all()
+        
+        # 格式化返回结果
+        result = []
+        for voice in voices:
+            result.append({
+                "id": voice.id,
+                "title": voice.title,
+                "preview": voice.preview,
+                "has_avatar": voice.avatar is not None,
+                "language": voice.language,
+                "is_public": voice.is_public,
+                "created_at": voice.created_at.isoformat() if voice.created_at else None
+            })
+        
+        return {"voice_samples": result}
+    except Exception as e:
+        logger.error(f"获取用户声音样本时出错: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"获取用户声音样本时出错: {str(e)}")
+
+@router.get("/voice-samples/{voice_id}/avatar")
+async def get_voice_sample_avatar(
+    voice_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    获取声音样本的头像图片
+    """
+    try:
+        # 查询声音样本
+        voice = db.query(Voice).filter(Voice.id == voice_id).first()
+        
+        if not voice:
+            raise HTTPException(status_code=404, detail="声音样本不存在")
+        
+        # 如果没有头像，返回默认头像
+        if not voice.avatar:
+            default_avatar_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 
+                                             "web", "assets", "images", "model-preview.png")
+            return FileResponse(default_avatar_path, media_type="image/png")
+        
+        # 返回头像数据
+        return Response(content=voice.avatar, media_type="image/jpeg")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"获取声音样本头像时出错: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"获取声音样本头像时出错: {str(e)}")
+
+@router.delete("/voice-samples/{voice_id}")
+async def delete_voice_sample(
+    voice_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    删除声音样本
+    """
+    try:
+        # 查询声音样本
+        voice = db.query(Voice).filter(Voice.id == voice_id).first()
+        
+        if not voice:
+            raise HTTPException(status_code=404, detail="声音样本不存在")
+        
+        # 验证所有权
+        if voice.user_id != current_user.id:
+            raise HTTPException(status_code=403, detail="无权删除此声音样本")
+        
+        # 删除音频文件
+        if voice.audio_data and os.path.exists(voice.audio_data):
+            try:
+                os.remove(voice.audio_data)
+            except Exception as e:
+                logger.warning(f"删除音频文件失败: {e}")
+        
+        # 从数据库中删除
+        db.delete(voice)
+        db.commit()
+        
+        return {"message": "声音样本已删除"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"删除声音样本时出错: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"删除声音样本时出错: {str(e)}")
 
 
 def run_tts_generation(task_id, input_wav, text, output_path, p_w, t_w):

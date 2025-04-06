@@ -37,7 +37,8 @@ class Voice(Base):
     preview = Column(String, nullable=False, comment="声音预览描述")
     avatar = Column(LargeBinary, nullable=True, comment="声音头像/封面图像数据")
     language = Column(String, default="zh", comment="声音语言类型，如中文、英文")
-    audio_data = Column(LargeBinary, nullable=True, comment="声音音频数据")
+    audio_data = Column(String, nullable=False, comment="声音音频文件存储路径")
+    is_public = Column(Boolean, default=True, comment="是否公开")
     
     # 统计数据
     play_count = Column(Integer, default=0, comment="播放次数")

@@ -18,10 +18,303 @@ function showToast(message) {
     }, 2000);
 }
 
+// API基础URL
+const API_BASE_URL = 'http://127.0.0.1:8000/api/v1';
+
+// 上传语音样本
+async function uploadVoiceSample(params) {
+    try {
+        // 获取认证令牌
+        const userJson = localStorage.getItem('currentUser');
+        const currentUser = userJson ? JSON.parse(userJson) : null;
+        const token = currentUser ? currentUser.token : null;
+        if (!token) {
+            // 如果没有令牌，提示用户登录
+            showToast('请先登录后再上传声音样本');
+            throw new Error('用户未登录');
+        }
+
+        const formData = new FormData();
+        
+        // 添加必要的字段
+        formData.append('title', params.title);
+        formData.append('preview', params.preview || '暂无描述');
+        
+        // 音频文件
+        if (params.voiceFile) {
+            formData.append('voice_file', params.voiceFile);
+        } else {
+            throw new Error('请提供音频文件');
+        }
+        
+        // 头像/封面图片
+        if (params.avatar) {
+            formData.append('avatar', params.avatar);
+        }
+        
+        // 公开/私有设置
+        formData.append('is_public', params.isPublic);
+        
+        // 语言设置，默认中文
+        formData.append('language', params.language || 'zh');
+        
+        console.log('发送语音样本上传请求...');
+        
+        // 发送请求，确保正确设置Authorization头
+        const response = await fetch(`${API_BASE_URL}/tts/voice-samples/upload`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) {
+            // 特别处理401错误
+            if (response.status === 401) {
+                showToast('登录已过期，请重新登录');
+                // 清除失效的令牌
+                localStorage.removeItem('token');
+                
+                throw new Error('登录已过期');
+            }
+            
+            // 处理其他错误
+            const errorData = await response.json();
+            const errorMessage = errorData.detail || errorData.message || '上传失败，服务器返回错误';
+            throw new Error(errorMessage);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('上传语音样本失败:', error);
+        const errorMessage = error.message || (typeof error === 'object' ? JSON.stringify(error) : String(error));
+        showToast(errorMessage || '上传失败，请重试');
+        throw error;
+    }
+}
+
+// 获取我的声音样本
+async function getMyVoiceSamples() {
+    try {
+        // 获取认证令牌
+        const userJson = localStorage.getItem('currentUser');
+        const currentUser = userJson ? JSON.parse(userJson) : null;
+        const token = currentUser ? currentUser.token : null;
+        
+        if (!token) {
+            // 用户未登录，显示提示
+            const voiceItems = document.querySelector('.voice-items');
+            voiceItems.innerHTML = '<p class="no-voice-tip">请先登录后查看您的声音</p>';
+            return;
+        }
+
+        // 发送请求获取声音样本
+        const response = await fetch(`${API_BASE_URL}/tts/voice-samples/my`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) {
+            // 处理错误
+            if (response.status === 401) {
+                // 登录已过期
+                localStorage.removeItem('currentUser');
+                const voiceItems = document.querySelector('.voice-items');
+                voiceItems.innerHTML = '<p class="no-voice-tip">登录已过期，请重新登录</p>';
+                return;
+            }
+            
+            throw new Error('获取声音样本失败');
+        }
+        
+        const data = await response.json();
+        const voiceSamples = data.voice_samples || [];
+        
+        // 更新UI
+        const voiceItems = document.querySelector('.voice-items');
+        
+        if (voiceSamples.length === 0) {
+            // 没有声音样本
+            voiceItems.innerHTML = '<p class="no-voice-tip">暂无我的声音</p>';
+            return;
+        }
+        
+        // 清空现有内容
+        voiceItems.innerHTML = '';
+        
+        // 添加声音样本
+        voiceSamples.forEach(sample => {
+            // 格式化日期
+            let dateStr = '未知日期';
+            if (sample.created_at) {
+                const date = new Date(sample.created_at);
+                dateStr = `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+            }
+            
+            const voiceItem = document.createElement('div');
+            voiceItem.className = 'voice-item';
+            voiceItem.innerHTML = `
+                <div class="voice-avatar">
+                    <img src="${API_BASE_URL}/tts/voice-samples/${sample.id}/avatar" alt="模型头像">
+                </div>
+                <div class="voice-info">
+                    <h3>${sample.title}</h3>
+                    <p class="voice-desc">${sample.preview || '暂无描述文本'}</p>
+                    <div class="date-wrapper">
+                        <img src="assets/icons/time-icon.png" alt="时间" class="time-icon">
+                        <span class="date">${dateStr}</span>
+                    </div>
+                </div>
+                <button class="delete-btn" onclick="showDeleteDialog(this)" data-voice-id="${sample.id}">
+                    <img src="assets/icons/delete-icon.png" alt="删除" class="delete-icon">
+                </button>
+            `;
+            
+            voiceItems.appendChild(voiceItem);
+        });
+    } catch (error) {
+        console.error('获取声音样本失败:', error);
+        const voiceItems = document.querySelector('.voice-items');
+        voiceItems.innerHTML = '<p class="no-voice-tip">获取声音样本失败，请刷新页面重试</p>';
+    }
+}
+
+// 删除声音样本
+async function deleteVoiceSample(voiceId) {
+    try {
+        // 获取认证令牌
+        const userJson = localStorage.getItem('currentUser');
+        const currentUser = userJson ? JSON.parse(userJson) : null;
+        const token = currentUser ? currentUser.token : null;
+        
+        if (!token) {
+            showToast('请先登录后再操作');
+            return false;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/tts/voice-samples/${voiceId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) {
+            if (response.status === 401) {
+                showToast('登录已过期，请重新登录');
+                localStorage.removeItem('currentUser');
+                return false;
+            }
+            
+            const errorData = await response.json();
+            throw new Error(errorData.detail || '删除失败');
+        }
+        
+        return true;
+    } catch (error) {
+        console.error('删除声音样本失败:', error);
+        showToast('删除失败: ' + (error.message || '未知错误'));
+        return false;
+    }
+}
+
+// 添加录音相关变量
+let mediaRecorder = null;
+let audioChunks = [];
+let audioBlob = null;
+let audioStream = null;
+
+// 实现开始录音功能
+async function startRecording() {
+    try {
+        // 请求麦克风权限
+        audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+        // 创建MediaRecorder实例
+        mediaRecorder = new MediaRecorder(audioStream);
+        
+        // 清空之前的数据
+        audioChunks = [];
+        
+        // 收集录音数据
+        mediaRecorder.addEventListener('dataavailable', event => {
+            if (event.data.size > 0) {
+                audioChunks.push(event.data);
+            }
+        });
+        
+        // 当录音停止时的处理
+        mediaRecorder.addEventListener('stop', () => {
+            // 创建音频Blob
+            audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            
+            // 创建音频URL
+            const audioUrl = URL.createObjectURL(audioBlob);
+            
+            // 找到或创建音频元素并设置源
+            const recordingAudio = ensureAudioElement();
+            recordingAudio.src = audioUrl;
+        });
+        
+        // 开始录音
+        mediaRecorder.start();
+        return true;
+    } catch (error) {
+        console.error('无法访问麦克风:', error);
+        showToast('无法访问麦克风，请检查权限设置');
+        return false;
+    }
+}
+
+// 实现停止录音功能
+function stopRecording() {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        
+        // 关闭麦克风流
+        if (audioStream) {
+            audioStream.getTracks().forEach(track => track.stop());
+            audioStream = null;
+        }
+        
+        return true;
+    }
+    return false;
+}
+
+// 确保录音完成界面有音频元素
+function ensureAudioElement() {
+    const recordComplete = document.querySelector('.record-complete');
+    let audio = recordComplete.querySelector('audio');
+    
+    if (!audio) {
+        audio = document.createElement('audio');
+        audio.controls = false; // 不显示默认控件，使用自定义播放按钮
+        audio.style.display = 'none'; // 隐藏但仍然可以播放
+        recordComplete.appendChild(audio);
+    }
+    
+    return audio;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
+    // 获取用户的声音样本
+    getMyVoiceSamples();
+    
     // 录音完成界面的提交按钮点击事件
     const completeSubmitBtn = document.querySelector('.record-complete .submit-record-btn');
-    completeSubmitBtn.addEventListener('click', function() {
+    completeSubmitBtn.addEventListener('click', async function() {
+        // 首先检查用户是否已登录
+        const userJson = localStorage.getItem('currentUser');
+        const currentUser = userJson ? JSON.parse(userJson) : null;
+        if (!currentUser || !currentUser.token) {
+            showToast('请先登录后再上传声音样本');
+            return;
+        }
+
         // 检查模型照片
         const modelPreview = document.querySelector('.preview-image');
         if (modelPreview.src.includes('model-preview.png')) {
@@ -38,67 +331,116 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 获取描述文本
         const modelDesc = document.querySelector('.model-description').value.trim();
+        
+        // 获取公开/私有设置
+        const isPublic = document.querySelector('.btn-public').classList.contains('active');
+        
+        try {
+            // 检查是否有录音数据
+            if (!audioBlob) {
+                showToast('录音数据不完整，请重新录制');
+                return;
+            }
+            
+            // 将录音Blob转换为文件对象
+            const audioFile = new File([audioBlob], 'recording.wav', { type: 'audio/wav' });
+            
+            // 将图片转换为文件
+            let avatarFile = null;
+            if (!modelPreview.src.includes('model-preview.png')) {
+                // 仅当用户上传了图片时才处理
+                avatarFile = await fetch(modelPreview.src)
+                    .then(r => r.blob())
+                    .then(blob => new File([blob], 'avatar.jpg', { type: 'image/jpeg' }));
+            }
+            
+            // 准备上传参数
+            const uploadParams = {
+                title: modelName,
+                preview: modelDesc,
+                voiceFile: audioFile,
+                avatar: avatarFile,
+                isPublic: isPublic,
+                language: 'zh'
+            };
+            
+            completeSubmitBtn.disabled = true;
+            completeSubmitBtn.textContent = '上传中...';
+            
+            // 调用API上传
+            const result = await uploadVoiceSample(uploadParams);
+            console.log('上传成功:', result);
+            
+            // 添加新的声音条目
+            const voiceItems = document.querySelector('.voice-items');
+            const noVoiceTip = voiceItems.querySelector('.no-voice-tip');
+            if (noVoiceTip) {
+                noVoiceTip.remove();
+            }
 
-        // 添加新的声音条目
-        const voiceItems = document.querySelector('.voice-items');
-        const noVoiceTip = voiceItems.querySelector('.no-voice-tip');
-        if (noVoiceTip) {
-            noVoiceTip.remove();
-        }
+            const currentDate = new Date();
+            const dateStr = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getDate().toString().padStart(2, '0')}`;
 
-        const currentDate = new Date();
-        const dateStr = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getDate().toString().padStart(2, '0')}`;
-
-        const newVoiceItem = document.createElement('div');
-        newVoiceItem.className = 'voice-item';
-        newVoiceItem.innerHTML = `
-            <div class="voice-avatar">
-                <img src="${modelPreview.src}" alt="模型头像">
-            </div>
-            <div class="voice-info">
-                <h3>${modelName}</h3>
-                <p class="voice-desc">${modelDesc || '暂无描述文本'}</p>
-                <div class="date-wrapper">
-                    <img src="assets/icons/time-icon.png" alt="时间" class="time-icon">
-                    <span class="date">${dateStr}</span>
+            const newVoiceItem = document.createElement('div');
+            newVoiceItem.className = 'voice-item';
+            newVoiceItem.innerHTML = `
+                <div class="voice-avatar">
+                    <img src="${modelPreview.src}" alt="模型头像">
                 </div>
-            </div>
-            <button class="delete-btn" onclick="showDeleteDialog(this)">
-                <img src="assets/icons/delete-icon.png" alt="删除" class="delete-icon">
-            </button>
-        `;
+                <div class="voice-info">
+                    <h3>${modelName}</h3>
+                    <p class="voice-desc">${modelDesc || '暂无描述文本'}</p>
+                    <div class="date-wrapper">
+                        <img src="assets/icons/time-icon.png" alt="时间" class="time-icon">
+                        <span class="date">${dateStr}</span>
+                    </div>
+                </div>
+                <button class="delete-btn" onclick="showDeleteDialog(this)" data-voice-id="${result.id}">
+                    <img src="assets/icons/delete-icon.png" alt="删除" class="delete-icon">
+                </button>
+            `;
 
-        voiceItems.insertBefore(newVoiceItem, voiceItems.firstChild);
+            voiceItems.insertBefore(newVoiceItem, voiceItems.firstChild);
 
-        // 显示提交成功提示
-        showToast('提交成功');
+            // 显示提交成功提示
+            showToast('提交成功');
 
-        // 清空模型详情
-        modelPreview.src = 'assets/images/model-preview.png';
-        document.querySelector('.model-name').value = '';
-        document.querySelector('.model-description').value = '';
-        document.querySelector('.image-upload').classList.remove('has-image');
+            // 清空模型详情
+            modelPreview.src = 'assets/images/model-preview.png';
+            document.querySelector('.model-name').value = '';
+            document.querySelector('.model-description').value = '';
+            document.querySelector('.image-upload').classList.remove('has-image');
 
-        // 返回上传界面
-        const recordComplete = document.querySelector('.record-complete');
-        const uploadDefault = document.querySelector('.upload-default');
-        recordComplete.style.display = 'none';
-        uploadDefault.style.display = 'block';
+            // 返回上传界面
+            const recordComplete = document.querySelector('.record-complete');
+            const uploadDefault = document.querySelector('.upload-default');
+            recordComplete.style.display = 'none';
+            uploadDefault.style.display = 'block';
 
-        // 重置录音界面状态
-        const startRecordBtn = document.querySelector('.record-interface .start-record-btn');
-        startRecordBtn.classList.remove('recording');
-        startRecordBtn.textContent = '开始录制';
-        const recordTitle = document.querySelector('.record-title');
-        recordTitle.textContent = '请录制30秒左右的音频';
-        document.querySelector('.record-tip-default').style.display = 'block';
-        document.querySelector('.record-tip-recording').style.display = 'none';
-        clearInterval(window.recordTimer);
+            // 重置录音界面状态
+            const startRecordBtn = document.querySelector('.record-interface .start-record-btn');
+            startRecordBtn.classList.remove('recording');
+            startRecordBtn.textContent = '开始录制';
+            const recordTitle = document.querySelector('.record-title');
+            recordTitle.textContent = '请录制30秒左右的音频';
+            document.querySelector('.record-tip-default').style.display = 'block';
+            document.querySelector('.record-tip-recording').style.display = 'none';
+            clearInterval(window.recordTimer);
 
-        // 清空已录制的音频
-        const audio = document.querySelector('audio');
-        if (audio) {
-            audio.src = '';
+            // 清空已录制的音频
+            const recordedAudioElement = ensureAudioElement();
+            recordedAudioElement.src = '';
+            
+            // 清空录音数据
+            audioBlob = null;
+            audioChunks = [];
+        } catch (error) {
+            console.error('上传失败:', error);
+            const errorMessage = error.message || (typeof error === 'object' ? JSON.stringify(error) : String(error));
+            showToast('上传失败: ' + errorMessage);
+        } finally {
+            completeSubmitBtn.disabled = false;
+            completeSubmitBtn.textContent = '提 交';
         }
     });
 
@@ -178,6 +520,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // 音频上传功能
     const uploadBox = document.querySelector('.upload-box');
     const audioFileInput = uploadBox.querySelector('.file-input');
+    
+    // 设置accept属性以同时接受MP3和WAV文件
+    audioFileInput.setAttribute('accept', 'audio/mpeg, audio/mp3, audio/wav');
+    
     const uploadIcon = uploadBox.querySelector('i');
     const uploadTitle = uploadBox.querySelector('h3');
     const uploadTip = uploadBox.querySelector('p');
@@ -193,8 +539,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!file) return;
 
         // 检查文件类型
-        if (!file.type.includes('audio/mpeg') && !file.type.includes('audio/mp3')) {
-            showToast('请选择 MP3 格式的音频文件');
+        if (!file.type.includes('audio/mpeg') && !file.type.includes('audio/mp3') && !file.type.includes('audio/wav')) {
+            showToast('请选择 MP3 或 WAV 格式的音频文件');
             return;
         }
 
@@ -212,9 +558,9 @@ document.addEventListener('DOMContentLoaded', function () {
         hasUploadedAudio = true;  // 标记已上传音频
 
         // 检查音频时长
-        const audio = new Audio();
-        audio.addEventListener('loadedmetadata', function () {
-            const duration = audio.duration;
+        const audioElement = new Audio();
+        audioElement.addEventListener('loadedmetadata', function () {
+            const duration = audioElement.duration;
             if (duration < 10 || duration > 45) {
                 showToast(duration < 10 ? '音频时长未达10秒' : '音频时长超过45秒');
                 audioFileInput.value = '';
@@ -229,7 +575,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         // 处理加载失败的情况
-        audio.addEventListener('error', function () {
+        audioElement.addEventListener('error', function () {
             showToast('音频文件加载失败，请重试');
             audioFileInput.value = '';
             // 恢复上传框默认显示
@@ -241,7 +587,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         // 加载音频文件
-        audio.src = URL.createObjectURL(file);
+        audioElement.src = URL.createObjectURL(file);
     });
 
     // 添加拖拽事件监听
@@ -265,8 +611,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const file = e.dataTransfer.files[0];
         if (file) {
             // 检查文件类型
-            if (!file.type.includes('audio/mpeg') && !file.type.includes('audio/mp3')) {
-                showToast('请选择 MP3 格式的音频文件');
+            if (!file.type.includes('audio/mpeg') && !file.type.includes('audio/mp3') && !file.type.includes('audio/wav')) {
+                showToast('请选择 MP3 或 WAV 格式的音频文件');
                 return;
             }
 
@@ -284,9 +630,9 @@ document.addEventListener('DOMContentLoaded', function () {
             hasUploadedAudio = true;
 
             // 检查音频时长
-            const audio = new Audio();
-            audio.addEventListener('loadedmetadata', function() {
-                const duration = audio.duration;
+            const droppedAudio = new Audio();
+            droppedAudio.addEventListener('loadedmetadata', function() {
+                const duration = droppedAudio.duration;
                 if (duration < 10 || duration > 45) {
                     showToast(duration < 10 ? '音频时长未达10秒' : '音频时长已达45秒');
                     // 恢复上传框默认显示
@@ -299,7 +645,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            audio.addEventListener('error', function() {
+            droppedAudio.addEventListener('error', function() {
                 showToast('音频文件加载失败，请重试');
                 // 恢复上传框默认显示
                 uploadIcon.style.display = 'block';
@@ -309,12 +655,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 hasUploadedAudio = false;
             });
 
-            audio.src = URL.createObjectURL(file);
+            droppedAudio.src = URL.createObjectURL(file);
         }
     });
 
     // 音频上传的提交按钮点击事件
-    uploadSubmitBtn.addEventListener('click', function () {
+    uploadSubmitBtn.addEventListener('click', async function () {
+        // 首先检查用户是否已登录
+        const userJson = localStorage.getItem('currentUser');
+        const currentUser = userJson ? JSON.parse(userJson) : null;
+        if (!currentUser || !currentUser.token) {
+            showToast('请先登录后再上传声音样本');
+            return;
+        }
+
         // 检查是否已上传音频文件
         if (!hasUploadedAudio) {
             showToast('请上传音频文件');
@@ -337,52 +691,103 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 获取描述文本
         const modelDesc = document.querySelector('.model-description').value.trim();
+        
+        // 获取公开/私有设置
+        const isPublic = document.querySelector('.btn-public').classList.contains('active');
+        
+        try {
+            // 获取上传的音频文件
+            const audioFile = audioFileInput.files[0];
+            if (!audioFile) {
+                showToast('请选择音频文件');
+                return;
+            }
+            
+            // 将图片转换为文件
+            let avatarFile = null;
+            if (!modelPreview.src.includes('model-preview.png')) {
+                // 如果是dataURL格式，需要转换为文件
+                if (modelPreview.src.startsWith('data:')) {
+                    avatarFile = await fetch(modelPreview.src)
+                        .then(r => r.blob())
+                        .then(blob => new File([blob], 'avatar.jpg', { type: 'image/jpeg' }));
+                } else if (fileInput.files && fileInput.files[0]) {
+                    // 如果已有文件，直接使用
+                    avatarFile = fileInput.files[0];
+                }
+            }
+            
+            // 准备上传参数
+            const uploadParams = {
+                title: modelName,
+                preview: modelDesc,
+                voiceFile: audioFile,
+                avatar: avatarFile,
+                isPublic: isPublic,
+                language: 'zh'
+            };
+            
+            uploadSubmitBtn.disabled = true;
+            uploadSubmitBtn.textContent = '上传中...';
+            
+            // 调用API上传
+            const result = await uploadVoiceSample(uploadParams);
+            console.log('上传成功:', result);
+            
+            // 添加新的声音条目
+            const voiceItems = document.querySelector('.voice-items');
+            const noVoiceTip = voiceItems.querySelector('.no-voice-tip');
+            if (noVoiceTip) {
+                noVoiceTip.remove();
+            }
 
-        // 添加新的声音条目
-        const voiceItems = document.querySelector('.voice-items');
-        const noVoiceTip = voiceItems.querySelector('.no-voice-tip');
-        if (noVoiceTip) {
-            noVoiceTip.remove();
-        }
+            const currentDate = new Date();
+            const dateStr = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getDate().toString().padStart(2, '0')}`;
 
-        const currentDate = new Date();
-        const dateStr = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getDate().toString().padStart(2, '0')}`;
-
-        const newVoiceItem = document.createElement('div');
-        newVoiceItem.className = 'voice-item';
-        newVoiceItem.innerHTML = `
-            <div class="voice-avatar">
-                <img src="${modelPreview.src}" alt="模型头像">
-            </div>
-            <div class="voice-info">
-                <h3>${modelName}</h3>
-                <p class="voice-desc">${modelDesc || '暂无描述文本'}</p>
-                <div class="date-wrapper">
-                    <img src="assets/icons/time-icon.png" alt="时间" class="time-icon">
-                    <span class="date">${dateStr}</span>
+            const newVoiceItem = document.createElement('div');
+            newVoiceItem.className = 'voice-item';
+            newVoiceItem.innerHTML = `
+                <div class="voice-avatar">
+                    <img src="${modelPreview.src}" alt="模型头像">
                 </div>
-            </div>
-            <button class="delete-btn" onclick="showDeleteDialog(this)">
-                <img src="assets/icons/delete-icon.png" alt="删除" class="delete-icon">
-            </button>
-        `;
+                <div class="voice-info">
+                    <h3>${modelName}</h3>
+                    <p class="voice-desc">${modelDesc || '暂无描述文本'}</p>
+                    <div class="date-wrapper">
+                        <img src="assets/icons/time-icon.png" alt="时间" class="time-icon">
+                        <span class="date">${dateStr}</span>
+                    </div>
+                </div>
+                <button class="delete-btn" onclick="showDeleteDialog(this)" data-voice-id="${result.id}">
+                    <img src="assets/icons/delete-icon.png" alt="删除" class="delete-icon">
+                </button>
+            `;
 
-        voiceItems.insertBefore(newVoiceItem, voiceItems.firstChild);
+            voiceItems.insertBefore(newVoiceItem, voiceItems.firstChild);
 
-        // 显示提交成功提示
-        showToast('提交成功');
-
-        // 清空所有输入
-        modelPreview.src = 'assets/images/model-preview.png';
-        document.querySelector('.model-name').value = '';
-        document.querySelector('.model-description').value = '';
-        document.querySelector('.image-upload').classList.remove('has-image');
-        uploadIcon.style.display = 'block';
-        uploadTitle.textContent = '上传音频文件';
-        uploadTip.style.display = 'block';
-        uploadBox.classList.remove('has-file');
-        audioFileInput.value = '';
-        hasUploadedAudio = false;
+            // 显示提交成功提示
+            showToast('提交成功');
+            
+            // 清空所有输入
+            modelPreview.src = 'assets/images/model-preview.png';
+            document.querySelector('.model-name').value = '';
+            document.querySelector('.model-description').value = '';
+            document.querySelector('.image-upload').classList.remove('has-image');
+            uploadIcon.style.display = 'block';
+            uploadTitle.textContent = '上传音频文件';
+            uploadTip.style.display = 'block';
+            uploadBox.classList.remove('has-file');
+            audioFileInput.value = '';
+            hasUploadedAudio = false;
+            
+        } catch (error) {
+            console.error('上传失败:', error);
+            const errorMessage = error.message || (typeof error === 'object' ? JSON.stringify(error) : String(error));
+            showToast('上传失败: ' + errorMessage);
+        } finally {
+            uploadSubmitBtn.disabled = false;
+            uploadSubmitBtn.textContent = '提 交';
+        }
     });
 
     // 录音功能
@@ -412,6 +817,12 @@ document.addEventListener('DOMContentLoaded', function () {
         recordTipDefault.style.display = 'block';
         recordTipRecording.style.display = 'none';
         clearInterval(recordTimer);
+        
+        // 清空录音数据
+        audioBlob = null;
+        audioChunks = [];
+        const recordedAudioElement = ensureAudioElement();
+        recordedAudioElement.src = '';
     });
 
     // 录音完成界面的返回按钮点击事件
@@ -445,46 +856,19 @@ document.addEventListener('DOMContentLoaded', function () {
         clearInterval(recordTimer);
     });
 
-    // 停止录制并显示录音完成界面
-    function stopRecording(duration) {
-        clearInterval(recordTimer);
-        const recordDuration = recordComplete.querySelector('.record-duration');
-        
-        // 创建音频元素（如果不存在）
-        let audio = recordComplete.querySelector('audio');
-        if (!audio) {
-            audio = document.createElement('audio');
-            recordComplete.appendChild(audio);
-            // 这里应该设置录制的音频源
-            audio.src = 'path/to/recorded/audio.mp3';  // 需要替换为实际录制的音频路径
-        }
-
-        // 监听音频播放结束事件
-        audio.addEventListener('ended', function() {
-            const playBtn = recordComplete.querySelector('.play-btn img');
-            playBtn.src = 'assets/icons/play.png';
-        });
-
-        // 更新录音时长显示
-        const wholeSeconds = Math.floor(duration);
-        const milliseconds = Math.floor((duration % 1) * 1000);
-        recordDuration.textContent = `${wholeSeconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(3, '0')}`;
-
-        recordInterface.style.display = 'none';
-        uploadDefault.style.display = 'none';
-        recordComplete.style.display = 'flex';
-    }
-
     // 开始录制按钮点击事件
-    startRecordBtn.addEventListener('click', function () {
+    startRecordBtn.addEventListener('click', async function () {
         const recordTitle = document.querySelector('.record-title');
 
         if (!this.classList.contains('recording')) {
             // 开始录制
+            const started = await startRecording();
+            if (!started) return; // 如果录音启动失败，直接返回
+            
             this.classList.add('recording');
             this.textContent = '停止录制';
             recordTitle.textContent = '00:000';
-            recordTipDefault.style.display = 'block';
+            recordTipDefault.style.display = 'none';
             recordTipRecording.style.display = 'block';
 
             startTime = Date.now();
@@ -499,7 +883,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 // 检查是否超过45秒
                 if (seconds >= 45) {
                     showToast('录制时长已达45秒');
-                    stopRecording(seconds);
+                    stopRecording();
+                    stopRecordingUI(seconds);
                 }
             }, 10);
         } else {
@@ -511,23 +896,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            stopRecording(seconds);
+            stopRecording();
+            stopRecordingUI(seconds);
         }
     });
 
-    // 重置按钮点击事件
-    const resetBtn = document.querySelector('.record-interface .reset-btn');
-    resetBtn.addEventListener('click', function () {
-        startRecordBtn.classList.remove('recording');
-        startRecordBtn.textContent = '开始录制';
-        startRecordBtn.style.display = 'block';
-        const recordTitle = document.querySelector('.record-title');
-        recordTitle.textContent = '请录制30秒左右的音频';
-        document.querySelector('.audio-wave').style.display = 'none';
-        resetBtn.style.display = 'none';
-        submitRecordBtn.disabled = true;
+    // 封装停止录制的UI部分
+    function stopRecordingUI(duration) {
         clearInterval(recordTimer);
-    });
+        const recordDuration = recordComplete.querySelector('.record-duration');
+        
+        // 更新录音时长显示
+        const wholeSeconds = Math.floor(duration);
+        const milliseconds = Math.floor((duration % 1) * 1000);
+        recordDuration.textContent = `${wholeSeconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(3, '0')}`;
+
+        recordInterface.style.display = 'none';
+        uploadDefault.style.display = 'none';
+        recordComplete.style.display = 'flex';
+    }
 
     // 删除声音条目
     const deleteButtons = document.querySelectorAll('.delete-btn');
@@ -555,42 +942,54 @@ function hideDeleteDialog() {
 // 确认删除
 function confirmDelete() {
     if (currentDeleteBtn) {
-        // 获取要删除的声音条目
-        const voiceItem = currentDeleteBtn.closest('.voice-item');
-        // 删除该条目
-        voiceItem.remove();
+        const voiceId = currentDeleteBtn.getAttribute('data-voice-id');
+        if (voiceId) {
+            // 调用API删除声音样本
+            deleteVoiceSample(voiceId).then(success => {
+                if (success) {
+                    // 获取要删除的声音条目
+                    const voiceItem = currentDeleteBtn.closest('.voice-item');
+                    // 删除该条目
+                    voiceItem.remove();
 
-        // 检查是否已删除所有声音条目
-        const voiceItems = document.querySelector('.voice-items');
-        if (!voiceItems.children.length) {
-            // 添加提示文本
-            const noVoiceTip = document.createElement('p');
-            noVoiceTip.className = 'no-voice-tip';
-            noVoiceTip.textContent = '暂无我的声音';
-            voiceItems.appendChild(noVoiceTip);
+                    // 检查是否已删除所有声音条目
+                    const voiceItems = document.querySelector('.voice-items');
+                    if (!voiceItems.children.length) {
+                        // 添加提示文本
+                        const noVoiceTip = document.createElement('p');
+                        noVoiceTip.className = 'no-voice-tip';
+                        noVoiceTip.textContent = '暂无我的声音';
+                        voiceItems.appendChild(noVoiceTip);
+                    }
+                    
+                    showToast('删除成功');
+                }
+            });
         }
     }
     hideDeleteDialog();
 }
 
-// 添加全局的音频播放处理函数
+// 修改播放按钮的处理函数
 function handlePlayClick(btn) {
     const img = btn.querySelector('img');
-    // 修改音频元素的查找范围，限定在录音完成界面内
-    const audio = document.querySelector('.record-complete audio');
+    const audioPlayer = ensureAudioElement();
     
-    if (!audio) return;
+    if (!audioPlayer.src) {
+        showToast('无可播放的录音');
+        return;
+    }
     
-    if (audio.paused) {
-        audio.play();
+    if (audioPlayer.paused) {
+        audioPlayer.play();
         img.src = 'assets/icons/pause.png';
     } else {
-        audio.pause();
+        audioPlayer.pause();
         img.src = 'assets/icons/play.png';
     }
 
     // 添加音频播放结束事件监听
-    audio.addEventListener('ended', function() {
+    audioPlayer.addEventListener('ended', function() {
         img.src = 'assets/icons/play.png';
     });
 }

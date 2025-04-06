@@ -23,8 +23,8 @@ origins = [
     "http://127.0.0.1:46511",  # 添加代理服务器地址
     "http://localhost:8080",  # 添加Python HTTP服务器
     "http://127.0.0.1:8080",  # 添加Python HTTP服务器IP
-    "http://127.0.0.1:35041",  # 添加Cascade代理服务器
-    "*",  # 暂时允许所有源（仅用于开发环境）
+    "http://127.0.0.1:35041"  # 添加Cascade代理服务器
+       # 暂时允许所有源（仅用于开发环境）      我添加"*"这行会报错
 ]
 
 app.add_middleware(
