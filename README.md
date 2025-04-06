@@ -35,6 +35,19 @@ bash stop_servers.sh
 - 后端API文档：http://localhost:8000/docs
 - 日志位置：`/logs` 目录
 
+### 模型文件设置（Linux环境）
+```bash
+# 在checkpoints目录下创建符号链接，链接到MegaTTS3的模型文件
+cd checkpoints
+ln -s /path/to/MegaTTS3/checkpoints/aligner_lm aligner_lm
+ln -s /path/to/MegaTTS3/checkpoints/diffusion_transformer diffusion_transformer
+ln -s /path/to/MegaTTS3/checkpoints/duration_lm duration_lm
+ln -s /path/to/MegaTTS3/checkpoints/g2p g2p
+ln -s /path/to/MegaTTS3/checkpoints/wavvae wavvae
+```
+
+注意：请将上述路径中的`/path/to/MegaTTS3/checkpoints/`替换为您系统中MegaTTS3实际的路径，文件名已经是正确的模型文件名称。
+
 ## 🔧 技术栈
 - **前端**：HTML5, CSS3, JavaScript
 - **后端**：Python, FastAPI
