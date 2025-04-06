@@ -6,6 +6,8 @@
     <title>语音资源审核 - Parrot Sound</title>
     <link rel="stylesheet" href="assets/css/index.css">
     <link rel="stylesheet" href="assets/css/resource-review.css">
+    <!-- 添加flatpickr样式 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
     <div class="container">
@@ -47,11 +49,23 @@
                 <div class="search-area">
                     <div class="search-item">
                         <label>用户名</label>
-                        <input type="text" placeholder="请输入">
+                        <input type="text" id="username-search" placeholder="请输入">
+                    </div>
+                    <div class="search-item">
+                        <label>标题</label>
+                        <input type="text" id="title-search" placeholder="请输入">
                     </div>
                     <div class="search-item">
                         <label>上传时间</label>
                         <input type="text" placeholder="请选择" class="date-picker">
+                    </div>
+                    <div class="search-item">
+                        <label>状态</label>
+                        <select id="status-search">
+                            <option value="">全部</option>
+                            <option value="pending">待审核</option>
+                            <option value="passed">已通过</option>
+                        </select>
                     </div>
                     <button class="search-btn">
                         <img src="images/icons/search-icon.png" alt="搜索图标" class="search-icon">
@@ -103,7 +117,10 @@
             </div>
         </main>
     </div>
+    <!-- 添加必要的库 -->
     <script src="libs/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh.js"></script>
     <script src="assets/js/resource-review.js"></script>
 </body>
 </html>

@@ -39,6 +39,7 @@ class Voice(Base):
     language = Column(String, default="zh", comment="声音语言类型，如中文、英文")
     audio_data = Column(String, nullable=False, comment="声音音频文件存储路径")
     is_public = Column(Boolean, default=True, comment="是否公开")
+    status = Column(String, default="pending", comment="审核状态：pending(待审核)、passed(已通过)、failed(未通过)")
     
     # 统计数据
     play_count = Column(Integer, default=0, comment="播放次数")

@@ -371,39 +371,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const result = await uploadVoiceSample(uploadParams);
             console.log('上传成功:', result);
             
-            // 添加新的声音条目
-            const voiceItems = document.querySelector('.voice-items');
-            const noVoiceTip = voiceItems.querySelector('.no-voice-tip');
-            if (noVoiceTip) {
-                noVoiceTip.remove();
-            }
-
-            const currentDate = new Date();
-            const dateStr = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getDate().toString().padStart(2, '0')}`;
-
-            const newVoiceItem = document.createElement('div');
-            newVoiceItem.className = 'voice-item';
-            newVoiceItem.innerHTML = `
-                <div class="voice-avatar">
-                    <img src="${modelPreview.src}" alt="模型头像">
-                </div>
-                <div class="voice-info">
-                    <h3>${modelName}</h3>
-                    <p class="voice-desc">${modelDesc || '暂无描述文本'}</p>
-                    <div class="date-wrapper">
-                        <img src="assets/icons/time-icon.png" alt="时间" class="time-icon">
-                        <span class="date">${dateStr}</span>
-                    </div>
-                </div>
-                <button class="delete-btn" onclick="showDeleteDialog(this)" data-voice-id="${result.id}">
-                    <img src="assets/icons/delete-icon.png" alt="删除" class="delete-icon">
-                </button>
-            `;
-
-            voiceItems.insertBefore(newVoiceItem, voiceItems.firstChild);
-
             // 显示提交成功提示
-            showToast('提交成功');
+            showToast('提交成功，等待管理员审核后将显示在您的声音列表中');
 
             // 清空模型详情
             modelPreview.src = 'assets/images/model-preview.png';
@@ -733,40 +702,9 @@ document.addEventListener('DOMContentLoaded', function () {
             // 调用API上传
             const result = await uploadVoiceSample(uploadParams);
             console.log('上传成功:', result);
-            
-            // 添加新的声音条目
-            const voiceItems = document.querySelector('.voice-items');
-            const noVoiceTip = voiceItems.querySelector('.no-voice-tip');
-            if (noVoiceTip) {
-                noVoiceTip.remove();
-            }
-
-            const currentDate = new Date();
-            const dateStr = `${currentDate.getFullYear()}/${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/${currentDate.getDate().toString().padStart(2, '0')}`;
-
-            const newVoiceItem = document.createElement('div');
-            newVoiceItem.className = 'voice-item';
-            newVoiceItem.innerHTML = `
-                <div class="voice-avatar">
-                    <img src="${modelPreview.src}" alt="模型头像">
-                </div>
-                <div class="voice-info">
-                    <h3>${modelName}</h3>
-                    <p class="voice-desc">${modelDesc || '暂无描述文本'}</p>
-                    <div class="date-wrapper">
-                        <img src="assets/icons/time-icon.png" alt="时间" class="time-icon">
-                        <span class="date">${dateStr}</span>
-                    </div>
-                </div>
-                <button class="delete-btn" onclick="showDeleteDialog(this)" data-voice-id="${result.id}">
-                    <img src="assets/icons/delete-icon.png" alt="删除" class="delete-icon">
-                </button>
-            `;
-
-            voiceItems.insertBefore(newVoiceItem, voiceItems.firstChild);
 
             // 显示提交成功提示
-            showToast('提交成功');
+            showToast('提交成功，等待管理员审核后将显示在您的声音列表中');
             
             // 清空所有输入
             modelPreview.src = 'assets/images/model-preview.png';

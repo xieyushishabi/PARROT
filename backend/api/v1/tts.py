@@ -541,11 +541,14 @@ async def get_my_voice_samples(
     current_user: User = Depends(get_current_user)
 ):
     """
-    获取当前用户的所有声音样本
+    获取当前用户的所有已通过审核的声音样本
     """
     try:
-        # 查询当前用户的所有声音样本
-        voices = db.query(Voice).filter(Voice.user_id == current_user.id).all()
+        # 查询当前用户已通过审核的声音样本
+        voices = db.query(Voice).filter(
+            Voice.user_id == current_user.id,
+            Voice.status == "passed"  # 只返回已通过审核的声音样本
+        ).all()
         
         # 格式化返回结果
         result = []

@@ -1,3 +1,35 @@
+/* 添加基础布局样式以支持滚动 */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* 侧边栏样式 */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px; /* 根据实际侧边栏宽度调整 */
+    height: 100vh;
+    z-index: 10;
+}
+
+/* 主内容区域样式 */
+.main-content {
+    margin-left: 240px; /* 与侧边栏宽度一致 */
+    width: calc(100% - 240px);
+    min-height: 100vh;
+    overflow-y: auto; /* 允许垂直滚动 */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
 /* 搜索区域样式 */
 .search-area {
     display: flex;
@@ -20,12 +52,26 @@
     font-size: 14px;
 }
 
-.search-item input {
+.search-item input,
+.search-item select,
+.status-filter {
     padding: 8px 12px;
     border: 1px solid #E5E7EB;
     border-radius: 6px;
     outline: none;
     width: 200px;
+    background-color: #fff;
+    font-size: 14px;
+}
+
+.status-filter {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.status-filter:focus {
+    border-color: var(--primary-color);
 }
 
 .search-btn {
@@ -195,4 +241,4 @@
     width: 26px;
     height: 26px;
     vertical-align: middle;
-} 
+}

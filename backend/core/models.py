@@ -177,3 +177,7 @@ class AdminUserCreate(BaseModel):
     age: Optional[int] = None
     gender: Optional[str] = None
     created_at: Optional[str] = None
+
+class VoiceReviewRequest(BaseModel):
+    """语音审核请求模型"""
+    status: str  # "passed" 或 "failed"

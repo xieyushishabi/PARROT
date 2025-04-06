@@ -5,8 +5,8 @@ from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel
 
-from backend.core.models import AdminUserCreate, APIResponse, UserUpdate
-from backend.database.models import User
+from backend.core.models import AdminUserCreate, APIResponse, UserUpdate, VoiceReviewRequest
+from backend.database.models import User, Voice
 from backend.database.database import get_db
 from backend.core.security import get_password_hash
 
@@ -305,5 +305,255 @@ def delete_user(
         "code": 200,
         "msg": "用户删除成功",
         "data": {"id": user_id}
+    }
+    
+@router.get("/voices", response_model=APIResponse)
+def get_voices_list(
+    title: Optional[str] = None,
+    username: Optional[str] = None,
+    upload_time: Optional[str] = None,
+    status: Optional[str] = None,
+    page: int = Query(1, ge=1),
+    page_size: int = Query(8, ge=1, le=100),
+    db: Session = Depends(get_db)
+):
+    """
+    获取语音资源列表，支持按条件筛选
+    
+    - title: 按标题筛选（模糊匹配）
+    - username: 按用户名筛选（模糊匹配）
+    - upload_time: 按上传时间筛选（格式：YYYY-MM-DD 或 YYYY-MM-DD to YYYY-MM-DD）
+    - status: 按审核状态筛选 (pending/passed/failed)
+    - page: 页码，从1开始
+    - page_size: 每页数量，默认8条
+    """
+    # 联合查询Voice和User表
+    query = db.query(Voice, User).join(User, User.id == Voice.user_id)
+    
+    # 按标题筛选
+    if title:
+        query = query.filter(Voice.title.like(f"%{title}%"))
+    
+    # 按用户名筛选
+    if username:
+        query = query.filter(User.username.like(f"%{username}%"))
+    
+    # 按上传时间筛选
+    if upload_time:
+        try:
+            if " to " in upload_time:
+                # 日期范围格式
+                start_date_str, end_date_str = upload_time.split(" to ")
+                start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+                end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+                # 设置为当天结束时间
+                end_date = end_date.replace(hour=23, minute=59, second=59)
+                
+                query = query.filter(and_(
+                    Voice.created_at >= start_date,
+                    Voice.created_at <= end_date
+                ))
+            else:
+                # 单个日期格式
+                date = datetime.strptime(upload_time, "%Y-%m-%d")
+                next_day = date.replace(hour=23, minute=59, second=59)
+                
+                query = query.filter(and_(
+                    Voice.created_at >= date,
+                    Voice.created_at <= next_day
+                ))
+        except ValueError:
+            # 日期格式错误，忽略该筛选条件
+            pass
+    
+    # 按审核状态筛选
+    if status:
+        query = query.filter(Voice.status == status)
+    
+    # 计算总数
+    total_items = query.count()
+    
+    # 分页
+    offset = (page - 1) * page_size
+    query = query.offset(offset).limit(page_size)
+    
+    # 执行查询
+    results = query.all()
+    
+    # 格式化返回数据
+    voice_list = []
+    for idx, (voice, user) in enumerate(results):
+        voice_list.append({
+            "id": voice.id,
+            "index": offset + idx + 1,  # 序号
+            "username": user.username,
+            "title": voice.title,
+            "uploadTime": voice.created_at.strftime("%Y-%m-%d %H:%M:%S") if voice.created_at else "",
+            "status": voice.status,  # 直接使用status字段
+            "audioUrl": voice.audio_data,  # 音频文件路径
+            "preview": voice.preview,
+            "language": voice.language
+        })
+    
+    return {
+        "code": 200,
+        "msg": "获取语音资源列表成功",
+        "data": {
+            "voices": voice_list,
+            "total": total_items,
+            "page": page,
+            "pageSize": page_size,
+            "pages": (total_items + page_size - 1) // page_size  # 总页数
+        }
+    }
+
+@router.get("/voices/{voice_id}", response_model=APIResponse)
+def get_voice_detail(
+    voice_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    获取单个语音资源详情
+    
+    - voice_id: 语音资源ID
+    """
+    # 联合查询获取语音和用户信息
+    result = db.query(Voice, User).join(User, User.id == Voice.user_id).filter(Voice.id == voice_id).first()
+    
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="语音资源不存在"
+        )
+    
+    voice, user = result
+    
+    # 将二进制头像数据转换为Base64字符串（如果存在）
+    avatar_base64 = None
+    if voice.avatar:
+        import base64
+        avatar_base64 = base64.b64encode(voice.avatar).decode('utf-8')
+    
+    # 格式化详情数据
+    voice_detail = {
+        "id": voice.id,
+        "title": voice.title,
+        "preview": voice.preview,
+        "avatar": avatar_base64,  # Base64编码的图像数据
+        "avatar_url": f"/api/v1/voices/{voice.id}/avatar",  # 或提供获取头像的URL
+        "language": voice.language,
+        "audio_url": f"/api/v1/voices/{voice.id}/audio",  # 提供获取音频的URL
+        "is_public": voice.is_public,
+        "status": voice.status,  # 直接使用status字段
+        "play_count": voice.play_count,
+        "like_count": voice.like_count,
+        "collect_count": voice.collect_count,
+        "created_at": voice.created_at.strftime("%Y-%m-%d %H:%M:%S") if voice.created_at else "",
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "avatar": None  # 用户头像可以单独提供
+        }
+    }
+    
+    return {
+        "code": 200,
+        "msg": "获取语音资源详情成功",
+        "data": voice_detail
+    }
+
+@router.put("/voices/{voice_id}/review", response_model=APIResponse)
+def review_voice(
+    voice_id: int,
+    review_data: VoiceReviewRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    审核语音资源
+    
+    - voice_id: 要审核的语音资源ID
+    - review_data: 包含审核状态的数据（passed或failed）
+    """
+    # 查找语音资源
+    voice = db.query(Voice).filter(Voice.id == voice_id).first()
+    if not voice:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="语音资源不存在"
+        )
+    
+    # 更新审核状态
+    if review_data.status in ["passed", "failed", "pending"]:
+        voice.status = review_data.status
+        # 同时更新is_public字段以保持兼容性
+        voice.is_public = (review_data.status == "passed")
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="无效的审核状态，应为 'passed'、'failed' 或 'pending'"
+        )
+    
+    # 提交更改
+    try:
+        db.commit()
+        db.refresh(voice)
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"审核语音资源失败: {str(e)}"
+        )
+    
+    return {
+        "code": 200,
+        "msg": f"语音资源已{'通过' if review_data.status == 'passed' else '拒绝'}审核",
+        "data": {
+            "id": voice.id,
+            "status": voice.status
+        }
+    }
+
+@router.delete("/voices/{voice_id}", response_model=APIResponse)
+def delete_voice(
+    voice_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    删除语音资源
+    
+    - voice_id: 要删除的语音资源ID
+    """
+    # 查找语音资源
+    voice = db.query(Voice).filter(Voice.id == voice_id).first()
+    if not voice:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="语音资源不存在"
+        )
+    
+    # 获取音频文件路径，以便删除文件
+    audio_file_path = voice.audio_data
+    
+    # 删除语音资源记录
+    try:
+        db.delete(voice)
+        db.commit()
+        
+        # 删除关联的音频文件
+        if audio_file_path and os.path.exists(audio_file_path):
+            import os
+            os.remove(audio_file_path)
+            
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"删除语音资源失败: {str(e)}"
+        )
+    
+    return {
+        "code": 200,
+        "msg": "语音资源删除成功",
+        "data": {"id": voice_id}
     }
 
