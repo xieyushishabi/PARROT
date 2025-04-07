@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
             dateFormat: "Y-m-d",
             mode: "range", // 允许选择日期范围
             allowInput: true,
-            placeholder: "请选择日期范围"
+            placeholder: "请选择日期范围",
+            rangeSeparator: " to " // 确保范围分隔符与后端一致
         });
     }
 
@@ -49,8 +50,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     return fetchVoices(searchParams); // 重新获取数据
                 }
                 
-                renderTable(resourceData);
-                updatePagination(data.total, currentPage, totalPages);
+                renderTable(currentPage); // 渲染表格数据
+                updatePagination();
             } else {
                 console.error('获取语音资源数据失败:', response.data.msg);
                 alert('获取语音资源数据失败: ' + (response.data.msg || '未知错误'));
@@ -61,23 +62,27 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 如果API调用失败，显示空表格
             resourceData = [];
-            renderTable(resourceData);
-            updatePagination(0, 1, 1);
+            renderTable(currentPage);
+            updatePagination();
         }
     }
 
     // 渲染表格数据
-    function renderTable(data) {
+    function renderTable(page) {
+        const start = (page - 1) * itemsPerPage;
+        const end = page * itemsPerPage;
+        const pageData = resourceData.slice(start, end);
+
         const tbody = document.querySelector('.resource-table tbody');
         
-        if (data.length === 0) {
+        if (pageData.length === 0) {
             tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">暂无语音资源数据</td></tr>`;
             return;
         }
         
-        tbody.innerHTML = data.map((resource, index) => `
+        tbody.innerHTML = pageData.map((resource, index) => `
             <tr>
-                <td>${resource.index}</td>
+                <td>${start + index + 1}</td>
                 <td>${resource.username}</td>
                 <td>${resource.title}</td>
                 <td>${resource.uploadTime}</td>
@@ -150,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // 创建新的音频对象
-        audioPlayer = new Audio(`${baseURL}/api/v1/voices/${voiceId}/audio`);
+        audioPlayer = new Audio(`${baseURL}/api/v1/admin/voices/${voiceId}/audio`);
         audioPlayer.play().catch(error => {
             console.error('播放音频失败:', error);
             alert('播放音频失败，请确保音频文件存在并且格式正确');
@@ -158,57 +163,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 更新分页区域
-    function updatePagination(totalItems, currentPage, totalPages) {
-        document.querySelector('.total').textContent = `共 ${totalItems} 条`;
-        
+    function updatePagination() {
+        const totalPages = Math.ceil(resourceData.length / itemsPerPage);
         const pageNav = document.querySelector('.page-nav');
         pageNav.innerHTML = '';
 
         // 添加上一页按钮
-        pageNav.innerHTML += `<button class="prev-btn">&lt;</button>`;
+        if (currentPage > 1) {
+            pageNav.innerHTML += `<button class="prev-btn">&lt;</button>`;
+        }
 
         // 添加页码按钮
-        if (totalPages <= 5) {
-            // 如果总页数少于等于5，直接显示所有页码
-            for (let i = 1; i <= totalPages; i++) {
-                pageNav.innerHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}">${i}</button>`;
-            }
-        } else {
-            // 如果总页数大于5，显示当前页附近的页码和省略号
-            if (currentPage <= 3) {
-                // 当前页靠近开头
-                for (let i = 1; i <= 4; i++) {
-                    pageNav.innerHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}">${i}</button>`;
-                }
-                pageNav.innerHTML += `<span class="ellipsis">...</span>`;
-                pageNav.innerHTML += `<button class="page-btn">${totalPages}</button>`;
-            } else if (currentPage >= totalPages - 2) {
-                // 当前页靠近结尾
-                pageNav.innerHTML += `<button class="page-btn">1</button>`;
-                pageNav.innerHTML += `<span class="ellipsis">...</span>`;
-                for (let i = totalPages - 3; i <= totalPages; i++) {
-                    pageNav.innerHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}">${i}</button>`;
-                }
-            } else {
-                // 当前页在中间
-                pageNav.innerHTML += `<button class="page-btn">1</button>`;
-                pageNav.innerHTML += `<span class="ellipsis">...</span>`;
-                for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-                    pageNav.innerHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}">${i}</button>`;
-                }
-                pageNav.innerHTML += `<span class="ellipsis">...</span>`;
-                pageNav.innerHTML += `<button class="page-btn">${totalPages}</button>`;
-            }
+        for (let i = 1; i <= totalPages; i++) {
+            pageNav.innerHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}">${i}</button>`;
         }
 
         // 添加下一页按钮
-        pageNav.innerHTML += `<button class="next-btn">&gt;</button>`;
+        if (currentPage < totalPages) {
+            pageNav.innerHTML += `<button class="next-btn">&gt;</button>`;
+        }
 
         // 为页码按钮添加点击事件
         document.querySelectorAll('.page-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 currentPage = parseInt(this.textContent);
-                fetchVoices();
+                renderTable(currentPage);
+                updatePagination();
             });
         });
 
@@ -218,7 +198,8 @@ document.addEventListener('DOMContentLoaded', function() {
             prevBtn.addEventListener('click', function() {
                 if (currentPage > 1) {
                     currentPage--;
-                    fetchVoices();
+                    renderTable(currentPage);
+                    updatePagination();
                 }
             });
         }
@@ -229,16 +210,13 @@ document.addEventListener('DOMContentLoaded', function() {
             nextBtn.addEventListener('click', function() {
                 if (currentPage < totalPages) {
                     currentPage++;
-                    fetchVoices();
+                    renderTable(currentPage);
+                    updatePagination();
                 }
             });
         }
 
-        // 更新跳转页码的输入框
-        const gotoInput = document.querySelector('.goto input');
-        if (gotoInput) {
-            gotoInput.value = currentPage;
-        }
+        document.querySelector('.total').textContent = `共 ${resourceData.length} 条`;
     }
 
     // 获取状态文本
@@ -270,7 +248,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             if (dateInput && dateInput.value.trim()) {
+                // 确保日期范围格式正确
                 searchParams.upload_time = dateInput.value.trim();
+                console.log("筛选日期范围:", searchParams.upload_time); // 添加调试输出
             }
             
             if (statusSelect && statusSelect.value) {
@@ -302,10 +282,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         function handleGotoPage() {
             const pageNum = parseInt(gotoInput.value);
+            const totalPages = Math.ceil(resourceData.length / itemsPerPage);
             
             if (!isNaN(pageNum) && pageNum > 0 && pageNum <= totalPages) {
                 currentPage = pageNum;
-                fetchVoices();
+                renderTable(currentPage);
+                updatePagination();
             } else {
                 // 如果输入无效，重置为当前页码
                 gotoInput.value = currentPage;

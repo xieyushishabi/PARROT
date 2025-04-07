@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const baseURL = 'http://127.0.0.1:8000';
     let currentVoiceId = null;
     let audioPlayer = null;
-    let userId = null;
 
     // 从URL获取语音ID
     function getVoiceIdFromUrl() {
@@ -26,14 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response.data && response.data.code === 200) {
                 const voiceData = response.data.data;
                 renderVoiceDetail(voiceData);
-                
-                // 保存用户ID以便获取用户资料
-                userId = voiceData.user.id;
-                
-                // 获取用户头像
-                if (userId) {
-                    await loadUserProfile();
-                }
             } else {
                 console.error('获取语音资源详情失败:', response.data.msg);
                 alert('获取语音资源详情失败: ' + (response.data.msg || '未知错误'));
@@ -42,27 +33,6 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('获取语音资源详情出错:', error);
             alert('获取语音资源详情失败: ' + (error.response?.data?.msg || error.message || '未知错误'));
             window.location.href = 'resource-review.html';
-        }
-    }
-
-    // 获取用户资料
-    async function loadUserProfile() {
-        try {
-            const response = await axios.get(`${baseURL}/api/v1/user/profile`, {
-                params: { user_id: userId }
-            });
-            
-            if (response.data && response.data.code === 200) {
-                const userData = response.data.data;
-                
-                // 更新用户头像
-                const avatarImg = document.querySelector('.avatar');
-                if (avatarImg && userData.avatar) {
-                    avatarImg.src = `data:image/jpeg;base64,${userData.avatar}`;
-                }
-            }
-        } catch (error) {
-            console.error('获取用户资料失败:', error);
         }
     }
 
@@ -101,13 +71,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 infoRows[2].innerHTML = `类型: <span>${voiceData.language}</span>`;
             }
 
-            // 设置用户头像 - 移除默认头像
+            // 设置用户头像 - 修复这里
             const avatarImg = resourceItem.querySelector('.avatar');
-            // 头像将由loadUserProfile负责设置
+            if (avatarImg && voiceData.user.avatar) {
+                avatarImg.src = `data:image/jpeg;base64,${voiceData.user.avatar}`;
+            }
 
             // 更新按钮状态
             const approveBtn = resourceItem.querySelector('.approve-btn');
-            const rejectBtn = resourceItem.querySelector('.reject-btn');
+            const rejectBtn = resourceItem.querySelector('.reject-btn');  // 修复了这里的语法错误
             
             if (approveBtn && rejectBtn) {
                 if (voiceData.status === 'passed') {
@@ -156,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // 创建新的音频对象
-        audioPlayer = new Audio(`${baseURL}/api/v1/voices/${currentVoiceId}/audio`);
+        audioPlayer = new Audio(`${baseURL}/api/v1/admin/voices/${currentVoiceId}/audio`);
         audioPlayer.play().catch(error => {
             console.error('播放音频失败:', error);
             alert('播放音频失败，请确保音频文件存在并且格式正确');

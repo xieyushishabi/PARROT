@@ -4,6 +4,8 @@ from sqlalchemy import and_, or_
 from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel
+import os
+from fastapi.responses import FileResponse
 
 from backend.core.models import AdminUserCreate, APIResponse, UserUpdate, VoiceReviewRequest
 from backend.database.models import User, Voice
@@ -46,14 +48,27 @@ def get_user_list(
     # 按日期范围筛选
     if date_range:
         try:
-            # 尝试解析日期格式
-            if " to " in date_range:
+            # 调试输出
+            print(f"处理注册时间筛选: {date_range}")
+            
+            # 尝试查找可能的分隔符：" to "、"至"、"到"、"-"、" - "
+            separators = [" to ", "至", "到", " - ", "-"]
+            found_separator = None
+            
+            for sep in separators:
+                if sep in date_range:
+                    found_separator = sep
+                    break
+            
+            if found_separator:
                 # 日期范围格式
-                start_date_str, end_date_str = date_range.split(" to ")
-                start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
-                end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+                start_date_str, end_date_str = date_range.split(found_separator)
+                start_date = datetime.strptime(start_date_str.strip(), "%Y-%m-%d")
+                end_date = datetime.strptime(end_date_str.strip(), "%Y-%m-%d")
                 # 设置为当天结束时间
                 end_date = end_date.replace(hour=23, minute=59, second=59)
+                
+                print(f"日期范围筛选: {start_date} 到 {end_date}")
                 
                 query = query.filter(and_(
                     User.created_at >= start_date,
@@ -61,15 +76,18 @@ def get_user_list(
                 ))
             else:
                 # 单个日期格式
-                date = datetime.strptime(date_range, "%Y-%m-%d")
+                date = datetime.strptime(date_range.strip(), "%Y-%m-%d")
                 next_day = date.replace(hour=23, minute=59, second=59)
+                
+                print(f"单日期筛选: {date} 到 {next_day}")
                 
                 query = query.filter(and_(
                     User.created_at >= date,
                     User.created_at <= next_day
                 ))
-        except ValueError:
-            # 日期格式错误，忽略该筛选条件
+        except ValueError as e:
+            # 日期格式错误，记录错误并忽略该筛选条件
+            print(f"日期解析错误: {e}")
             pass
     
     # 执行查询
@@ -313,8 +331,6 @@ def get_voices_list(
     username: Optional[str] = None,
     upload_time: Optional[str] = None,
     status: Optional[str] = None,
-    page: int = Query(1, ge=1),
-    page_size: int = Query(8, ge=1, le=100),
     db: Session = Depends(get_db)
 ):
     """
@@ -324,8 +340,6 @@ def get_voices_list(
     - username: 按用户名筛选（模糊匹配）
     - upload_time: 按上传时间筛选（格式：YYYY-MM-DD 或 YYYY-MM-DD to YYYY-MM-DD）
     - status: 按审核状态筛选 (pending/passed/failed)
-    - page: 页码，从1开始
-    - page_size: 每页数量，默认8条
     """
     # 联合查询Voice和User表
     query = db.query(Voice, User).join(User, User.id == Voice.user_id)
@@ -341,13 +355,27 @@ def get_voices_list(
     # 按上传时间筛选
     if upload_time:
         try:
-            if " to " in upload_time:
+            # 调试输出
+            print(f"处理上传时间筛选: {upload_time}")
+            
+            # 尝试查找可能的分隔符：" to "、"至"、"到"、"-"、" - "
+            separators = [" to ", "至", "到", " - ", "-"]
+            found_separator = None
+            
+            for sep in separators:
+                if sep in upload_time:
+                    found_separator = sep
+                    break
+            
+            if found_separator:
                 # 日期范围格式
-                start_date_str, end_date_str = upload_time.split(" to ")
-                start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
-                end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+                start_date_str, end_date_str = upload_time.split(found_separator)
+                start_date = datetime.strptime(start_date_str.strip(), "%Y-%m-%d")
+                end_date = datetime.strptime(end_date_str.strip(), "%Y-%m-%d")
                 # 设置为当天结束时间
                 end_date = end_date.replace(hour=23, minute=59, second=59)
+                
+                print(f"日期范围筛选: {start_date} 到 {end_date}")
                 
                 query = query.filter(and_(
                     Voice.created_at >= start_date,
@@ -355,27 +383,23 @@ def get_voices_list(
                 ))
             else:
                 # 单个日期格式
-                date = datetime.strptime(upload_time, "%Y-%m-%d")
+                date = datetime.strptime(upload_time.strip(), "%Y-%m-%d")
                 next_day = date.replace(hour=23, minute=59, second=59)
+                
+                print(f"单日期筛选: {date} 到 {next_day}")
                 
                 query = query.filter(and_(
                     Voice.created_at >= date,
                     Voice.created_at <= next_day
                 ))
-        except ValueError:
-            # 日期格式错误，忽略该筛选条件
+        except ValueError as e:
+            # 日期格式错误，记录错误并忽略该筛选条件
+            print(f"日期解析错误: {e}")
             pass
     
     # 按审核状态筛选
     if status:
         query = query.filter(Voice.status == status)
-    
-    # 计算总数
-    total_items = query.count()
-    
-    # 分页
-    offset = (page - 1) * page_size
-    query = query.offset(offset).limit(page_size)
     
     # 执行查询
     results = query.all()
@@ -385,7 +409,7 @@ def get_voices_list(
     for idx, (voice, user) in enumerate(results):
         voice_list.append({
             "id": voice.id,
-            "index": offset + idx + 1,  # 序号
+            "index": idx + 1,  # 序号
             "username": user.username,
             "title": voice.title,
             "uploadTime": voice.created_at.strftime("%Y-%m-%d %H:%M:%S") if voice.created_at else "",
@@ -400,10 +424,7 @@ def get_voices_list(
         "msg": "获取语音资源列表成功",
         "data": {
             "voices": voice_list,
-            "total": total_items,
-            "page": page,
-            "pageSize": page_size,
-            "pages": (total_items + page_size - 1) // page_size  # 总页数
+            "total": len(voice_list)
         }
     }
 
@@ -434,6 +455,12 @@ def get_voice_detail(
         import base64
         avatar_base64 = base64.b64encode(voice.avatar).decode('utf-8')
     
+    # 将用户头像数据转换为Base64字符串（如果存在）
+    user_avatar_base64 = None
+    if user.avatar:
+        import base64
+        user_avatar_base64 = base64.b64encode(user.avatar).decode('utf-8')
+    
     # 格式化详情数据
     voice_detail = {
         "id": voice.id,
@@ -452,10 +479,9 @@ def get_voice_detail(
         "user": {
             "id": user.id,
             "username": user.username,
-            "avatar": None  # 用户头像可以单独提供
+            "avatar": user_avatar_base64  # 添加用户头像的Base64编码数据
         }
     }
-    
     return {
         "code": 200,
         "msg": "获取语音资源详情成功",
@@ -556,4 +582,35 @@ def delete_voice(
         "msg": "语音资源删除成功",
         "data": {"id": voice_id}
     }
+
+@router.get("/voices/{voice_id}/audio")
+def get_voice_audio(
+    voice_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    获取语音资源的音频文件
+    
+    - voice_id: 语音资源ID
+    """
+    # 查找语音资源
+    voice = db.query(Voice).filter(Voice.id == voice_id).first()
+    if not voice:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="语音资源不存在"
+        )
+    
+    # 获取音频文件路径
+    audio_path = voice.audio_data
+    
+    # 检查文件是否存在
+    if not audio_path or not os.path.exists(audio_path):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="音频文件不存在"
+        )
+    
+    # 返回音频文件
+    return FileResponse(audio_path, media_type="audio/wav", filename=f"声音资源_{voice.id}.wav")
 

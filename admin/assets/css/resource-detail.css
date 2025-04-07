@@ -1,14 +1,52 @@
+/* 添加基础布局样式以支持滚动 */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* 侧边栏样式 */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100vh;
+    z-index: 10;
+}
+
+/* 主内容区域样式 */
+.main-content {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+    min-height: 100vh;
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #F9FAFB;
+    margin-top: 60px;
+}
+
 .detail-header {
-    padding: 0px;
+    padding: 16px 20px;
     border-bottom: 1px solid #E5E7EB;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: white;
+    border-radius: 12px 12px 0 0;
+    margin-bottom: 0;
 }
 
 .detail-header h2 {
     font-size: 18px;
     color: #333;
+    margin: 0;
 }
 
 .back-btn {
@@ -17,24 +55,21 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    font-size: 16px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: background-color 0.3s;
 }
 
-.main-content {
-    background-color: white;
-    border-radius: 12px;
-    padding: 30px;
-    margin-top: 84px;
-    margin-bottom: 24px; /* 确保底部边距 */
-    margin-left: 264px;
-    margin-right: 24px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: relative; /* 确保定位不受影响 */
+.back-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 .detail-content {
-    background-color: #f0f0f0;
-    border-radius: 12px;
+    background-color: white;
+    border-radius: 0 0 12px 12px;
     padding: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .resource-item {
@@ -44,6 +79,7 @@
     border: 1px solid #E5E7EB;
     border-radius: 8px;
     margin-bottom: 16px;
+    background-color: #F9FAFB;
 }
 
 .resource-image {
@@ -61,7 +97,7 @@
 .info-row {
     display: flex;
     gap: 16px;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     align-items: center;
 }
 
@@ -76,11 +112,13 @@
     margin: 0;
     font-size: 16px;
     color: #333;
+    font-weight: 500;
 }
 
 .resource-info p {
     margin: 4px 0;
     color: #666;
+    font-size: 16px;
 }
 
 .listen-btn {
@@ -90,21 +128,81 @@
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    margin-top: 8px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.listen-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .resource-actions {
     display: flex;
-    gap: 8px;
+    gap: 12px;
     align-items: center;
+    margin-top: 24px;
+    justify-content: flex-end;
 }
 
 .approve-btn,
 .reject-btn {
-    padding: 8px 16px;
-    background-color: var(--primary-color);
-    color: white;
+    padding: 8px 24px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-} 
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.approve-btn {
+    background-color: #10B981; /* 绿色，表示通过 */
+    color: white;
+}
+
+.reject-btn {
+    background-color: #EF4444; /* 红色，表示拒绝 */
+    color: white;
+}
+
+.approve-btn:hover,
+.reject-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 状态标签样式，与 resource-review.css 保持一致 */
+.status-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    border-radius: 12px;
+    padding: 6px 12px;
+    width: fit-content;
+    font-size: 16px;
+}
+
+.status-label.pending {
+    color: #F59E0B;
+    background-color: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status-label.passed {
+    color: #10B981;
+    background-color: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-label.failed {
+    color: #EF4444;
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}

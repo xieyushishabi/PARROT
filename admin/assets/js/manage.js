@@ -13,7 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
             dateFormat: "Y-m-d",
             mode: "range", // 允许选择日期范围
             allowInput: true,
-            placeholder: "请选择日期范围"
+            placeholder: "请选择日期范围",
+            rangeSeparator: " to " // 确保范围分隔符与后端一致
         });
     }
     
@@ -185,7 +186,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const searchParams = {};
         if (username) searchParams.username = username;
         if (phone) searchParams.phone = phone;
-        if (dateRange) searchParams.date_range = dateRange;
+        if (dateRange) {
+            searchParams.date_range = dateRange;
+            console.log("筛选日期范围:", dateRange); // 添加调试输出
+        }
         
         // 重置到第一页
         currentPage = 1;

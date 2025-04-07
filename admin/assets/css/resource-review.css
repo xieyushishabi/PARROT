@@ -95,7 +95,11 @@ body, html {
 
 .resource-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .resource-table th,
@@ -109,10 +113,17 @@ body, html {
     color: #666;
     font-weight: normal;
     background-color: #F9FAFB;
+    font-size: 16px; /* 修改表头字体大小为16px */
 }
 
 .resource-table td {
     color: #333;
+    font-size: 16px; /* 修改表格单元格字体大小为16px */
+    vertical-align: middle;
+}
+
+.resource-table tr:hover td {
+    background-color: rgba(243, 244, 246, 0.5);
 }
 
 .resource-table tr:last-child td {
@@ -130,19 +141,33 @@ body, html {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 16px; /* 修改操作按钮字体大小为16px */
 }
 
 /* 播放按钮样式 */
 .play-btn {
-    width: 24px;
-    height: 24px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: rgba(14, 165, 233, 0.1);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.play-btn:hover {
+    background-color: rgba(14, 165, 233, 0.2);
+    transform: scale(1.05);
+}
+
+.play-icon {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) saturate(100%) invert(47%) sepia(82%) saturate(2279%) hue-rotate(177deg) brightness(97%) contrast(101%);
 }
 
 /* 任务状态样式 */
@@ -150,23 +175,52 @@ body, html {
     display: flex;
     align-items: center;
     gap: 8px;
+    font-weight: 500;
+    border-radius: 12px;
+    padding: 6px 12px;
+    width: fit-content;
+    font-size: 16px; /* 修改状态标签字体大小为16px */
 }
 
 .status-icon {
-    width: 16px;
-    height: 16px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
 }
 
-.status-pending {
-    color: #666;
+/* 待审核状态 */
+.task-status.pending {
+    color: #F59E0B;
+    background-color: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
-.status-passed {
-    color: #34D399;
+.task-status.pending .status-icon {
+    background-color: #F59E0B;
 }
 
-.status-failed {
+/* 已通过状态 */
+.task-status.passed {
+    color: #10B981;
+    background-color: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.task-status.passed .status-icon {
+    background-color: #10B981;
+}
+
+/* 未通过状态 */
+.task-status.failed {
     color: #EF4444;
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.task-status.failed .status-icon {
+    background-color: #EF4444;
 }
 
 /* 分页样式 */
@@ -235,10 +289,4 @@ body, html {
     display: flex;
     align-items: center;
     gap: 8px;
-}
-
-.play-icon {
-    width: 26px;
-    height: 26px;
-    vertical-align: middle;
 }

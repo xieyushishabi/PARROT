@@ -810,8 +810,24 @@ async function saveUserProfile(auth) {
         
         // 添加头像文件（如果有）
         if (avatarInput && avatarInput.files && avatarInput.files.length > 0) {
-            console.log('正在上传头像文件:', avatarInput.files[0].name);
+            console.log('正在上传用户选择的头像文件:', avatarInput.files[0].name);
             formData.append('avatar', avatarInput.files[0]);
+        } else {
+            // 如果用户没有选择头像，获取默认头像并上传
+            console.log('用户未选择头像，使用默认头像');
+            try {
+                // 获取默认头像
+                const defaultAvatarUrl = "assets/images/avatar-default.png";
+                const response = await fetch(defaultAvatarUrl);
+                const blob = await response.blob();
+                const defaultAvatarFile = new File([blob], "default-avatar.png", { type: "image/png" });
+                
+                // 将默认头像添加到表单数据
+                formData.append('avatar', defaultAvatarFile);
+                console.log('已添加默认头像到上传数据');
+            } catch (avatarError) {
+                console.error('获取默认头像失败:', avatarError);
+            }
         }
         
         // 添加密保问题答案（如果存在）
