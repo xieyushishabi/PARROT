@@ -45,18 +45,39 @@
             <div class="content-wrapper">
                 <div class="detail-container">
                     <div class="detail-header">
-                        <h2>用户 1237shde 历史操作记录</h2>
+                        <h2>用户历史操作记录</h2>
                         <a href="manage.html" class="back-btn">返回</a>
                     </div>
                     <div class="detail-content">
-                        <div class="history-item">
-                            <img src="path/to/image.jpg" alt="操作图片" class="history-image">
-                            <div class="history-content">
-                                <div class="history-text">创建了一个声音克隆音频</div>
-                                <div class="history-time">2024-01-18 14:30</div>
+                        <!-- 历史记录会通过JavaScript动态加载 -->
+                        <div class="loading">正在加载用户历史记录...</div>
+                    </div>
+                    <!-- 添加分页控件区域 -->
+                    <div class="pagination-container">
+                        <div class="page-size-selector">
+                            <span>显示：</span>
+                            <div class="dropdown">
+                                <button class="dropdown-toggle">
+                                    <span class="current-page-size">10条/页</span>
+                                    <span class="down-arrow"></span>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-item" data-value="5">5条/页</div>
+                                    <div class="dropdown-item active" data-value="10">10条/页</div>
+                                    <div class="dropdown-item" data-value="20">20条/页</div>
+                                    <div class="dropdown-item" data-value="50">50条/页</div>
+                                </div>
                             </div>
                         </div>
-                        <!-- 更多历史记录项 -->
+                        <div class="page-nav-container">
+                            <span class="total">共 0 条</span>
+                            <div class="page-nav"></div>
+                            <div class="goto">
+                                <span>跳至</span>
+                                <input type="text" value="1">
+                                <span>页</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

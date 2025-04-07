@@ -27,6 +27,7 @@ class User(Base):
     voices = relationship("Voice", back_populates="author")
     voice_likes = relationship("VoiceLike", back_populates="user")
     voice_collections = relationship("VoiceCollection", back_populates="user")
+    operations = relationship("UserOperationHistory", backref="user")
 
 class Voice(Base):
     """声音数据库模型"""
@@ -93,3 +94,15 @@ class VoiceCollection(Base):
     __table_args__ = (
         UniqueConstraint('user_id', 'voice_id', name='uq_user_voice_collection'),
     )
+
+class UserOperationHistory(Base):
+    """用户操作历史数据库模型"""
+    __tablename__ = "user_operation_history"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, comment="用户ID")
+    operation_type = Column(String, nullable=False, comment="操作类型，如：配音、克隆、教学等")
+    operation_detail = Column(String, nullable=True, comment="操作详情描述")
+    resource_id = Column(Integer, nullable=True, comment="关联资源ID，如音频ID等")
+    resource_type = Column(String, nullable=True, comment="资源类型，如音频、视频等")
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="操作时间")

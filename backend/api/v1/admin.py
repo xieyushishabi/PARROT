@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel
 import os
 from fastapi.responses import FileResponse
 
-from backend.core.models import AdminUserCreate, APIResponse, UserUpdate, VoiceReviewRequest
-from backend.database.models import User, Voice
+from backend.core.models import AdminUserCreate, APIResponse, UserUpdate, VoiceReviewRequest, BatchVoiceReviewRequest, BatchUserDeleteRequest
+from backend.database.models import User, Voice, UserOperationHistory
 from backend.database.database import get_db
 from backend.core.security import get_password_hash
 
@@ -324,6 +324,61 @@ def delete_user(
         "msg": "用户删除成功",
         "data": {"id": user_id}
     }
+
+@router.post("/batch_delete_users", response_model=APIResponse)
+def batch_delete_users(
+    delete_data: BatchUserDeleteRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    批量删除用户
+    
+    - delete_data: 包含要删除的用户ID列表
+    """
+    if not delete_data.user_ids:
+        return {
+            "code": 400,
+            "msg": "用户ID列表不能为空",
+            "data": None
+        }
+    
+    # 查找所有指定的用户
+    users = db.query(User).filter(User.id.in_(delete_data.user_ids)).all()
+    
+    # 检查是否找到所有用户
+    found_ids = [user.id for user in users]
+    not_found_ids = [id for id in delete_data.user_ids if id not in found_ids]
+    
+    if not_found_ids:
+        return {
+            "code": 404,
+            "msg": f"部分用户不存在: {', '.join(map(str, not_found_ids))}",
+            "data": None
+        }
+    
+    # 批量删除用户
+    deleted_count = 0
+    try:
+        for user in users:
+            db.delete(user)
+            deleted_count += 1
+        
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"批量删除用户失败: {str(e)}"
+        )
+    
+    return {
+        "code": 200,
+        "msg": f"成功删除 {deleted_count} 个用户",
+        "data": {
+            "deleted_count": deleted_count,
+            "deleted_ids": found_ids
+        }
+    }
     
 @router.get("/voices", response_model=APIResponse)
 def get_voices_list(
@@ -539,6 +594,131 @@ def review_voice(
         }
     }
 
+@router.post("/voices/batch_review", response_model=APIResponse)
+def batch_review_voices(
+    review_data: BatchVoiceReviewRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    批量审核语音资源
+    
+    - review_data: 包含多个语音资源ID和状态的数据
+    """
+    # 验证状态值是否有效
+    if review_data.status not in ["passed", "failed", "pending"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="无效的审核状态，应为 'passed'、'failed' 或 'pending'"
+        )
+    
+    # 查找所有指定的语音资源
+    voices = db.query(Voice).filter(Voice.id.in_(review_data.voice_ids)).all()
+    
+    # 检查是否找到所有资源
+    found_ids = [voice.id for voice in voices]
+    not_found_ids = [id for id in review_data.voice_ids if id not in found_ids]
+    
+    if not_found_ids:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"部分语音资源不存在: {', '.join(map(str, not_found_ids))}"
+        )
+    
+    # 批量更新审核状态
+    updated_count = 0
+    try:
+        for voice in voices:
+            voice.status = review_data.status
+            # 同时更新is_public字段以保持兼容性
+            voice.is_public = (review_data.status == "passed")
+            updated_count += 1
+        
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"批量审核语音资源失败: {str(e)}"
+        )
+    
+    return {
+        "code": 200,
+        "msg": f"已成功将 {updated_count} 个语音资源状态更新为{review_data.status}",
+        "data": {
+            "updated_count": updated_count,
+            "status": review_data.status
+        }
+    }
+
+@router.post("/voices/batch_delete", response_model=APIResponse)
+def batch_delete_voices(
+    delete_data: BatchUserDeleteRequest,  # 复用现有的BatchUserDeleteRequest模型
+    db: Session = Depends(get_db)
+):
+    """
+    批量删除语音资源
+    
+    - delete_data: 包含要删除的语音资源ID列表 (voice_ids 与 user_ids 字段用途相同)
+    """
+    if not delete_data.user_ids:
+        return {
+            "code": 400,
+            "msg": "语音资源ID列表不能为空",
+            "data": None
+        }
+    
+    # 获取所有指定的语音资源
+    voices = db.query(Voice).filter(Voice.id.in_(delete_data.user_ids)).all()
+    
+    # 检查是否找到所有语音资源
+    found_ids = [voice.id for voice in voices]
+    not_found_ids = [id for id in delete_data.user_ids if id not in found_ids]
+    
+    if not_found_ids:
+        return {
+            "code": 404,
+            "msg": f"部分语音资源不存在: {', '.join(map(str, not_found_ids))}",
+            "data": None
+        }
+    
+    # 批量删除语音资源
+    deleted_count = 0
+    audio_files_to_delete = []
+    
+    try:
+        # 首先收集需要删除的音频文件路径
+        for voice in voices:
+            if voice.audio_data and os.path.exists(voice.audio_data):
+                audio_files_to_delete.append(voice.audio_data)
+            
+            db.delete(voice)
+            deleted_count += 1
+        
+        db.commit()
+        
+        # 删除关联的音频文件
+        for file_path in audio_files_to_delete:
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                print(f"删除音频文件失败: {file_path}, 错误: {str(e)}")
+                
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"批量删除语音资源失败: {str(e)}"
+        )
+    
+    return {
+        "code": 200,
+        "msg": f"成功删除 {deleted_count} 个语音资源",
+        "data": {
+            "deleted_count": deleted_count,
+            "deleted_ids": found_ids
+        }
+    }
+
 @router.delete("/voices/{voice_id}", response_model=APIResponse)
 def delete_voice(
     voice_id: int,
@@ -560,22 +740,40 @@ def delete_voice(
     # 获取音频文件路径，以便删除文件
     audio_file_path = voice.audio_data
     
+    # 获取语音所属用户ID和标题，用于记录操作历史
+    user_id = voice.user_id
+    voice_title = voice.title
+    
     # 删除语音资源记录
     try:
         db.delete(voice)
-        db.commit()
         
-        # 删除关联的音频文件
-        if audio_file_path and os.path.exists(audio_file_path):
-            import os
-            os.remove(audio_file_path)
-            
+        # 添加管理员删除语音的操作记录
+        if user_id:
+            operation_history = UserOperationHistory(
+                user_id=user_id,
+                operation_type="delete",
+                operation_detail=f"管理员删除了您的语音资源: {voice_title}",
+                resource_id=voice_id,
+                resource_type="voice"
+            )
+            db.add(operation_history)
+        
+        db.commit()
     except Exception as e:
         db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"删除语音资源失败: {str(e)}"
         )
+    
+    # 在数据库事务完成后，尝试删除关联的音频文件
+    if audio_file_path and os.path.exists(audio_file_path):
+        try:
+            os.remove(audio_file_path)
+        except Exception as e:
+            # 记录错误但不影响响应
+            print(f"删除音频文件失败: {audio_file_path}, 错误: {str(e)}")
     
     return {
         "code": 200,
@@ -613,4 +811,70 @@ def get_voice_audio(
     
     # 返回音频文件
     return FileResponse(audio_path, media_type="audio/wav", filename=f"声音资源_{voice.id}.wav")
+
+@router.get("/users/{user_id}/history", response_model=APIResponse)
+def get_user_history(
+    user_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    获取用户操作历史记录
+    
+    - user_id: 用户ID
+    """
+    # 查找用户
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="用户不存在"
+        )
+    
+    # 获取用户操作历史记录，不再使用分页
+    history_records = db.query(UserOperationHistory)\
+        .filter(UserOperationHistory.user_id == user_id)\
+        .order_by(UserOperationHistory.created_at.desc())\
+        .all()
+    
+    # 格式化历史记录
+    formatted_records = []
+    for record in history_records:
+        # 初始化预览图片为None
+        preview_image = None
+        
+        # 如果是与Voice资源相关的操作，尝试获取模型图片
+        if record.resource_type == "voice" and record.resource_id:
+            try:
+                # 查询对应的Voice记录
+                voice = db.query(Voice).get(record.resource_id)
+                
+                # 如果找到了音频资源并且有头像数据，转换为Base64字符串
+                if voice and voice.avatar:
+                    import base64
+                    preview_image = base64.b64encode(voice.avatar).decode('utf-8')
+            except Exception as e:
+                print(f"获取资源图片时出错: {e}")
+        
+        formatted_records.append({
+            "id": record.id,
+            "operation_type": record.operation_type,
+            "operation_detail": record.operation_detail,
+            "resource_id": record.resource_id,
+            "resource_type": record.resource_type,
+            "preview_image": preview_image,  # 添加预览图片Base64数据
+            "created_at": record.created_at.strftime("%Y-%m-%d %H:%M:%S")
+        })
+    
+    return {
+        "code": 200,
+        "msg": "获取用户操作历史记录成功",
+        "data": {
+            "user": {
+                "id": user.id,
+                "username": user.username,
+            },
+            "history": formatted_records,
+            "total": len(formatted_records)
+        }
+    }
 

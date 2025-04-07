@@ -16,9 +16,8 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from backend.database.database import get_db
-from backend.database.models import Voice
+from backend.database.models import Voice, User, UserOperationHistory  # 添加UserOperationHistory导入
 from backend.core.security import get_current_user
-from backend.database.models import User
 
 # 设置日志
 logging.basicConfig(level=logging.INFO)
@@ -138,7 +137,7 @@ async def generate_tts(
     voice_display_name: Optional[str] = Form(None),  # 音色显示名称参数
     p_w: float = Form(2.0),  # 清晰度权重
     t_w: float = Form(3.0),  # 相似度权重
-):
+    ):
     """
     使用MegaTTS3生成语音
     """
@@ -258,7 +257,7 @@ async def generate_tts(
         tts_tasks[task_id]["output_path"] = output_path
         tts_tasks[task_id]["status"] = "processing"
         
-        # 添加后台任务
+                # 添加后台任务
         background_tasks.add_task(
             run_tts_generation,
             task_id,
@@ -518,6 +517,17 @@ async def upload_voice_sample(
         db.commit()
         db.refresh(new_voice)
         
+        # 记录用户操作到历史记录表
+        operation_history = UserOperationHistory(
+            user_id=current_user.id,
+            operation_type="upload",  # 上传操作
+            operation_detail=f"上传语音资源: {title}",
+            resource_id=new_voice.id,
+            resource_type="voice"
+        )
+        db.add(operation_history)
+        db.commit()
+        
         return {
             "id": new_voice.id,
             "title": title,
@@ -617,6 +627,9 @@ async def delete_voice_sample(
         if voice.user_id != current_user.id:
             raise HTTPException(status_code=403, detail="无权删除此声音样本")
         
+        # 记录要删除的声音标题，用于操作记录
+        voice_title = voice.title
+        
         # 删除音频文件
         if voice.audio_data and os.path.exists(voice.audio_data):
             try:
@@ -626,6 +639,16 @@ async def delete_voice_sample(
         
         # 从数据库中删除
         db.delete(voice)
+        
+        # 记录用户操作到历史记录表
+        operation_history = UserOperationHistory(
+            user_id=current_user.id,
+            operation_type="delete",  # 删除操作
+            operation_detail=f"删除语音资源: {voice_title}",
+            resource_id=voice_id,
+            resource_type="voice"
+        )
+        db.add(operation_history)
         db.commit()
         
         return {"message": "声音样本已删除"}

@@ -2,8 +2,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // 用于存储用户数据
     let userData = [];
     const baseURL = 'http://127.0.0.1:8000';
-    const usersPerPage = 8; // 每页显示8条数据
+    let usersPerPage = 8; // 改为可变的每页显示条数
     let currentPage = 1; // 当前页码
+    let lastSearchParams = {}; // 存储最后一次的搜索参数
+    let selectedItems = new Set(); // 存储选中项的ID
     
     // 初始化日期选择器
     const datePickerElement = document.getElementById('date-search');
@@ -21,6 +23,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 从后端获取用户数据
     async function fetchUsers(searchParams = {}) {
         try {
+            // 保存搜索参数以便切换页面大小时使用
+            lastSearchParams = {...searchParams};
+            
             // 构建查询参数
             let url = `${baseURL}/api/v1/admin/users`;
             if (Object.keys(searchParams).length > 0) {
@@ -37,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 userData = response.data.data.users;
                 renderTable(currentPage);
                 updatePagination();
+                updatePageSizeDisplay(); // 更新页面大小显示
             } else {
                 console.error('获取用户数据失败:', response.data.msg);
                 alert('获取用户数据失败: ' + (response.data.msg || '未知错误'));
@@ -59,8 +65,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const pageData = userData.slice(start, end);
         
         const tbody = document.querySelector('.user-table tbody');
+        
+        if (pageData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center;">暂无用户数据</td></tr>`;
+            return;
+        }
+        
         tbody.innerHTML = pageData.map((user, index) => `
             <tr>
+                <td><input type="checkbox" class="item-checkbox" data-id="${user.id}" ${selectedItems.has(user.id) ? 'checked' : ''}></td>
                 <td>${start + index + 1}</td>
                 <td>${user.username}</td>
                 <td>${user.phone}</td>
@@ -77,6 +90,19 @@ document.addEventListener('DOMContentLoaded', function() {
             </tr>
         `).join('');
 
+        // 添加复选框事件
+        document.querySelectorAll('.item-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const id = this.dataset.id;
+                if (this.checked) {
+                    selectedItems.add(id);
+                } else {
+                    selectedItems.delete(id);
+                }
+                updateSelectAllCheckbox();
+            });
+        });
+
         // 为每个按钮添加事件处理
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -88,7 +114,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.detail-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const userId = this.dataset.id;
-                window.location.href = `user-detail.html?userId=${encodeURIComponent(userId)}`;
+                // 修改从userId参数为id参数，与后端API保持一致
+                window.location.href = `user-detail.html?id=${encodeURIComponent(userId)}`;
             });
         });
 
@@ -114,6 +141,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+
+        // 更新全选复选框状态
+        updateSelectAllCheckbox();
+    }
+
+    // 更新全选复选框状态
+    function updateSelectAllCheckbox() {
+        const selectAllCheckbox = document.getElementById('select-all');
+        const checkboxes = document.querySelectorAll('.item-checkbox');
+        if (checkboxes.length > 0 && checkboxes.length === selectedItems.size) {
+            selectAllCheckbox.checked = true;
+            selectAllCheckbox.indeterminate = false;
+        } else if (selectedItems.size > 0) {
+            selectAllCheckbox.indeterminate = true;
+        } else {
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = false;
+        }
     }
 
     // 更新分页区域
@@ -175,6 +220,54 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.total').textContent = `共 ${userData.length} 条`;
     }
 
+    // 更新页面大小显示
+    function updatePageSizeDisplay() {
+        // 更新当前显示的页面大小
+        const currentPageSizeElement = document.querySelector('.current-page-size');
+        if (currentPageSizeElement) {
+            currentPageSizeElement.textContent = `${usersPerPage}条/页`;
+        }
+        
+        // 更新下拉菜单中的活动项
+        const dropdownItems = document.querySelectorAll('.dropdown-item');
+        dropdownItems.forEach(item => {
+            if (parseInt(item.dataset.value) === usersPerPage) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    // 切换每页显示数量
+    function changePageSize(newSize) {
+        // 保存当前页面的相对位置
+        const currentTopItem = (currentPage - 1) * usersPerPage + 1;
+        
+        // 更新每页显示数量
+        usersPerPage = newSize;
+        
+        // 计算新的当前页码，尽量保持查看的是同一批数据
+        currentPage = Math.ceil(currentTopItem / usersPerPage);
+        if (currentPage === 0) currentPage = 1;
+        
+        // 重新获取数据
+        fetchUsers(lastSearchParams);
+    }
+
+    // 为页面大小选择器添加事件
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    if (dropdownItems) {
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const newSize = parseInt(this.dataset.value);
+                if (newSize !== usersPerPage) {
+                    changePageSize(newSize);
+                }
+            });
+        });
+    }
+
     // 搜索功能
     const searchBtn = document.getElementById('search-button');
     searchBtn.addEventListener('click', function() {
@@ -198,8 +291,62 @@ document.addEventListener('DOMContentLoaded', function() {
         fetchUsers(searchParams);
     });
 
+    // 批量删除用户
+    async function batchDeleteUsers() {
+        if (selectedItems.size === 0) {
+            alert('请至少选择一个用户');
+            return;
+        }
+        
+        const confirmDelete = confirm(`确定要删除选中的 ${selectedItems.size} 个用户吗？此操作不可恢复！`);
+        if (!confirmDelete) return;
+        
+        try {
+            const response = await axios.post(`${baseURL}/api/v1/admin/batch_delete_users`, {
+                user_ids: Array.from(selectedItems)
+            });
+            
+            if (response.data && response.data.code === 200) {
+                alert(`成功删除 ${response.data.data.deleted_count} 个用户`);
+                selectedItems.clear(); // 清空选中项
+                fetchUsers(lastSearchParams); // 重新获取数据
+            } else {
+                alert(`批量删除失败: ${response.data.msg || '未知错误'}`);
+            }
+        } catch (error) {
+            console.error('批量删除用户出错:', error);
+            alert(`批量删除失败: ${error.response?.data?.msg || error.message || '未知错误'}`);
+        }
+    }
+    
+    // 为全选复选框添加事件
+    const selectAllCheckbox = document.getElementById('select-all');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+                const id = checkbox.dataset.id;
+                if (this.checked) {
+                    selectedItems.add(id);
+                } else {
+                    selectedItems.delete(id);
+                }
+            });
+        });
+    }
+    
+    // 为批量删除按钮添加事件
+    const batchDeleteBtn = document.querySelector('.batch-delete-btn');
+    if (batchDeleteBtn) {
+        batchDeleteBtn.addEventListener('click', function() {
+            batchDeleteUsers();
+        });
+    }
+
     // 初始化表格和分页 - 从API获取数据
     fetchUsers();
+    updatePageSizeDisplay(); // 初始化页面大小显示
 
     // 添加页码跳转功能
     const gotoInput = document.querySelector('.goto input');

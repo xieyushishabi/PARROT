@@ -181,3 +181,10 @@ class AdminUserCreate(BaseModel):
 class VoiceReviewRequest(BaseModel):
     """语音审核请求模型"""
     status: str  # "passed" 或 "failed"
+
+class BatchVoiceReviewRequest(BaseModel):
+    voice_ids: List[int]
+    status: str
+
+class BatchUserDeleteRequest(BaseModel):
+    user_ids: List[int]

@@ -78,6 +78,7 @@
                     <table class="resource-table">
                         <thead>
                             <tr>
+                                <th><input type="checkbox" id="select-all" title="全选/取消全选"></th>
                                 <th>序号</th>
                                 <th>用户名</th>
                                 <th>语音资源标题</th>
@@ -96,9 +97,16 @@
                 <!-- 分页区域 -->
                 <div class="pagination">
                     <div class="total">共 400 条</div>
-                    <div class="page-size">
-                        8条/页
-                        <i class="arrow-down"></i>
+                    <div class="page-size-container">
+                        <div class="page-size">
+                            <span class="current-page-size">8条/页</span>
+                            <i class="arrow-down"></i>
+                        </div>
+                        <div class="page-size-dropdown">
+                            <div class="dropdown-item" data-value="8">8条/页</div>
+                            <div class="dropdown-item" data-value="16">16条/页</div>
+                            <div class="dropdown-item" data-value="32">32条/页</div>
+                        </div>
                     </div>
                     <div class="page-nav">
                         <!-- 分页按钮将由 JavaScript 动态生成 -->
@@ -108,7 +116,11 @@
                         <input type="text" value="1">
                         页
                     </div>
-                    <button class="save-btn">保存修改</button>
+                    <div class="batch-actions">
+                        <button class="batch-btn batch-pass-btn">批量通过</button>
+                        <button class="batch-btn batch-fail-btn">批量不通过</button>
+                        <button class="batch-btn batch-delete-btn">批量删除</button>
+                    </div>
                 </div>
             </div>
         </main>

@@ -2,10 +2,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化变量
     let resourceData = [];
     const baseURL = 'http://127.0.0.1:8000';
-    const itemsPerPage = 8; // 每页显示的条数
+    let itemsPerPage = 8; // 初始每页显示的条数，现在是可变的
     let currentPage = 1; // 当前页码
     let totalPages = 1; // 总页数
     let audioPlayer = null; // 当前播放的音频对象
+    let selectedItems = new Set(); // 存储选中项的ID
+    let lastSearchParams = {}; // 存储最后一次的搜索参数
 
     // 初始化日期选择器
     const datePickerElement = document.querySelector('.date-picker');
@@ -23,6 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 从后端获取语音资源数据
     async function fetchVoices(searchParams = {}) {
         try {
+            // 保存搜索参数以便切换页面大小时使用
+            lastSearchParams = {...searchParams};
+            
             // 构建查询参数
             const queryParams = new URLSearchParams();
             
@@ -44,14 +49,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 resourceData = data.voices;
                 
                 // 更新总页数和当前页
-                totalPages = data.pages;
+                totalPages = Math.ceil(data.total / itemsPerPage); // 使用总记录数计算总页数
                 if (currentPage > totalPages && totalPages > 0) {
                     currentPage = totalPages;
                     return fetchVoices(searchParams); // 重新获取数据
                 }
                 
+                // 清空选中项
+                selectedItems.clear();
+                
                 renderTable(currentPage); // 渲染表格数据
                 updatePagination();
+                updatePageSizeDisplay(); // 更新页面大小显示
             } else {
                 console.error('获取语音资源数据失败:', response.data.msg);
                 alert('获取语音资源数据失败: ' + (response.data.msg || '未知错误'));
@@ -76,12 +85,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const tbody = document.querySelector('.resource-table tbody');
         
         if (pageData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">暂无语音资源数据</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center;">暂无语音资源数据</td></tr>`;
             return;
         }
         
         tbody.innerHTML = pageData.map((resource, index) => `
             <tr>
+                <td><input type="checkbox" class="item-checkbox" data-id="${resource.id}" ${selectedItems.has(resource.id) ? 'checked' : ''}></td>
                 <td>${start + index + 1}</td>
                 <td>${resource.username}</td>
                 <td>${resource.title}</td>
@@ -105,6 +115,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 </td>
             </tr>
         `).join('');
+
+        // 添加复选框事件
+        document.querySelectorAll('.item-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const id = this.dataset.id;
+                if (this.checked) {
+                    selectedItems.add(id);
+                } else {
+                    selectedItems.delete(id);
+                }
+                updateSelectAllCheckbox();
+            });
+        });
 
         // 添加播放按钮点击事件
         document.querySelectorAll('.play-btn').forEach(btn => {
@@ -144,6 +167,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+        
+        // 更新全选复选框状态
+        updateSelectAllCheckbox();
+    }
+    
+    // 更新全选复选框状态
+    function updateSelectAllCheckbox() {
+        const selectAllCheckbox = document.getElementById('select-all');
+        const checkboxes = document.querySelectorAll('.item-checkbox');
+        if (checkboxes.length > 0 && checkboxes.length === selectedItems.size) {
+            selectAllCheckbox.checked = true;
+            selectAllCheckbox.indeterminate = false;
+        } else if (selectedItems.size > 0) {
+            selectAllCheckbox.indeterminate = true;
+        } else {
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = false;
+        }
     }
 
     // 播放音频
@@ -217,6 +258,54 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         document.querySelector('.total').textContent = `共 ${resourceData.length} 条`;
+    }
+
+    // 更新页面大小显示
+    function updatePageSizeDisplay() {
+        // 更新当前显示的页面大小
+        const currentPageSizeElement = document.querySelector('.current-page-size');
+        if (currentPageSizeElement) {
+            currentPageSizeElement.textContent = `${itemsPerPage}条/页`;
+        }
+        
+        // 更新下拉菜单中的活动项
+        const dropdownItems = document.querySelectorAll('.dropdown-item');
+        dropdownItems.forEach(item => {
+            if (parseInt(item.dataset.value) === itemsPerPage) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    }
+
+    // 切换每页显示数量
+    function changePageSize(newSize) {
+        // 保存当前页面的相对位置
+        const currentTopItem = (currentPage - 1) * itemsPerPage + 1;
+        
+        // 更新每页显示数量
+        itemsPerPage = newSize;
+        
+        // 计算新的当前页码，尽量保持查看的是同一批数据
+        currentPage = Math.ceil(currentTopItem / itemsPerPage);
+        if (currentPage === 0) currentPage = 1;
+        
+        // 重新获取数据
+        fetchVoices(lastSearchParams);
+    }
+
+    // 为页面大小选择器添加事件
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    if (dropdownItems) {
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const newSize = parseInt(this.dataset.value);
+                if (newSize !== itemsPerPage) {
+                    changePageSize(newSize);
+                }
+            });
+        });
     }
 
     // 获取状态文本
@@ -296,8 +385,107 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // 批量处理审核
+    async function batchReviewVoices(status) {
+        if (selectedItems.size === 0) {
+            alert('请至少选择一条语音资源');
+            return;
+        }
+        
+        const confirmAction = confirm(`确定要将选中的 ${selectedItems.size} 条语音资源${status === 'passed' ? '通过' : '不通过'}审核吗？`);
+        if (!confirmAction) return;
+        
+        try {
+            const response = await axios.post(`${baseURL}/api/v1/admin/voices/batch_review`, {
+                voice_ids: Array.from(selectedItems),
+                status: status
+            });
+            
+            if (response.data && response.data.code === 200) {
+                alert(`批量${status === 'passed' ? '通过' : '不通过'}操作成功`);
+                selectedItems.clear(); // 清空选中项
+                fetchVoices(); // 重新获取数据
+            } else {
+                alert(`批量操作失败: ${response.data.msg || '未知错误'}`);
+            }
+        } catch (error) {
+            console.error('批量处理审核出错:', error);
+            alert(`批量操作失败: ${error.response?.data?.msg || error.message || '未知错误'}`);
+        }
+    }
+    
+    // 为全选复选框添加事件
+    const selectAllCheckbox = document.getElementById('select-all');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+                const id = checkbox.dataset.id;
+                if (this.checked) {
+                    selectedItems.add(id);
+                } else {
+                    selectedItems.delete(id);
+                }
+            });
+        });
+    }
+    
+    // 为批量通过按钮添加事件
+    const batchPassBtn = document.querySelector('.batch-pass-btn');
+    if (batchPassBtn) {
+        batchPassBtn.addEventListener('click', function() {
+            batchReviewVoices('passed');
+        });
+    }
+    
+    // 为批量不通过按钮添加事件
+    const batchFailBtn = document.querySelector('.batch-fail-btn');
+    if (batchFailBtn) {
+        batchFailBtn.addEventListener('click', function() {
+            batchReviewVoices('failed');
+        });
+    }
+    
+    // 批量删除功能
+    async function batchDeleteVoices() {
+        if (selectedItems.size === 0) {
+            alert('请至少选择一条语音资源');
+            return;
+        }
+        
+        const confirmAction = confirm(`确定要删除选中的 ${selectedItems.size} 条语音资源吗？此操作不可恢复！`);
+        if (!confirmAction) return;
+        
+        try {
+            const response = await axios.post(`${baseURL}/api/v1/admin/voices/batch_delete`, {
+                user_ids: Array.from(selectedItems)  // 复用现有的user_ids字段
+            });
+            
+            if (response.data && response.data.code === 200) {
+                alert(`批量删除操作成功，已删除 ${response.data.data.deleted_count} 条资源`);
+                selectedItems.clear(); // 清空选中项
+                fetchVoices(); // 重新获取数据
+            } else {
+                alert(`批量删除失败: ${response.data.msg || '未知错误'}`);
+            }
+        } catch (error) {
+            console.error('批量删除语音资源出错:', error);
+            alert(`批量删除失败: ${error.response?.data?.msg || error.message || '未知错误'}`);
+        }
+    }
+    
+    // 为批量删除按钮添加事件
+    const batchDeleteBtn = document.querySelector('.batch-delete-btn');
+    if (batchDeleteBtn) {
+        batchDeleteBtn.addEventListener('click', function() {
+            batchDeleteVoices();
+        });
+    }
+
     // 初始化 - 从API获取数据
     fetchVoices();
+    updatePageSizeDisplay(); // 初始化页面大小显示
     
     // 退出登录按钮
     const logoutBtn = document.querySelector('.logout-btn');

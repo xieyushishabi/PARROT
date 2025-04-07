@@ -127,6 +127,43 @@ body, html {
     font-size: 16px; /* 修改操作按钮字体大小为16px */
 }
 
+/* 批量操作按钮样式 */
+.batch-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.batch-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.batch-delete-btn {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.batch-delete-btn:hover {
+    background-color: rgba(239, 68, 68, 0.2);
+}
+
+/* 复选框样式优化 */
+.user-table input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
 /* 分页样式 */
 .pagination {
     display: flex;
@@ -196,15 +233,23 @@ body, html {
 }
 
 .add-user-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
     padding: 8px 16px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
+    background-color: rgba(14, 165, 233, 0.1);
+    color: var(--primary-color);
+    border: 1px solid rgba(14, 165, 233, 0.2);
     border-radius: 6px;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.add-user-btn:hover {
+    background-color: rgba(14, 165, 233, 0.2);
 }
 
 .icon-plus {
@@ -256,4 +301,71 @@ body, html {
 .flatpickr-day.nextMonthDay:focus {
     background: #f0f9ff;
     border-color: #f0f9ff;
+}
+
+/* 分页大小选择样式 */
+.page-size-container {
+    position: relative;
+}
+
+.page-size {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    background-color: #fff;
+    min-width: 80px;
+    justify-content: space-between;
+}
+
+.page-size-dropdown {
+    position: absolute;
+    bottom: 100%; /* 从底部向上弹出 */
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1); /* 阴影方向向上 */
+    z-index: 100;
+    display: none;
+    margin-bottom: 4px; /* 底部间距 */
+}
+
+.page-size-container:hover .page-size-dropdown,
+.page-size-dropdown:hover {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #F3F4F6;
+}
+
+.dropdown-item.active {
+    background-color: rgba(14, 165, 233, 0.1);
+    color: var(--primary-color);
+}
+
+.arrow-down {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #666;
+    margin-left: 4px;
+    transition: transform 0.2s;
+}
+
+.page-size:hover .arrow-down {
+    transform: rotate(180deg);
 }

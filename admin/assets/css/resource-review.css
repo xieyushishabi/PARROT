@@ -233,11 +233,70 @@ body, html {
     border-radius: 12px;
 }
 
+.page-size-container {
+    position: relative;
+}
+
 .page-size {
     display: flex;
     align-items: center;
     gap: 8px;
     cursor: pointer;
+    padding: 4px 8px;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    background-color: #fff;
+    min-width: 80px;
+    justify-content: space-between;
+}
+
+.page-size-dropdown {
+    position: absolute;
+    bottom: 100%; /* 修改：从底部向上弹出 */
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1); /* 修改：阴影方向向上 */
+    z-index: 100;
+    display: none;
+    margin-bottom: 4px; /* 修改：底部间距 */
+}
+
+.page-size-container:hover .page-size-dropdown,
+.page-size-dropdown:hover {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #F3F4F6;
+}
+
+.dropdown-item.active {
+    background-color: rgba(14, 165, 233, 0.1);
+    color: var(--primary-color);
+}
+
+.arrow-down {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #666;
+    margin-left: 4px;
+    transition: transform 0.2s;
+}
+
+.page-size:hover .arrow-down {
+    transform: rotate(180deg);
 }
 
 .page-nav {
@@ -277,16 +336,57 @@ body, html {
     text-align: center;
 }
 
-/* ... 其他分页样式保持不变 ... */
+/* 批量操作按钮样式 */
+.batch-actions {
+    display: flex;
+    gap: 12px;
+}
 
-.save-btn {
+.batch-btn {
     padding: 8px 16px;
-    background-color: var(--primary-color);
-    color: white;
     border: none;
     border-radius: 6px;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.batch-pass-btn {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.batch-pass-btn:hover {
+    background-color: rgba(16, 185, 129, 0.2);
+}
+
+.batch-fail-btn {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.batch-fail-btn:hover {
+    background-color: rgba(239, 68, 68, 0.2);
+}
+
+.batch-delete-btn {
+    background-color: rgba(107, 114, 128, 0.1);
+    color: #6B7280;
+    border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+.batch-delete-btn:hover {
+    background-color: rgba(107, 114, 128, 0.2);
+}
+
+/* 移除保存按钮样式（不再需要） */
+.save-btn {
+    display: none;
 }
