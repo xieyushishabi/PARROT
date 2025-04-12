@@ -3,6 +3,8 @@ from .auth import router as auth_router
 from .profile import router as profile_router
 from .admin import router as admin_router
 from .tts import router as tts_router
+from .community import router as community_router
+from .teaching import router as teaching_router
 
 # 创建API路由聚合器
 api_router = APIRouter()
@@ -12,3 +14,5 @@ api_router.include_router(auth_router)
 api_router.include_router(profile_router)
 api_router.include_router(admin_router)
 api_router.include_router(tts_router)
+api_router.include_router(community_router)
+api_router.include_router(teaching_router)

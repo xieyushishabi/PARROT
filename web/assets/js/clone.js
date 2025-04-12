@@ -21,6 +21,42 @@ function showToast(message) {
 // API基础URL
 const API_BASE_URL = 'http://127.0.0.1:8000/api/v1';
 
+function recordVisit() {
+    const baseURL = 'http://127.0.0.1:8000';
+    
+    try {
+        // 尝试获取并解析用户信息
+        const userDataStr = localStorage.getItem('currentUser');
+        if (userDataStr) {
+            userInfo = JSON.parse(userDataStr);
+            // 检查是否有token，用来判断用户是否已登录
+            isLoggedIn = userInfo && userInfo.token ? true : false;
+        }
+    } catch (error) {
+        console.error('解析用户信息失败:', error);
+        userInfo = null;
+        isLoggedIn = false;
+    }
+    const config = {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    };
+    // 如果有token，添加到请求头
+    if (isLoggedIn && userInfo.token) {
+        config.headers['Authorization'] = `Bearer ${userInfo.token}`;
+    }
+
+    // 调用API记录访问
+    const params = new URLSearchParams();
+    params.append('feature_type', "cloning");
+
+    axios.post(`${baseURL}/api/v1/admin/record-visit`, params,config)
+    .catch(error => {
+        console.error('记录页面访问失败:', error);
+    });
+}
+
 // 上传语音样本
 async function uploadVoiceSample(params) {
     try {
@@ -301,6 +337,9 @@ function ensureAudioElement() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    // 记录页面访问
+    recordVisit();
+
     // 获取用户的声音样本
     getMyVoiceSamples();
     

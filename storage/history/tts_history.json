@@ -62,22 +62,5 @@
     "status": "completed",
     "output_path": "/home/hoey/桌面/PARROT-master/storage/outputs/5deb97e4-e70a-4c74-b92d-4e94c88b813f.wav",
     "updated_at": "2025-04-03T15:54:58.848758"
-  },
-  "8867b99e-5414-43ed-aee7-e5fb71d307a1": {
-    "task_id": "8867b99e-5414-43ed-aee7-e5fb71d307a1",
-    "created_at": "2025-04-03T16:23:10.790770",
-    "text": "111111111111111",
-    "voice_id": "女声",
-    "voice_name": "女声",
-    "emotion": "默认",
-    "params": {
-      "text": "111111111111111",
-      "voice_sample": "女声",
-      "voice_display_name": "女声",
-      "p_w": 2.0,
-      "t_w": 3.0
-    },
-    "status": "processing",
-    "output_path": null
   }
 }

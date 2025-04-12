@@ -303,7 +303,42 @@ document.addEventListener('DOMContentLoaded', function() {
                 elements.voiceList.innerHTML = '<div class="error-message">\u52a0\u8f7d\u97f3\u8272\u5217\u8868\u5931\u8d25\uff0c\u8bf7\u5237\u65b0\u9875\u9762\u91cd\u8bd5</div>';
             }
         }
+    }
+    // 记录页面访问的函数
+    function recordVisit() {
+        const baseURL = 'http://127.0.0.1:8000';
+        
+        try {
+            // 尝试获取并解析用户信息
+            const userDataStr = localStorage.getItem('currentUser');
+            if (userDataStr) {
+                userInfo = JSON.parse(userDataStr);
+                // 检查是否有token，用来判断用户是否已登录
+                isLoggedIn = userInfo && userInfo.token ? true : false;
+            }
+        } catch (error) {
+            console.error('解析用户信息失败:', error);
+            userInfo = null;
+            isLoggedIn = false;
         }
+        const config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        // 如果有token，添加到请求头
+        if (isLoggedIn && userInfo.token) {
+            config.headers['Authorization'] = `Bearer ${userInfo.token}`;
+        }
+
+        // 调用API记录访问
+        const params = new URLSearchParams();
+        params.append('feature_type', "dubbing");
+
+        axios.post(`${baseURL}/api/v1/admin/record-visit`, params,config)
+        .catch(error => {
+            console.error('记录页面访问失败:', error);
+        });
     }
     
     // 初始化控制面板事件
@@ -648,6 +683,9 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             console.log('初始化配音页面...');
             
+            // 记录页面访问
+            recordVisit();
+
             // 初始化元素引用
             elements.initialize();
             

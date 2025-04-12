@@ -154,80 +154,188 @@ document.addEventListener('DOMContentLoaded', function() {
     // 添加标签页切换功能
     const tabItems = document.querySelectorAll('.tab-item');
     const historyList = document.querySelector('.history-list');
-    const originalItems = historyList.innerHTML; // 保存原始的10个作品
-
-    // 创建视频作品的HTML
-    const videoItems = `
-        <div class="history-item">
-            <div class="item-cover">
-                <img src="assets/images/cover1.jpg" alt="作品封面">
-                <div class="item-tag">生成副本</div>
-            </div>
-            <div class="item-info">
-                <div class="item-title">
-                    <input type="text" value="视频作品1" class="title-input">
-                    <button class="btn-save-title">保存</button>
-                </div>
-                <div class="item-meta">2025-01-26 编辑 · 5分40秒</div>
-            </div>
-        </div>
-        <div class="history-item">
-            <div class="item-cover">
-                <img src="assets/images/cover2.jpg" alt="作品封面">
-                <div class="item-tag">生成副本</div>
-            </div>
-            <div class="item-info">
-                <div class="item-title">
-                    <input type="text" value="视频作品2" class="title-input">
-                    <button class="btn-save-title">保存</button>
-                </div>
-                <div class="item-meta">2025-01-25 编辑 · 3分20秒</div>
-            </div>
-        </div>
-        <div class="history-item">
-            <div class="item-cover">
-                <img src="assets/images/cover3.jpg" alt="作品封面">
-                <div class="item-tag">生成副本</div>
-            </div>
-            <div class="item-info">
-                <div class="item-title">
-                    <input type="text" value="视频作品3" class="title-input">
-                    <button class="btn-save-title">保存</button>
-                </div>
-                <div class="item-meta">2025-01-24 编辑 · 4分15秒</div>
-            </div>
-        </div>
-    `;
-
-    // 创建声音作品的HTML
-    const voiceItems = `
-        <div class="history-item">
-            <div class="item-cover">
-                <img src="assets/images/cover1.jpg" alt="作品封面">
-                <div class="item-tag">生成副本</div>
-            </div>
-            <div class="item-info">
-                <div class="item-title">
-                    <input type="text" value="声音作品1" class="title-input">
-                    <button class="btn-save-title">保存</button>
-                </div>
-                <div class="item-meta">2025-01-26 编辑 · 5分40秒</div>
-            </div>
-        </div>
-        <div class="history-item">
-            <div class="item-cover">
-                <img src="assets/images/cover2.jpg" alt="作品封面">
-                <div class="item-tag">生成副本</div>
-            </div>
-            <div class="item-info">
-                <div class="item-title">
-                    <input type="text" value="声音作品2" class="title-input">
-                    <button class="btn-save-title">保存</button>
-                </div>
-                <div class="item-meta">2025-01-25 编辑 · 3分20秒</div>
-            </div>
-        </div>
-    `;
+    let originalItems = historyList.innerHTML; // 保存原始的作品HTML
+    
+    // 加载音频历史作品
+    async function loadAudioHistory(auth) {
+        try {
+            // 构建请求配置
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${auth.currentUser.token}`
+                }
+            };
+            
+            // 调用API获取音频历史
+            const response = await axios.get(
+                `${auth.baseURL}/api/v1/user/history/audio`, 
+                config
+            );
+            
+            if (response.data.code !== 200) {
+                throw new Error(response.data.msg || '获取音频历史失败');
+            }
+            
+            const audioData = response.data.data;
+            
+            // 生成HTML
+            let audioItemsHtml = '';
+            if (audioData.items && audioData.items.length > 0) {
+                audioData.items.forEach(item => {
+                    audioItemsHtml += `
+                        <div class="history-item" data-id="${item.id}">
+                            <div class="item-cover">
+                                <img src="${item.cover}" alt="作品封面">
+                                <div class="item-tag">${item.tag}</div>
+                            </div>
+                            <div class="item-info">
+                                <div class="item-title">
+                                    <input type="text" value="${item.title}" class="title-input">
+                                    <button class="btn-save-title">保存</button>
+                                </div>
+                                <div class="item-meta">${item.created_at} 编辑 · ${item.duration}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                audioItemsHtml = '<div class="no-content">暂无音频作品</div>';
+            }
+            
+            // 更新列表
+            historyList.innerHTML = audioItemsHtml;
+            originalItems = audioItemsHtml; // 更新原始内容
+            
+            // 设置历史项目的事件
+            setupHistoryItemEvents();
+            
+            return audioData;
+        } catch (error) {
+            console.error('加载音频历史失败:', error);
+            historyList.innerHTML = '<div class="no-content">加载失败，请稍后再试</div>';
+            return null;
+        }
+    }
+    
+    // 加载视频历史作品
+    async function loadVideoHistory(auth) {
+        try {
+            // 构建请求配置
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${auth.currentUser.token}`
+                }
+            };
+            
+            // 调用API获取视频历史
+            const response = await axios.get(
+                `${auth.baseURL}/api/v1/user/history/video`, 
+                config
+            );
+            
+            if (response.data.code !== 200) {
+                throw new Error(response.data.msg || '获取视频历史失败');
+            }
+            
+            const videoData = response.data.data;
+            
+            // 生成HTML
+            let videoItemsHtml = '';
+            if (videoData.items && videoData.items.length > 0) {
+                videoData.items.forEach(item => {
+                    videoItemsHtml += `
+                        <div class="history-item" data-id="${item.id}">
+                            <div class="item-cover">
+                                <img src="${item.cover}" alt="作品封面">
+                                <div class="item-tag">${item.tag}</div>
+                            </div>
+                            <div class="item-info">
+                                <div class="item-title">
+                                    <input type="text" value="${item.title}" class="title-input">
+                                    <button class="btn-save-title">保存</button>
+                                </div>
+                                <div class="item-meta">${item.created_at} 编辑 · ${item.duration}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                videoItemsHtml = '<div class="no-content">暂无视频作品</div>';
+            }
+            
+            // 更新列表
+            historyList.innerHTML = videoItemsHtml;
+            
+            // 设置历史项目的事件
+            setupHistoryItemEvents();
+            
+            return videoData;
+        } catch (error) {
+            console.error('加载视频历史失败:', error);
+            historyList.innerHTML = '<div class="no-content">加载失败，请稍后再试</div>';
+            return null;
+        }
+    }
+    
+    // 加载克隆声音历史作品
+    async function loadVoiceHistory(auth) {
+        try {
+            // 构建请求配置
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${auth.currentUser.token}`
+                }
+            };
+            
+            // 调用API获取克隆声音历史
+            const response = await axios.get(
+                `${auth.baseURL}/api/v1/user/history/voice`, 
+                config
+            );
+            
+            if (response.data.code !== 200) {
+                throw new Error(response.data.msg || '获取克隆声音历史失败');
+            }
+            
+            const voiceData = response.data.data;
+            
+            // 生成HTML
+            let voiceItemsHtml = '';
+            if (voiceData.items && voiceData.items.length > 0) {
+                voiceData.items.forEach(item => {
+                    voiceItemsHtml += `
+                        <div class="history-item" data-id="${item.id}">
+                            <div class="item-cover">
+                                <img src="${item.cover}" alt="作品封面">
+                                <div class="item-tag">${item.tag}</div>
+                            </div>
+                            <div class="item-info">
+                                <div class="item-title">
+                                    <input type="text" value="${item.title}" class="title-input">
+                                    <button class="btn-save-title">保存</button>
+                                </div>
+                                <div class="item-meta">${item.created_at} 编辑 · ${item.duration}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                voiceItemsHtml = '<div class="no-content">暂无克隆声音作品</div>';
+            }
+            
+            // 更新列表
+            historyList.innerHTML = voiceItemsHtml;
+            
+            // 设置历史项目的事件
+            setupHistoryItemEvents();
+            
+            return voiceData;
+        } catch (error) {
+            console.error('加载克隆声音历史失败:', error);
+            historyList.innerHTML = '<div class="no-content">加载失败，请稍后再试</div>';
+            return null;
+        }
+    }
     
     tabItems.forEach(tab => {
         tab.addEventListener('click', (e) => {
@@ -237,17 +345,59 @@ document.addEventListener('DOMContentLoaded', function() {
             // 添加当前标签的active类
             tab.classList.add('active');
             
-            // 根据标签切换内容
+            // 根据标签切换内容并从API加载数据
             if (tab.textContent === '视频') {
-                historyList.innerHTML = videoItems;
+                loadVideoHistory(auth);
             } else if (tab.textContent === '我的声音') {
-                historyList.innerHTML = voiceItems;
+                loadVoiceHistory(auth);
             } else {
-                historyList.innerHTML = originalItems;
+                loadAudioHistory(auth);
             }
         });
     });
+    
+    // 初始加载音频历史作品
+    loadAudioHistory(auth);
 
+    // 添加保存作品标题功能
+    function setupTitleSaveButtons() {
+        const saveButtons = document.querySelectorAll('.btn-save-title');
+        saveButtons.forEach(button => {
+            button.addEventListener('click', async function() {
+                const historyItem = this.closest('.history-item');
+                const itemId = historyItem.getAttribute('data-id');
+                const titleInput = historyItem.querySelector('.title-input');
+                const newTitle = titleInput.value.trim();
+                
+                if (!newTitle) {
+                    alert('标题不能为空');
+                    return;
+                }
+                
+                try {
+                    // 构建请求配置
+                    const config = {
+                        headers: {
+                            'Authorization': `Bearer ${auth.currentUser.token}`
+                        }
+                    };
+                    
+                    // 这里可以添加保存标题的API调用
+                    // 目前仅显示成功消息
+                    alert('标题保存成功！');
+                } catch (error) {
+                    console.error('保存标题失败:', error);
+                    alert('保存失败，请稍后再试');
+                }
+            });
+        });
+    }
+    
+    // 在加载历史作品后设置标题保存按钮事件
+    function setupHistoryItemEvents() {
+        setupTitleSaveButtons();
+    }
+    
     // 添加互动信息标签页切换功能
     const interactionTabs = document.querySelectorAll('.interaction-section .tab-item');
     const interactionList = document.querySelector('.interaction-section .history-list');

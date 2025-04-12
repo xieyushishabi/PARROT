@@ -1,12 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status, Query
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, List, Dict, Any
 import base64
+from sqlalchemy import desc
 
 # 修改导入路径
 from backend.core.security import get_current_user, get_password_hash
-from backend.database.models import User
+from backend.database.models import User, Voice, UserOperationHistory
 from backend.database.database import get_db
 from backend.core.models import ProfileUpdate, ProfileResponse, APIResponse
 
@@ -170,3 +171,144 @@ async def change_password(
         msg="密码修改成功",
         data={}
     )
+
+# 获取用户历史作品 - 音频
+@router.get("/history/audio")
+async def get_user_audio_history(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """获取用户的音频历史作品"""
+    try:
+        # 查询用户的音频历史记录 - 使用UserOperationHistory表
+        query = db.query(UserOperationHistory).filter(
+            UserOperationHistory.user_id == current_user.id,
+            UserOperationHistory.operation_type == "upload",  # 音频类型为upload
+            UserOperationHistory.resource_type == "audio"
+        ).order_by(desc(UserOperationHistory.created_at))
+        
+        # 获取所有记录
+        items = query.all()
+        
+        # 构建响应数据
+        result = []
+        for item in items:
+            # 构建每个音频项的数据
+            audio_item = {
+                "id": item.id,
+                "title": item.operation_detail or "未命名音频",
+                "cover": "assets/images/cover1.jpg",  # 默认封面
+                "tag": "生成副本",
+                "created_at": item.created_at.strftime("%Y-%m-%d"),
+                "duration": "5分40秒",  # 这里可以从资源中获取实际时长
+                "resource_id": item.resource_id
+            }
+            result.append(audio_item)
+        
+        return APIResponse(
+            code=200,
+            msg="获取音频历史成功",
+            data={
+                "items": result
+            }
+        )
+    except Exception as e:
+        return APIResponse(
+            code=500,
+            msg=f"获取音频历史失败: {str(e)}",
+            data={}
+        )
+
+# 获取用户历史作品 - 视频
+@router.get("/history/video")
+async def get_user_video_history(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """获取用户的视频历史作品"""
+    try:
+        # 查询用户的视频历史记录 - 使用UserOperationHistory表
+        query = db.query(UserOperationHistory).filter(
+            UserOperationHistory.user_id == current_user.id,
+            UserOperationHistory.operation_type == "upload",  # 视频类型为upload
+            UserOperationHistory.resource_type == "video"
+        ).order_by(desc(UserOperationHistory.created_at))
+        
+        # 获取所有记录
+        items = query.all()
+        
+        # 构建响应数据
+        result = []
+        for item in items:
+            # 构建每个视频项的数据
+            video_item = {
+                "id": item.id,
+                "title": item.operation_detail or "未命名视频",
+                "cover": "assets/images/cover2.jpg",  # 默认封面
+                "tag": "生成副本",
+                "created_at": item.created_at.strftime("%Y-%m-%d"),
+                "duration": "3分20秒",  # 这里可以从资源中获取实际时长
+                "resource_id": item.resource_id
+            }
+            result.append(video_item)
+        
+        return APIResponse(
+            code=200,
+            msg="获取视频历史成功",
+            data={
+                "items": result
+            }
+        )
+    except Exception as e:
+        return APIResponse(
+            code=500,
+            msg=f"获取视频历史失败: {str(e)}",
+            data={}
+        )
+
+# 获取用户历史作品 - 克隆声音
+@router.get("/history/voice")
+async def get_user_voice_history(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """获取用户的克隆声音历史作品"""
+    try:
+        # 查询用户的声音克隆历史 - 使用Voice表
+        query = db.query(Voice).filter(
+            Voice.user_id == current_user.id
+        ).order_by(desc(Voice.created_at))
+        
+        # 获取所有记录
+        voices = query.all()
+        
+        # 构建响应数据
+        result = []
+        for voice in voices:
+            # 构建每个声音项的数据
+            voice_item = {
+                "id": voice.id,
+                "title": voice.title or "未命名声音",
+                "cover": "assets/images/cover3.jpg",  # 默认封面，实际应该使用voice.avatar
+                "tag": "声音克隆",
+                "created_at": voice.created_at.strftime("%Y-%m-%d"),
+                "duration": "4分15秒",  # 这里可以从资源中获取实际时长
+                "play_count": voice.play_count,
+                "like_count": voice.like_count,
+                "collect_count": voice.collect_count
+            }
+            result.append(voice_item)
+        
+        return APIResponse(
+            code=200,
+            msg="获取克隆声音历史成功",
+            data={
+                "items": result
+            }
+        )
+    except Exception as e:
+        return APIResponse(
+            code=500,
+            msg=f"获取克隆声音历史失败: {str(e)}",
+            data={}
+        )

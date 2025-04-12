@@ -6,6 +6,45 @@ document.addEventListener('DOMContentLoaded', function() {
     const resolutionSelect = document.querySelector('.resolution select');
     const bitrateSelect = document.querySelector('.bitrate select');
     
+    // 添加记录页面访问的函数
+    function recordVisit() {
+        const baseURL = 'http://127.0.0.1:8000';
+        
+        try {
+            // 尝试获取并解析用户信息
+            const userDataStr = localStorage.getItem('currentUser');
+            if (userDataStr) {
+                userInfo = JSON.parse(userDataStr);
+                // 检查是否有token，用来判断用户是否已登录
+                isLoggedIn = userInfo && userInfo.token ? true : false;
+            }
+        } catch (error) {
+            console.error('解析用户信息失败:', error);
+            userInfo = null;
+            isLoggedIn = false;
+        }
+        const config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        };
+        // 如果有token，添加到请求头
+        if (isLoggedIn && userInfo.token) {
+            config.headers['Authorization'] = `Bearer ${userInfo.token}`;
+        }
+
+        // 调用API记录访问
+        const params = new URLSearchParams();
+        params.append('feature_type', "education");
+
+        axios.post(`${baseURL}/api/v1/admin/record-visit`, params,config)
+        .catch(error => {
+            console.error('记录页面访问失败:', error);
+        });
+    }
+    // 记录页面访问
+    recordVisit();
+
     // 播放/暂停切换
     let isPlaying = false;
     playButton.addEventListener('click', function() {
@@ -21,6 +60,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 导入PPT按钮点击事件
     const importBtn = document.querySelector('.import-btn');
+    const resourceList = document.querySelector('.resource-list');
+    const baseURL = 'http://127.0.0.1:8000';
+
+    // 创建加载提示元素
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.className = 'loading-indicator';
+    loadingIndicator.textContent = '正在处理PPT...';
+    loadingIndicator.style.display = 'none';
+    document.querySelector('.resource-panel').appendChild(loadingIndicator);
+
+    // 创建资源项
+    function createResourceItem(imageUrl, index) {
+        const resourceItem = document.createElement('div');
+        resourceItem.className = 'resource-item';
+        resourceItem.innerHTML = `
+            <img src="${imageUrl}" alt="PPT页面 ${index + 1}">
+            <div class="resource-actions">
+                <button class="delete-btn"><i class="icon-delete"></i></button>
+            </div>
+        `;
+
+        // 添加删除按钮事件
+        const deleteBtn = resourceItem.querySelector('.delete-btn');
+        deleteBtn.addEventListener('click', function() {
+            resourceItem.remove();
+        });
+
+        return resourceItem;
+    }
+
     importBtn.addEventListener('click', function() {
         // 创建文件输入元素
         const input = document.createElement('input');
@@ -28,11 +97,42 @@ document.addEventListener('DOMContentLoaded', function() {
         input.accept = '.ppt,.pptx';
         input.multiple = false;
         
-        input.addEventListener('change', function(e) {
+        input.addEventListener('change', async function(e) {
             if (e.target.files.length > 0) {
                 const file = e.target.files[0];
-                console.log('Selected file:', file.name);
-                // 这里添加处理PPT文件的逻辑
+                const formData = new FormData();
+                formData.append('file', file);
+
+                // 显示加载提示
+                loadingIndicator.style.display = 'block';
+                
+                try {
+                    // 上传PPT文件并获取处理后的图片列表
+                    const response = await axios.post(`${baseURL}/api/v1/teaching/upload-ppt`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+
+                    if (response.data.code === 200) {
+                        // 清空现有的资源项
+                        resourceList.innerHTML = '';
+
+                        // 添加新的资源项
+                        response.data.images.forEach((imageUrl, index) => {
+                            const resourceItem = createResourceItem(imageUrl, index);
+                            resourceList.appendChild(resourceItem);
+                        });
+                    } else {
+                        throw new Error(response.data.message || '处理PPT文件失败');
+                    }
+                } catch (error) {
+                    console.error('上传PPT文件失败:', error);
+                    alert('上传PPT文件失败: ' + (error.response?.data?.message || error.message || '未知错误'));
+                } finally {
+                    // 隐藏加载提示
+                    loadingIndicator.style.display = 'none';
+                }
             }
         });
         
@@ -216,4 +316,4 @@ document.addEventListener('DOMContentLoaded', function() {
             timelineTracks.innerHTML = ''; // 清空轨道内容
         }
     });
-}); 
+});

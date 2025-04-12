@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parrot Sound 管理平台登录</title>
+    <link rel="stylesheet" href="assets/css/login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-panel">
+            <div class="logo-area">
+                <h1 class="logo">Parrot Sound</h1>
+                <div class="subtitle">管理平台</div>
+            </div>
+            <div class="login-form">
+                <h2>管理员登录</h2>
+                <div class="form-item">
+                    <label>用户名</label>
+                    <input type="text" id="username" placeholder="请输入管理员用户名">
+                </div>
+                <div class="form-item">
+                    <label>密码</label>
+                    <input type="password" id="password" placeholder="请输入管理员密码">
+                </div>
+                <div class="form-item error-message" id="error-message"></div>
+                <div class="form-item">
+                    <button class="login-btn" id="login-btn">登 录</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="libs/axios.min.js"></script>
+    <script src="assets/js/login.js"></script>
+</body>
+</html>

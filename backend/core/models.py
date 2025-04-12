@@ -1,9 +1,8 @@
 from pydantic import BaseModel, EmailStr, Field, validator
-from typing import Optional, Any
+from typing import Optional, Any, Union, List
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from typing import Optional, Tuple, List
 from datetime import datetime
 from backend.database.models import User 
 
@@ -34,9 +33,10 @@ class AdminLogin(BaseModel):
 
 # API 响应模型
 class APIResponse(BaseModel):
+    """API响应模型"""
     code: int
     msg: str
-    data: dict = None
+    data: Optional[Union[dict, list]] = None
 
 # Pydantic 模型 - 用户相关
 class UserBase(BaseModel):
@@ -120,7 +120,7 @@ def get_users(
     register_date: Optional[str] = None,
     skip: int = 0,
     limit: int = 100
-) -> Tuple[List[User], int]:
+) -> tuple[List[User], int]:
     """
     获取用户列表，支持筛选
     
@@ -170,6 +170,7 @@ class UserUpdate(BaseModel):
     password: Optional[str] = None
 
 class AdminUserCreate(BaseModel):
+    """管理员添加用户请求模型"""
     username: str
     password: str
     phone_number: str
@@ -177,6 +178,11 @@ class AdminUserCreate(BaseModel):
     age: Optional[int] = None
     gender: Optional[str] = None
     created_at: Optional[str] = None
+
+class AdminLoginRequest(BaseModel):
+    """管理员登录请求模型"""
+    username: str
+    password: str
 
 class VoiceReviewRequest(BaseModel):
     """语音审核请求模型"""

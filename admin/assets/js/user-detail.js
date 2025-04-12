@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'dub': '智能配音',
             'clone': '声音克隆',
             'teaching': '教育教学',
-            'collection': '收藏声音',
+            'collect': '收藏声音',
             'like': '点赞声音',
             'upload': '上传资源',
             'delete': '删除资源',
@@ -128,7 +128,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'download': '下载资源',
             'share': '分享资源',
             'comment': '评论资源',
-            'edit': '编辑资源'
+            'edit': '编辑资源',
+            'play': '播放声音'
         };
         
         return typeMap[type] || type;

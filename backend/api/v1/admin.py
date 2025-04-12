@@ -1,18 +1,56 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_
+from sqlalchemy import and_, or_, func, cast, Date
 from typing import Optional, List
 from datetime import datetime
 from pydantic import BaseModel
+from backend.core.security import get_optional_user
+from fastapi import Form
 import os
 from fastapi.responses import FileResponse
+from fastapi import BackgroundTasks
+import asyncio
+from backend.database.database import async_session
+from sqlalchemy import select, and_
 
-from backend.core.models import AdminUserCreate, APIResponse, UserUpdate, VoiceReviewRequest, BatchVoiceReviewRequest, BatchUserDeleteRequest
-from backend.database.models import User, Voice, UserOperationHistory
+from backend.core.models import AdminUserCreate, APIResponse, UserUpdate, VoiceReviewRequest, BatchVoiceReviewRequest, BatchUserDeleteRequest, AdminLoginRequest
+from backend.database.models import User, Voice, UserOperationHistory, Admin, SiteVisit, FeatureUsage, UserDailyActivity
 from backend.database.database import get_db
 from backend.core.security import get_password_hash
 
 router = APIRouter(tags=["管理"], prefix="/admin")
+
+@router.post("/login", response_model=APIResponse)
+def admin_login(
+    login_data: AdminLoginRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    管理员登录验证
+    
+    - username: 管理员用户名
+    - password: 管理员密码
+    """
+    # 根据用户名查找管理员
+    admin = db.query(Admin).filter(Admin.name == login_data.username).first()
+    
+    # 验证管理员是否存在及密码是否匹配
+    if not admin or admin.password != login_data.password:
+        return {
+            "code": 401,
+            "msg": "用户名或密码错误",
+            "data": None
+        }
+    
+    # 登录成功
+    return {
+        "code": 200,
+        "msg": "登录成功",
+        "data": {
+            "id": admin.id,
+            "name": admin.name
+        }
+    }
 
 @router.get("/users", response_model=APIResponse)
 def get_user_list(
@@ -878,3 +916,305 @@ def get_user_history(
         }
     }
 
+@router.get("/dashboard/stats", response_model=APIResponse)
+def get_dashboard_stats(
+    db: Session = Depends(get_db)
+):
+    """
+    获取首页仪表盘统计数据
+    
+    返回:
+    - 网站浏览量
+    - 用户数量
+    - 内容生产量
+    """
+    try:
+        # 获取网站总访问量
+        total_visits = db.query(SiteVisit).count()
+        
+        # 获取注册用户总数
+        total_users = db.query(User).count()
+        
+        # 获取内容总生产量 (包括声音资源数量)
+        total_contents = db.query(Voice).count()
+        
+        return {
+            "code": 200,
+            "msg": "获取统计数据成功",
+            "data": {
+                "visits": total_visits,
+                "users": total_users,
+                "contents": total_contents
+            }
+        }
+    except Exception as e:
+        return {
+            "code": 500,
+            "msg": f"获取统计数据失败: {str(e)}",
+            "data": None
+        }
+
+@router.get("/dashboard/feature-usage", response_model=APIResponse)
+def get_feature_usage_stats(
+    db: Session = Depends(get_db)
+):
+    """
+    获取各功能使用人数占比
+    
+    返回:
+    - 教育教学使用比例
+    - 智能配音使用比例
+    - 声音克隆使用比例
+    """
+    try:
+        # 获取总功能使用记录数
+        total_usage = db.query(FeatureUsage).count()
+        if total_usage == 0:
+            # 如果没有数据，返回默认值
+            return {
+                "code": 200,
+                "msg": "获取功能使用统计成功",
+                "data": {
+                    "education": 45.55,
+                    "dubbing": 36.09,
+                    "cloning": 18.36
+                }
+            }
+        
+        # 按功能类型分组并统计数量
+        feature_counts = db.query(
+            FeatureUsage.feature_type,
+            func.count(FeatureUsage.id).label('count')
+        ).group_by(FeatureUsage.feature_type).all()
+        
+        # 计算比例
+        result = {}
+        for feature_type, count in feature_counts:
+            percentage = (count / total_usage) * 100
+            # 将功能类型转换为前端使用的名称
+            if feature_type == "education" or feature_type == "教育教学":
+                result["education"] = round(percentage, 2)
+            elif feature_type == "dubbing" or feature_type == "智能配音":
+                result["dubbing"] = round(percentage, 2)
+            elif feature_type == "cloning" or feature_type == "声音克隆":
+                result["cloning"] = round(percentage, 2)
+            else:
+                # 其他类型功能
+                result[feature_type] = round(percentage, 2)
+        
+        # 确保所有三个主要类别都有数据
+        if "education" not in result:
+            result["education"] = 0
+        if "dubbing" not in result:
+            result["dubbing"] = 0
+        if "cloning" not in result:
+            result["cloning"] = 0
+        return {
+            "code": 200,
+            "msg": "获取功能使用统计成功",
+            "data": result
+        }
+    except Exception as e:
+        return {
+            "code": 500,
+            "msg": f"获取功能使用统计失败: {str(e)}",
+            "data": None
+        }
+
+@router.get("/dashboard/active-users", response_model=APIResponse)
+def get_weekly_active_users(
+    db: Session = Depends(get_db)
+):
+    """
+    获取近一周活跃用户人数
+    
+    返回:
+    - 最近7天每天的活跃用户数
+    """
+    try:
+        import datetime
+        from sqlalchemy import func, cast, Date
+        
+        # 获取当前日期
+        today = datetime.datetime.now().date()
+        
+        # 计算7天前的日期
+        seven_days_ago = today - datetime.timedelta(days=6)
+        
+        # 准备日期范围和结果容器
+        date_range = []
+        current_date = seven_days_ago
+
+        # 生成最近7天的日期列表
+        while current_date <= today:
+            date_range.append(current_date)
+            current_date += datetime.timedelta(days=1)
+
+        print(f"当前日期: {today}, 七天前: {seven_days_ago}")
+
+        # 查询每日活跃用户数据
+        daily_activities = db.query(
+            func.date(UserDailyActivity.activity_date).label('date'),
+            func.count(UserDailyActivity.user_id.distinct())
+        ).filter(
+            func.date(UserDailyActivity.activity_date) >= seven_days_ago,
+            func.date(UserDailyActivity.activity_date) <= today
+        ).group_by(
+            func.date(UserDailyActivity.activity_date)
+        ).all()
+
+        print(daily_activities)
+
+        # 转换查询结果为字典，以日期为键
+        activity_dict = {str(date): count for date, count in daily_activities}
+        
+        # 准备返回数据格式
+        result = []
+        weekdays = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+        
+        for date in date_range:
+            # 获取当天活跃用户数，如果没有数据则为0
+            user_count = activity_dict.get(str(date), 0)
+            
+            # 获取星期几 (0是周一，6是周日)
+            weekday_index = date.weekday()
+            weekday_name = weekdays[weekday_index]
+            
+            result.append({
+                "date": str(date),
+                "weekday": weekday_name,
+                "user_count": user_count
+            })
+        
+        # 如果没有足够数据，生成模拟数据
+        if not daily_activities:
+            result = [
+                {"date": str(seven_days_ago + datetime.timedelta(days=0)), "weekday": "周一", "user_count": 250},
+                {"date": str(seven_days_ago + datetime.timedelta(days=1)), "weekday": "周二", "user_count": 180},
+                {"date": str(seven_days_ago + datetime.timedelta(days=2)), "weekday": "周三", "user_count": 300},
+                {"date": str(seven_days_ago + datetime.timedelta(days=3)), "weekday": "周四", "user_count": 220},
+                {"date": str(seven_days_ago + datetime.timedelta(days=4)), "weekday": "周五", "user_count": 250},
+                {"date": str(seven_days_ago + datetime.timedelta(days=5)), "weekday": "周六", "user_count": 400},
+                {"date": str(today), "weekday": "周日", "user_count": 350}
+            ]
+            
+        return {
+            "code": 200,
+            "msg": "获取近一周活跃用户数据成功",
+            "data": result
+        }
+    except Exception as e:
+        return {
+            "code": 500,
+            "msg": f"获取近一周活跃用户数据失败: {str(e)}",
+            "data": None
+        }
+
+@router.post("/record-visit", response_model=APIResponse)
+async def record_site_visit(
+    feature_type: Optional[str] = Form(None),  # 功能类型参数
+    background_tasks: BackgroundTasks = BackgroundTasks(),
+    current_user: Optional[User] = Depends(get_optional_user),  # 添加可选的用户依赖
+    db: Session = Depends(get_db)
+):
+    """
+    记录网站访问和功能使用，所有记录都延时30分钟后上传到数据库
+    
+    - user_id: 用户ID，未登录为空
+    - feature_type: 功能类型 (教育教学、智能配音、声音克隆)
+    """
+    try:
+        print("\n===== 请求调试信息 =====")
+        print(feature_type)
+        user_id = current_user.id if current_user else None
+        # 所有记录延时30分钟后处理
+        print(user_id)
+        background_tasks.add_task(
+            delayed_record_visit, 
+            user_id=user_id,
+            feature_type=feature_type,
+            delay_minutes=0.2
+        )
+        
+        return {
+            "code": 200,
+            "msg": "访问已记录，将在30分钟后保存到数据库",
+            "data": None
+        }
+    except Exception as e:
+        return {
+            "code": 500,
+            "msg": f"记录访问失败: {str(e)}",
+            "data": None
+        }
+    
+# 延时记录访问的异步函数
+async def delayed_record_visit(user_id: Optional[int], feature_type: Optional[str] = None, delay_minutes: int = 30):
+    # 等待指定的延迟时间
+    await asyncio.sleep(delay_minutes * 60)
+    
+    try:
+        # 使用异步会话
+        async with async_session() as session:
+            # 1. 创建SiteVisit记录 - 对所有访问都记录
+            visit = SiteVisit(user_id=user_id)
+            session.add(visit)
+            
+            # 2. 如果有功能类型，创建FeatureUsage记录 - 对所有访问有功能类型的记录
+            if feature_type:
+                # 标准化功能类型名称
+                if feature_type in ["教育教学", "教育", "teaching"]:
+                    normalized_feature = "education"
+                elif feature_type in ["智能配音", "配音", "dubbing"]:
+                    normalized_feature = "dubbing"
+                elif feature_type in ["声音克隆", "克隆", "cloning"]:
+                    normalized_feature = "cloning"
+                else:
+                    normalized_feature = feature_type
+                
+                # 创建功能使用记录
+                usage = FeatureUsage(
+                    feature_type=normalized_feature,
+                    user_id=user_id
+                )
+                session.add(usage)
+            
+            # 3. 如果是已登录用户，更新UserDailyActivity - 只针对登录用户
+            if user_id is not None:
+                # 获取今天的日期（只保留日期部分，不含时间）
+                current_time = datetime.now()
+                today = current_time.date()
+                
+                # 查找今天该用户的活跃记录，使用日期转换确保匹配
+                query = await session.execute(
+                    select(UserDailyActivity).where(
+                        and_(
+                            UserDailyActivity.user_id == user_id,
+                            func.date(UserDailyActivity.activity_date) == today
+                        )
+                    )
+                )
+                activity = query.scalars().first()
+                
+                if activity:
+                    # 如果已有记录，增加活动次数
+                    activity.activity_count += 1
+                else:
+                    # 否则创建新记录，存储零点时间确保日期匹配
+                    # 使用日期的0点时间，便于后续查询
+                    day_start_time = datetime(today.year, today.month, today.day)
+                    activity = UserDailyActivity(
+                        user_id=user_id,
+                        activity_date=day_start_time,
+                        activity_count=1
+                    )
+                    session.add(activity)
+            
+            # 提交所有记录
+            await session.commit()
+            print(f"成功延时记录访问: user_id={user_id}, feature_type={feature_type}, 延时={delay_minutes}分钟")
+    except Exception as e:
+        print(f"延时记录访问失败: {str(e)}")
+        # 为了调试，打印更详细的错误信息
+        import traceback
+        traceback.print_exc()

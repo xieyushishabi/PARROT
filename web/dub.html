@@ -895,6 +895,49 @@
         
         // 默认应用默认预设
         applyPreset('default');
+        
+        // 检查URL参数，如果包含声音ID和名称，则自动选择该声音
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const voiceId = urlParams.get('voice');
+            const voiceName = urlParams.get('name');
+            
+            if (voiceId) {
+                console.log('从URL参数中检测到声音ID:', voiceId, '声音名称:', voiceName);
+                
+                // 等待音色列表加载完成后再选择
+                setTimeout(() => {
+                    // 查找对应的音色卡片
+                    const voiceCard = document.querySelector(`.voice-card[data-voice-id="${voiceId}"]`);
+                    if (voiceCard) {
+                        // 滚动到该音色卡片并选中
+                        voiceCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        selectVoice(voiceCard);
+                        
+                        // 显示提示信息
+                        alert(`已自动选择来自社区的声音: ${voiceName || '未知声音'}\n现在您可以输入文本并生成配音了！`);
+                    } else {
+                        console.error('未找到ID为', voiceId, '的音色卡片');
+                        
+                        // 如果直接通过ID找不到，则尝试通过名称匹配
+                        if (voiceName) {
+                            const cards = document.querySelectorAll('.voice-card');
+                            for (const card of cards) {
+                                const cardName = card.querySelector('h3').textContent;
+                                if (cardName === voiceName) {
+                                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    selectVoice(card);
+                                    alert(`已自动选择来自社区的声音: ${voiceName}`);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }, 1000); // 给予1秒时间让音色列表加载
+            }
+        } catch (error) {
+            console.error('处理URL参数出错:', error);
+        }
     });
     
     // 全局音频生成处理函数
