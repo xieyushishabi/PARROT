@@ -23,7 +23,8 @@ const API_BASE_URL = 'http://127.0.0.1:8000/api/v1';
 
 function recordVisit() {
     const baseURL = 'http://127.0.0.1:8000';
-    
+    let isLoggedIn = false;
+    let userInfo = null;
     try {
         // 尝试获取并解析用户信息
         const userDataStr = localStorage.getItem('currentUser');

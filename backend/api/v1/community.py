@@ -145,7 +145,6 @@ async def get_voices(
                 result.append({
                     "id": voice.id,
                     "title": voice.title or "无标题",
-                    "voiceAvatar": f"/api/v1/community/voices/{voice.id}/avatar", # 保留原有路径
                     "voiceAvatarData": voice_avatar_base64,  # 添加Base64编码的图像数据
                     "authorName": author_name,
                     "authorId": author_id,
@@ -222,7 +221,6 @@ async def get_best_voices(
                 result.append({
                     "id": voice.id,
                     "title": voice.title,
-                    "voiceAvatar": f"/api/v1/community/voices/{voice.id}/avatar", # 保留原有路径
                     "voiceAvatarData": voice_avatar_base64,  # 添加Base64编码的图像数据
                     "authorName": author_name,
                     "authorId": voice.user_id,
@@ -659,7 +657,6 @@ async def get_my_collections(
                 result.append({
                     "id": voice.id,
                     "title": voice.title,
-                    "voiceAvatar": f"/api/v1/community/voices/{voice.id}/avatar",
                     "authorName": author_name,
                     "authorId": voice.user_id,
                     "date": voice.created_at.strftime("%Y/%m/%d") if voice.created_at else "未知日期",

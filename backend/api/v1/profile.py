@@ -3,11 +3,11 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from typing import Optional, List, Dict, Any
 import base64
-from sqlalchemy import desc
+from sqlalchemy import desc, and_, join
 
 # 修改导入路径
 from backend.core.security import get_current_user, get_password_hash
-from backend.database.models import User, Voice, UserOperationHistory
+from backend.database.models import User, Voice, UserOperationHistory, VoiceCollection, VoiceLike
 from backend.database.database import get_db
 from backend.core.models import ProfileUpdate, ProfileResponse, APIResponse
 
@@ -285,13 +285,17 @@ async def get_user_voice_history(
         # 构建响应数据
         result = []
         for voice in voices:
+            # 获取声音头像的base64编码
+            voice_avatar_base64 = base64.b64encode(voice.avatar).decode('utf-8') if voice.avatar else None
+
             # 构建每个声音项的数据
             voice_item = {
                 "id": voice.id,
                 "title": voice.title or "未命名声音",
-                "cover": "assets/images/cover3.jpg",  # 默认封面，实际应该使用voice.avatar
+                "cover": f"/api/v1/community/voices/{voice.id}/avatar",  # 使用API路径获取封面
+                "coverData": voice_avatar_base64,  # 添加Base64编码的图像数据
                 "tag": "声音克隆",
-                "created_at": voice.created_at.strftime("%Y-%m-%d"),
+                "created_at": voice.created_at.strftime("%Y-%m-%d") if voice.created_at else "",
                 "duration": "4分15秒",  # 这里可以从资源中获取实际时长
                 "play_count": voice.play_count,
                 "like_count": voice.like_count,
@@ -310,5 +314,245 @@ async def get_user_voice_history(
         return APIResponse(
             code=500,
             msg=f"获取克隆声音历史失败: {str(e)}",
+            data={}
+        )
+
+# 获取用户收藏的声音
+@router.get("/collections")
+async def get_user_collections(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """获取用户收藏的声音列表"""
+    try:
+        # 查询用户收藏的声音 - 使用VoiceCollection表关联Voice表
+        query = db.query(Voice).join(
+            VoiceCollection, 
+            VoiceCollection.voice_id == Voice.id
+        ).filter(
+            VoiceCollection.user_id == current_user.id
+        ).order_by(desc(VoiceCollection.created_at))
+        
+        # 获取所有记录
+        voices = query.all()
+        
+        # 构建响应数据
+        result = []
+        for voice in voices:
+            # 获取收藏时间
+            collection = db.query(VoiceCollection).filter(
+                VoiceCollection.user_id == current_user.id,
+                VoiceCollection.voice_id == voice.id
+            ).first()
+            
+            # 获取声音头像的base64编码
+            voice_avatar_base64 = base64.b64encode(voice.avatar).decode('utf-8') if voice.avatar else None
+            
+            # 构建每个声音项的数据
+            voice_item = {
+                "id": voice.id,
+                "title": voice.title or "未命名声音",
+                "coverData": voice_avatar_base64,  # 添加Base64编码的图像数据
+                "tag": "收藏声音",
+                "created_at": collection.created_at.strftime("%Y-%m-%d") if collection else "",
+                "duration": "5分40秒",  # 这里可以从资源中获取实际时长
+                "author": {
+                    "id": voice.user_id,
+                    "username": voice.author.username if voice.author else "未知用户"
+                },
+                "play_count": voice.play_count,
+                "like_count": voice.like_count,
+                "collect_count": voice.collect_count
+            }
+            result.append(voice_item)
+        
+        return APIResponse(
+            code=200,
+            msg="获取收藏声音成功",
+            data={
+                "items": result
+            }
+        )
+    except Exception as e:
+        return APIResponse(
+            code=500,
+            msg=f"获取收藏声音失败: {str(e)}",
+            data={}
+        )
+
+# 获取用户喜欢的声音
+@router.get("/likes")
+async def get_user_likes(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """获取用户喜欢的声音列表"""
+    try:
+        # 查询用户喜欢的声音 - 使用VoiceLike表关联Voice表
+        query = db.query(Voice).join(
+            VoiceLike, 
+            VoiceLike.voice_id == Voice.id
+        ).filter(
+            VoiceLike.user_id == current_user.id
+        ).order_by(desc(VoiceLike.created_at))
+        
+        # 获取所有记录
+        voices = query.all()
+        
+        # 构建响应数据
+        result = []
+        for voice in voices:
+            # 获取点赞时间
+            like = db.query(VoiceLike).filter(
+                VoiceLike.user_id == current_user.id,
+                VoiceLike.voice_id == voice.id
+            ).first()
+            
+            # 获取声音头像的base64编码
+            voice_avatar_base64 = base64.b64encode(voice.avatar).decode('utf-8') if voice.avatar else None
+            
+            # 构建每个声音项的数据
+            voice_item = {
+                "id": voice.id,
+                "title": voice.title or "未命名声音",
+                "coverData": voice_avatar_base64,  # 添加Base64编码的图像数据
+                "tag": "喜欢声音",
+                "created_at": like.created_at.strftime("%Y-%m-%d") if like else "",
+                "duration": "6分50秒",  # 这里可以从资源中获取实际时长
+                "author": {
+                    "id": voice.user_id,
+                    "username": voice.author.username if voice.author else "未知用户"
+                },
+                "play_count": voice.play_count,
+                "like_count": voice.like_count,
+                "collect_count": voice.collect_count
+            }
+            result.append(voice_item)
+        
+        return APIResponse(
+            code=200,
+            msg="获取喜欢声音成功",
+            data={
+                "items": result
+            }
+        )
+    except Exception as e:
+        return APIResponse(
+            code=500,
+            msg=f"获取喜欢声音失败: {str(e)}",
+            data={}
+        )
+
+# 获取谁赞过用户的声音
+@router.get("/liked-by")
+async def get_liked_by_users(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """获取谁赞过用户的声音"""
+    try:
+        # 查询赞过用户声音的记录 - 使用VoiceLike表关联Voice表和User表
+        query = db.query(VoiceLike, Voice, User).join(
+            Voice, VoiceLike.voice_id == Voice.id
+        ).join(
+            User, VoiceLike.user_id == User.id
+        ).filter(
+            Voice.user_id == current_user.id
+        ).order_by(desc(VoiceLike.created_at))
+        
+        # 获取所有记录
+        likes = query.all()
+        
+        # 构建响应数据
+        result = []
+        for like, voice, user in likes:
+            # 获取声音头像的base64编码
+            voice_avatar_base64 = base64.b64encode(voice.avatar).decode('utf-8') if voice.avatar else None
+            
+            # 构建每个点赞记录的数据
+            like_item = {
+                "id": like.id,
+                "created_at": like.created_at.strftime("%Y-%m-%d"),
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "avatar": base64.b64encode(user.avatar).decode('utf-8') if user.avatar else None
+                },
+                "voice": {
+                    "id": voice.id,
+                    "title": voice.title or "未命名声音",
+                    "coverData": voice_avatar_base64  # 添加Base64编码的图像数据
+                }
+            }
+            result.append(like_item)
+        
+        return APIResponse(
+            code=200,
+            msg="获取点赞用户成功",
+            data={
+                "items": result
+            }
+        )
+    except Exception as e:
+        return APIResponse(
+            code=500,
+            msg=f"获取点赞用户失败: {str(e)}",
+            data={}
+        )
+
+# 获取谁收藏过用户的声音
+@router.get("/collected-by")
+async def get_collected_by_users(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """获取谁收藏过用户的声音"""
+    try:
+        # 查询收藏过用户声音的记录 - 使用VoiceCollection表关联Voice表和User表
+        query = db.query(VoiceCollection, Voice, User).join(
+            Voice, VoiceCollection.voice_id == Voice.id
+        ).join(
+            User, VoiceCollection.user_id == User.id
+        ).filter(
+            Voice.user_id == current_user.id
+        ).order_by(desc(VoiceCollection.created_at))
+        
+        # 获取所有记录
+        collections = query.all()
+        
+        # 构建响应数据
+        result = []
+        for collection, voice, user in collections:
+            # 获取声音头像的base64编码
+            voice_avatar_base64 = base64.b64encode(voice.avatar).decode('utf-8') if voice.avatar else None
+            
+            # 构建每个收藏记录的数据
+            collection_item = {
+                "id": collection.id,
+                "created_at": collection.created_at.strftime("%Y-%m-%d"),
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "avatar": base64.b64encode(user.avatar).decode('utf-8') if user.avatar else None
+                },
+                "voice": {
+                    "id": voice.id,
+                    "title": voice.title or "未命名声音",
+                    "coverData": voice_avatar_base64  # 添加Base64编码的图像数据
+                }
+            }
+            result.append(collection_item)
+        
+        return APIResponse(
+            code=200,
+            msg="获取收藏用户成功",
+            data={
+                "items": result
+            }
+        )
+    except Exception as e:
+        return APIResponse(
+            code=500,
+            msg=f"获取收藏用户失败: {str(e)}",
             data={}
         )

@@ -102,12 +102,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 将API返回的音色格式化为前端需要的格式
             voices = data.voice_samples.map((sample, index) => {
+                const displayName = sample.name.split('_')[0];
                 // 为每个音色生成一个随机的用户头像和描述
                 const avatarIndex = (index % 6) + 1; // 1-6之间循环
                 const popular = Math.floor(Math.random() * 3000) + 1000; // 1000-4000之间的随机数
                 
                 // 根据文件名判断性别
-                const isFemale = sample.name.includes('女') || sample.name.includes('腔');
+                const isFemale = displayName.includes('女') || displayName.includes('腔');
                 const type = isFemale ? 'female' : 'male';
                 
                 // 根据名称设置描述和标签
@@ -115,19 +116,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 let tags = ["专业", "清晰", "自然"];
                 
                 // 针对特定音色设置特殊描述
-                if (sample.name.includes('cctv')) {
+                if (displayName.includes('cctv')) {
                     description = "专业播音腔，标准普通话";
                     tags = ["播音", "权威", "标准"];
-                } else if (sample.name.includes('剑魔')) {
+                } else if (displayName.includes('剑魔')) {
                     description = "低沉磁性，具有力量感";
                     tags = ["磁性", "力量", "特色"];
-                } else if (sample.name.includes('女声')) {
+                } else if (displayName.includes('女声')) {
                     description = "温柔甜美，清晰自然";
                     tags = ["甜美", "温柔", "清晰"];
-                } else if (sample.name.includes('英语')) {
+                } else if (displayName.includes('英语')) {
                     description = "英语发音标准，语调自然";
                     tags = ["英语", "国际化", "专业"];
-                } else if (sample.name.includes('蔡徐坤')) {
+                } else if (displayName.includes('蔡徐坤')) {
                     description = "独特音色，有辨识度";
                     tags = ["特色", "年轻", "活力"];
                 }

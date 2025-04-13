@@ -117,10 +117,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 interactionTabs.forEach(t => t.classList.remove('active'));
                 interactionTabs[0].classList.add('active');  // 选中第一个标签（我收藏的声音）
                 
-                // 显示默认内容
+                // 显示加载中提示
                 const listContainer = document.querySelector('.interaction-section .history-list');
                 listContainer.className = 'history-list';
-                listContainer.innerHTML = collectedItems;
+                listContainer.innerHTML = '<div class="loading">加载中...</div>';
+                
+                // 加载收藏的声音数据
+                loadCollectedVoices(auth).then(collectedItems => {
+                    listContainer.innerHTML = collectedItems;
+                }).catch(error => {
+                    console.error('加载收藏声音失败:', error);
+                    listContainer.innerHTML = '<div class="no-content">加载失败，请稍后再试</div>';
+                });
             }
         });
     });
@@ -185,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     audioItemsHtml += `
                         <div class="history-item" data-id="${item.id}">
                             <div class="item-cover">
-                                <img src="${item.cover}" alt="作品封面">
+                                <img src="data:image/jpeg;base64,${item.coverData}" alt="作品封面">
                                 <div class="item-tag">${item.tag}</div>
                             </div>
                             <div class="item-info">
@@ -246,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     videoItemsHtml += `
                         <div class="history-item" data-id="${item.id}">
                             <div class="item-cover">
-                                <img src="${item.cover}" alt="作品封面">
+                                <img src="data:image/jpeg;base64,${item.coverData}" alt="作品封面">
                                 <div class="item-tag">${item.tag}</div>
                             </div>
                             <div class="item-info">
@@ -306,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     voiceItemsHtml += `
                         <div class="history-item" data-id="${item.id}">
                             <div class="item-cover">
-                                <img src="${item.cover}" alt="作品封面">
+                                <img src="data:image/jpeg;base64,${item.coverData}" alt="作品封面">
                                 <div class="item-tag">${item.tag}</div>
                             </div>
                             <div class="item-info">
@@ -402,171 +410,245 @@ document.addEventListener('DOMContentLoaded', function() {
     const interactionTabs = document.querySelectorAll('.interaction-section .tab-item');
     const interactionList = document.querySelector('.interaction-section .history-list');
 
-    // 创建我收藏的声音内容（3个作品）
-    const collectedItems = `
-        <div class="history-item">
-            <div class="item-cover">
-                <img src="assets/images/cover1.jpg" alt="作品封面">
-                <div class="item-tag">生成副本</div>
-            </div>
-            <div class="item-info">
-                <div class="item-title">
-                    <input type="text" value="收藏的声音1" class="title-input">
-                    <button class="btn-save-title">保存</button>
-                </div>
-                <div class="item-meta">2025-01-26 收藏 · 5分40秒</div>
-            </div>
-        </div>
-        <div class="history-item">
-            <div class="item-cover">
-                <img src="assets/images/cover2.jpg" alt="作品封面">
-                <div class="item-tag">生成副本</div>
-            </div>
-            <div class="item-info">
-                <div class="item-title">
-                    <input type="text" value="收藏的声音2" class="title-input">
-                    <button class="btn-save-title">保存</button>
-                </div>
-                <div class="item-meta">2025-01-25 收藏 · 3分20秒</div>
-            </div>
-        </div>
-        <div class="history-item">
-            <div class="item-cover">
-                <img src="assets/images/cover3.jpg" alt="作品封面">
-                <div class="item-tag">生成副本</div>
-            </div>
-            <div class="item-info">
-                <div class="item-title">
-                    <input type="text" value="收藏的声音3" class="title-input">
-                    <button class="btn-save-title">保存</button>
-                </div>
-                <div class="item-meta">2025-01-24 收藏 · 4分15秒</div>
-            </div>
-        </div>
-    `;
+    // 加载用户收藏的声音
+    async function loadCollectedVoices(auth) {
+        try {
+            // 构建请求配置
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${auth.currentUser.token}`
+                }
+            };
+            
+            // 调用API获取用户收藏的声音
+            const response = await axios.get(
+                `${auth.baseURL}/api/v1/user/collections`, 
+                config
+            );
+            
+            if (response.data.code !== 200) {
+                throw new Error(response.data.msg || '获取收藏声音失败');
+            }
+            
+            const voiceData = response.data.data;
+            
+            // 生成HTML
+            let collectedItemsHtml = '';
+            if (voiceData.items && voiceData.items.length > 0) {
+                voiceData.items.forEach(item => {
+                    collectedItemsHtml += `
+                        <div class="history-item" data-id="${item.id}">
+                            <div class="item-cover">
+                                <img src="data:image/jpeg;base64,${item.coverData}" alt="作品封面">
+                                <div class="item-tag">${item.tag}</div>
+                            </div>
+                            <div class="item-info">
+                                <div class="item-title">
+                                    <input type="text" value="${item.title}" class="title-input" readonly>
+                                </div>
+                                <div class="item-meta">${item.created_at} 收藏 · ${item.duration}</div>
+                                <div class="item-author">作者: ${item.author.username}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                collectedItemsHtml = '<div class="no-content">暂无收藏声音</div>';
+            }
+            
+            return collectedItemsHtml;
+            
+        } catch (error) {
+            console.error('加载收藏声音失败:', error);
+            return '<div class="no-content">加载失败，请稍后再试</div>';
+        }
+    }
 
-    // 创建我喜欢的声音内容（3个作品）
-    const likedItems = `
-        <div class="history-item">
-            <div class="item-cover">
-                <img src="assets/images/cover4.jpg" alt="作品封面">
-                <div class="item-tag">生成副本</div>
-            </div>
-            <div class="item-info">
-                <div class="item-title">
-                    <input type="text" value="喜欢的声音1" class="title-input">
-                    <button class="btn-save-title">保存</button>
-                </div>
-                <div class="item-meta">2025-01-23 点赞 · 6分50秒</div>
-            </div>
-        </div>
-        <div class="history-item">
-            <div class="item-cover">
-                <img src="assets/images/cover5.jpg" alt="作品封面">
-                <div class="item-tag">生成副本</div>
-            </div>
-            <div class="item-info">
-                <div class="item-title">
-                    <input type="text" value="喜欢的声音2" class="title-input">
-                    <button class="btn-save-title">保存</button>
-                </div>
-                <div class="item-meta">2025-01-22 点赞 · 2分30秒</div>
-            </div>
-        </div>
-        <div class="history-item">
-            <div class="item-cover">
-                <img src="assets/images/cover6.jpg" alt="作品封面">
-                <div class="item-tag">生成副本</div>
-            </div>
-            <div class="item-info">
-                <div class="item-title">
-                    <input type="text" value="喜欢的声音3" class="title-input">
-                    <button class="btn-save-title">保存</button>
-                </div>
-                <div class="item-meta">2025-01-21 点赞 · 7分10秒</div>
-            </div>
-        </div>
-    `;
+    // 加载用户喜欢的声音
+    async function loadLikedVoices(auth) {
+        try {
+            // 构建请求配置
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${auth.currentUser.token}`
+                }
+            };
+            
+            // 调用API获取用户喜欢的声音
+            const response = await axios.get(
+                `${auth.baseURL}/api/v1/user/likes`, 
+                config
+            );
+            
+            if (response.data.code !== 200) {
+                throw new Error(response.data.msg || '获取喜欢声音失败');
+            }
+            
+            const voiceData = response.data.data;
+            
+            // 生成HTML
+            let likedItemsHtml = '';
+            if (voiceData.items && voiceData.items.length > 0) {
+                voiceData.items.forEach(item => {
+                    likedItemsHtml += `
+                        <div class="history-item" data-id="${item.id}">
+                            <div class="item-cover">
+                                <img src="data:image/jpeg;base64,${item.coverData}" alt="作品封面">
+                                <div class="item-tag">${item.tag}</div>
+                            </div>
+                            <div class="item-info">
+                                <div class="item-title">
+                                    <input type="text" value="${item.title}" class="title-input" readonly>
+                                </div>
+                                <div class="item-meta">${item.created_at} 点赞 · ${item.duration}</div>
+                                <div class="item-author">作者: ${item.author.username}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                likedItemsHtml = '<div class="no-content">暂无喜欢声音</div>';
+            }
+            
+            return likedItemsHtml;
+            
+        } catch (error) {
+            console.error('加载喜欢声音失败:', error);
+            return '<div class="no-content">加载失败，请稍后再试</div>';
+        }
+    }
 
-    // 创建谁赞过我的内容
-    const likedByItems = `
-        <div class="interaction-user">
-            <div class="user-wrapper">
-                <div class="user-avatar">
-                    <img src="assets/images/avatar-default.png" alt="用户头像">
-                </div>
-                <div class="user-info">
-                    <div class="user-name">用户名字</div>
-                    <div class="like-time">2025-01-29</div>
-                </div>
-            </div>
-            <div class="liked-content">
-                <div class="liked-text">赞了你的声音</div>
-                <div class="liked-image">
-                    <img src="assets/images/cover1.jpg" alt="作品封面">
-                </div>
-            </div>
-        </div>
-        <div class="interaction-user">
-            <div class="user-wrapper">
-                <div class="user-avatar">
-                    <img src="assets/images/avatar-default.png" alt="用户头像">
-                </div>
-                <div class="user-info">
-                    <div class="user-name">用户名字</div>
-                    <div class="like-time">2025-01-29</div>
-                </div>
-            </div>
-            <div class="liked-content">
-                <div class="liked-text">赞了你的声音</div>
-                <div class="liked-image">
-                    <img src="assets/images/cover2.jpg" alt="作品封面">
-                </div>
-            </div>
-        </div>
-    `;
+    // 加载谁赞过我的声音
+    async function loadLikedByUsers(auth) {
+        try {
+            // 构建请求配置
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${auth.currentUser.token}`
+                }
+            };
+            
+            // 调用API获取谁赞过用户的声音
+            const response = await axios.get(
+                `${auth.baseURL}/api/v1/user/liked-by`, 
+                config
+            );
+            
+            if (response.data.code !== 200) {
+                throw new Error(response.data.msg || '获取点赞用户失败');
+            }
+            
+            const likeData = response.data.data;
+            
+            // 生成HTML
+            let likedByItemsHtml = '';
+            if (likeData.items && likeData.items.length > 0) {
+                likeData.items.forEach(item => {
+                    // 处理头像
+                    let avatarSrc = 'assets/images/avatar-default.png';
+                    if (item.user.avatar) {
+                        avatarSrc = `data:image/jpeg;base64,${item.user.avatar}`;
+                    }
+                    
+                    likedByItemsHtml += `
+                        <div class="interaction-user" data-id="${item.id}">
+                            <div class="user-wrapper">
+                                <div class="user-avatar">
+                                    <img src="${avatarSrc}" alt="用户头像">
+                                </div>
+                                <div class="user-info">
+                                    <div class="user-name">${item.user.username}</div>
+                                    <div class="like-time">${item.created_at}</div>
+                                </div>
+                            </div>
+                            <div class="liked-content">
+                                <div class="liked-text">赞了你的声音</div>
+                                <div class="liked-image">
+                                    <img src="${item.voice.cover}" alt="作品封面">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                likedByItemsHtml = '<div class="no-content">暂无用户点赞</div>';
+            }
+            
+            return likedByItemsHtml;
+            
+        } catch (error) {
+            console.error('加载点赞用户失败:', error);
+            return '<div class="no-content">加载失败，请稍后再试</div>';
+        }
+    }
 
-    // 创建谁收藏过的内容
-    const collectedByItems = `
-        <div class="interaction-user">
-            <div class="user-wrapper">
-                <div class="user-avatar">
-                    <img src="assets/images/avatar-default.png" alt="用户头像">
-                </div>
-                <div class="user-info">
-                    <div class="user-name">用户名字</div>
-                    <div class="like-time">2025-01-29</div>
-                </div>
-            </div>
-            <div class="liked-content">
-                <div class="liked-text">收藏了你的声音</div>
-                <div class="liked-image">
-                    <img src="assets/images/cover3.jpg" alt="作品封面">
-                </div>
-            </div>
-        </div>
-        <div class="interaction-user">
-            <div class="user-wrapper">
-                <div class="user-avatar">
-                    <img src="assets/images/avatar-default.png" alt="用户头像">
-                </div>
-                <div class="user-info">
-                    <div class="user-name">用户名字</div>
-                    <div class="like-time">2025-01-29</div>
-                </div>
-            </div>
-            <div class="liked-content">
-                <div class="liked-text">收藏了你的声音</div>
-                <div class="liked-image">
-                    <img src="assets/images/cover4.jpg" alt="作品封面">
-                </div>
-            </div>
-        </div>
-    `;
+    // 加载谁收藏过我的声音
+    async function loadCollectedByUsers(auth) {
+        try {
+            // 构建请求配置
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${auth.currentUser.token}`
+                }
+            };
+            
+            // 调用API获取谁收藏过用户的声音
+            const response = await axios.get(
+                `${auth.baseURL}/api/v1/user/collected-by`, 
+                config
+            );
+            
+            if (response.data.code !== 200) {
+                throw new Error(response.data.msg || '获取收藏用户失败');
+            }
+            
+            const collectionData = response.data.data;
+            
+            // 生成HTML
+            let collectedByItemsHtml = '';
+            if (collectionData.items && collectionData.items.length > 0) {
+                collectionData.items.forEach(item => {
+                    // 处理头像
+                    let avatarSrc = 'assets/images/avatar-default.png';
+                    if (item.user.avatar) {
+                        avatarSrc = `data:image/jpeg;base64,${item.user.avatar}`;
+                    }
+                    
+                    collectedByItemsHtml += `
+                        <div class="interaction-user" data-id="${item.id}">
+                            <div class="user-wrapper">
+                                <div class="user-avatar">
+                                    <img src="${avatarSrc}" alt="用户头像">
+                                </div>
+                                <div class="user-info">
+                                    <div class="user-name">${item.user.username}</div>
+                                    <div class="like-time">${item.created_at}</div>
+                                </div>
+                            </div>
+                            <div class="liked-content">
+                                <div class="liked-text">收藏了你的声音</div>
+                                <div class="liked-image">
+                                    <img src="${item.voice.cover}" alt="作品封面">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                collectedByItemsHtml = '<div class="no-content">暂无用户收藏</div>';
+            }
+            
+            return collectedByItemsHtml;
+            
+        } catch (error) {
+            console.error('加载收藏用户失败:', error);
+            return '<div class="no-content">加载失败，请稍后再试</div>';
+        }
+    }
 
     // 修改标签切换逻辑
     interactionTabs.forEach(tab => {
-        tab.addEventListener('click', (e) => {
+        tab.addEventListener('click', async (e) => {
             e.preventDefault();
             interactionTabs.forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
@@ -574,20 +656,47 @@ document.addEventListener('DOMContentLoaded', function() {
             // 获取列表容器
             const listContainer = document.querySelector('.interaction-section .history-list, .interaction-section .interaction-list');
             
-            if (tab.textContent === '我收藏的声音') {
-                listContainer.className = 'history-list';  // 使用网格布局
-                listContainer.innerHTML = collectedItems;
-            } else if (tab.textContent === '我喜欢的声音') {
-                listContainer.className = 'history-list';  // 使用网格布局
-                listContainer.innerHTML = likedItems;
-            } else if (tab.textContent === '谁赞过我') {
-                listContainer.className = 'interaction-list';  // 使用列表布局
-                listContainer.innerHTML = likedByItems;
-            } else if (tab.textContent === '谁收藏过') {
-                listContainer.className = 'interaction-list';  // 使用列表布局
-                listContainer.innerHTML = collectedByItems;
+            // 显示加载中提示
+            listContainer.innerHTML = '<div class="loading">加载中...</div>';
+            
+            try {
+                if (tab.textContent === '我收藏的声音') {
+                    listContainer.className = 'history-list';  // 使用网格布局
+                    const collectedItems = await loadCollectedVoices(auth);
+                    listContainer.innerHTML = collectedItems;
+                } else if (tab.textContent === '我喜欢的声音') {
+                    listContainer.className = 'history-list';  // 使用网格布局
+                    const likedItems = await loadLikedVoices(auth);
+                    listContainer.innerHTML = likedItems;
+                } else if (tab.textContent === '谁赞过我') {
+                    listContainer.className = 'interaction-list';  // 使用列表布局
+                    const likedByItems = await loadLikedByUsers(auth);
+                    listContainer.innerHTML = likedByItems;
+                } else if (tab.textContent === '谁收藏过') {
+                    listContainer.className = 'interaction-list';  // 使用列表布局
+                    const collectedByItems = await loadCollectedByUsers(auth);
+                    listContainer.innerHTML = collectedByItems;
+                }
+            } catch (error) {
+                console.error('加载互动信息失败:', error);
+                listContainer.innerHTML = '<div class="no-content">加载失败，请稍后再试</div>';
             }
         });
+    });
+    
+    // 初始加载互动信息 - 默认加载我收藏的声音
+    document.querySelector('.menu-item:nth-child(3)').addEventListener('click', async function() {
+        if (this.classList.contains('active')) {
+            const listContainer = document.querySelector('.interaction-section .history-list');
+            listContainer.innerHTML = '<div class="loading">加载中...</div>';
+            try {
+                const collectedItems = await loadCollectedVoices(auth);
+                listContainer.innerHTML = collectedItems;
+            } catch (error) {
+                console.error('初始加载收藏声音失败:', error);
+                listContainer.innerHTML = '<div class="no-content">加载失败，请稍后再试</div>';
+            }
+        }
     });
 
     // 检查用户信息是否已完善

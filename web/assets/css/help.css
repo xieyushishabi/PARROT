@@ -163,12 +163,26 @@ body {
 }
 
 .video-placeholder {
-    flex: 1;
-    height: 180px;
-    background-color: #d3d3d3;
     position: relative;
+    width: 100%;
+    height: 200px;
+    margin-bottom: 20px;
     border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    /* 删除原来的背景色 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
+.platform-guide .video-placeholder:nth-child(1) {
+    background-image: url('../images/tutorials/platform-guide.jpeg') !important;
+}
+
+.platform-guide .video-placeholder:nth-child(2) {
+    background-image: url('../images/tutorials/platform-guide.jpeg') !important;
+}
+
 
 .play-button {
     position: absolute;

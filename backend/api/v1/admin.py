@@ -1124,16 +1124,13 @@ async def record_site_visit(
     - feature_type: 功能类型 (教育教学、智能配音、声音克隆)
     """
     try:
-        print("\n===== 请求调试信息 =====")
-        print(feature_type)
         user_id = current_user.id if current_user else None
         # 所有记录延时30分钟后处理
-        print(user_id)
         background_tasks.add_task(
             delayed_record_visit, 
             user_id=user_id,
             feature_type=feature_type,
-            delay_minutes=0.2
+            delay_minutes=30
         )
         
         return {

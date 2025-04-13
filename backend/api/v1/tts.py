@@ -437,9 +437,12 @@ async def list_voice_samples():
         samples = []
         for filename in os.listdir(VOICE_SAMPLES_DIR):
             if filename.endswith(('.wav', '.mp3')):
+                name = filename.split('.')[0]
+                # 移除文件名中的UUID
+                name = name.split('_')[0]
                 samples.append({
-                    "id": filename.split('.')[0],
-                    "name": filename,
+                    "id": name,
+                    "name": name,
                     "path": os.path.join(VOICE_SAMPLES_DIR, filename)
                 })
         

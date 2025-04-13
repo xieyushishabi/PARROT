@@ -155,10 +155,7 @@ class TeachingAvatar(Base):
     gender = Column(String, nullable=True, comment="性别：男、女")
     pose_type = Column(String, nullable=True, comment="姿势类型")
     is_system = Column(Boolean, default=True, comment="是否系统预设")
-    
-    # 外键关系(仅自定义头像需要)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, comment="创建者ID")
-    
+
     # 时间戳
     created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="创建时间")
 
@@ -172,9 +169,6 @@ class TeachingBackground(Base):
     category = Column(String, nullable=True, comment="背景类别")
     is_system = Column(Boolean, default=True, comment="是否系统预设")
     
-    # 外键关系(仅自定义背景需要)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, comment="创建者ID")
-    
     # 时间戳
     created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="创建时间")
 
@@ -186,58 +180,6 @@ class TeachingMusic(Base):
     name = Column(String, nullable=False, comment="音乐名称")
     music_path = Column(String, nullable=False, comment="音乐文件存储路径")
     duration = Column(Integer, nullable=False, comment="音乐时长(秒)")
-    category = Column(String, nullable=True, comment="音乐类别")
-    is_system = Column(Boolean, default=True, comment="是否系统预设")
-    
-    # 外键关系(仅自定义音乐需要)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, comment="创建者ID")
-    
-    # 时间戳
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="创建时间")
-
-class TeachingResource(Base):
-    """教学资源数据库模型"""
-    __tablename__ = "teaching_resources"
-    
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, nullable=False, comment="教学资源标题")
-    description = Column(String, nullable=True, comment="教学资源描述")
-    ppt_path = Column(String, nullable=True, comment="PPT文件存储路径")
-    ppt_images_dir = Column(String, nullable=True, comment="PPT图片目录路径")
-    
-    # 关联资源
-    avatar_id = Column(Integer, ForeignKey("teaching_avatars.id"), nullable=True)
-    background_id = Column(Integer, ForeignKey("teaching_backgrounds.id"), nullable=True)
-    music_id = Column(Integer, ForeignKey("teaching_music.id"), nullable=True)
-    
-    # 外键关系
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, comment="创建者ID")
-    
-    # 时间戳
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="创建时间")
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), comment="更新时间")
-
-class Teaching(Base):
-    """教学内容数据库模型"""
-    __tablename__ = "teachings"
-    
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, nullable=False, comment="教学标题")
-    description = Column(String, nullable=True, comment="教学描述")
-    status = Column(String, default="draft", comment="状态：draft(草稿)、published(已发布)")
-    is_public = Column(Boolean, default=True, comment="是否公开")
-    
-    # 关联资源
-    resource_id = Column(Integer, ForeignKey("teaching_resources.id"), nullable=False)
-    resource = relationship("TeachingResource")
-    
-    # 外键关系
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, comment="创建者ID")
-    user = relationship("User")
-    
-    # 时间戳
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="创建时间")
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), comment="更新时间")    
     category = Column(String, nullable=True, comment="音乐类别：放松、紧张等")
     is_system = Column(Boolean, default=True, comment="是否系统预设")
     
@@ -246,3 +188,5 @@ class Teaching(Base):
     
     # 时间戳
     created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="创建时间")
+
+
