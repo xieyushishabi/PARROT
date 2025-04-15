@@ -183,9 +183,6 @@ class TeachingMusic(Base):
     category = Column(String, nullable=True, comment="音乐类别：放松、紧张等")
     is_system = Column(Boolean, default=True, comment="是否系统预设")
     
-    # 外键关系(仅自定义音乐需要)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, comment="创建者ID")
-    
     # 时间戳
     created_at = Column(DateTime(timezone=True), server_default=func.now(), comment="创建时间")
 

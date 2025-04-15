@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parrot Sound - 声音置换</title>
+    <link rel="stylesheet" href="assets/css/common.css">
+    <link rel="stylesheet" href="assets/css/voice-swap.css">
+    <link rel="stylesheet" href="assets/css/iconfont.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="nav-left">
+            <div class="logo">
+                <img src="assets/images/logo.png" alt="Parrot Sound">
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html">首页</a></li>
+                <li class="nav-item"><a href="dub.html">智能配音</a></li>
+                <li class="nav-item"><a href="history.html">音频记录</a></li>
+                <li class="nav-item"><a href="clone.html">声音克隆</a></li>
+                <li class="nav-item"><a href="voice-swap.html" class="active">声音置换</a></li>
+                <li class="nav-item"><a href="teaching.html">教育教学</a></li>
+                <li class="nav-item"><a href="community.html">社区资源</a></li>
+                <li class="nav-item"><a href="help.html">帮助中心</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <a href="#" class="nav-user" id="userAvatar">
+                <img src="assets/images/avatar-default.png" alt="用户头像">
+            </a>
+        </div>
+    </nav>
+
+    <!-- 主要内容区域 -->
+    <div class="voice-swap-container">
+        <h1 class="page-title">声音置换</h1>
+        
+        <!-- 上传区域 -->
+        <div class="upload-section">
+            <h2 class="upload-title">上传音频或视频</h2>
+            <p class="upload-description">上传您要进行声音置换的音频或视频文件。支持mp3, wav, mp4, avi等格式。</p>
+            
+            <div class="upload-area" id="uploadArea">
+                <span class="upload-icon-text">上传</span>
+                <p class="upload-text">点击或拖拽文件到此处上传</p>
+                <p class="upload-hint">支持的格式: MP3, WAV, MP4, AVI (最大100MB)</p>
+                <input type="file" id="uploadFile" class="upload-file-input" accept=".mp3,.wav,.mp4,.avi">
+                <button class="upload-btn">选择文件</button>
+            </div>
+            
+            <!-- 上传的文件预览 -->
+            <div class="file-preview" id="filePreview">
+                <div class="file-info">
+                    <span class="file-icon-text" id="fileTypeIcon">文件</span>
+                    <div class="file-details">
+                        <div class="file-name" id="fileName">example.mp3</div>
+                        <div class="file-meta">
+                            <span class="file-size" id="fileSize">3.2MB</span>
+                            <span class="file-type" id="fileType">音频文件</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="file-actions">
+                    <button class="file-delete" id="deleteFile">删除</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 媒体播放器 -->
+        <div class="media-player" id="mediaPlayer">
+            <h2 class="player-title">原始媒体</h2>
+            <div class="player-container">
+                <video id="videoPlayer" controls style="display: none;">
+                    <source src="" type="video/mp4">
+                    您的浏览器不支持 HTML5 视频
+                </video>
+                <audio id="audioPlayer" controls style="display: none;">
+                    <source src="" type="audio/mpeg">
+                    您的浏览器不支持 HTML5 音频
+                </audio>
+            </div>
+        </div>
+        
+        <!-- 声音选择区域 -->
+        <div class="voice-selection">
+            <h2 class="voice-title">选择替换声音</h2>
+            <p class="voice-description">请从下方选择一个声音来替换原始媒体中的声音</p>
+            
+            <div class="voice-grid" id="voiceGrid">
+                <!-- 声音卡片将通过JavaScript动态添加 -->
+            </div>
+            
+            <button class="process-btn" id="processBtn" disabled>开始声音置换</button>
+        </div>
+        
+        <!-- 字幕区域 -->
+        <div class="subtitle-section" id="subtitleSection">
+            <h2 class="subtitle-title">识别字幕</h2>
+            <p class="subtitle-description">系统已自动提取原始媒体中的语音内容并转换为文字</p>
+            
+            <div class="subtitle-box" id="subtitleBox">
+                正在加载字幕...
+            </div>
+        </div>
+        
+        <!-- 结果区域 -->
+        <div class="result-section" id="resultSection">
+            <h2 class="result-title">处理结果</h2>
+            <p class="result-description">声音置换处理已完成，您可以预览并下载成果</p>
+            
+            <div class="result-container">
+                <video id="resultPlayer" class="result-player" controls>
+                    <source src="" type="video/mp4">
+                    您的浏览器不支持 HTML5 视频
+                </video>
+                
+                <div class="result-actions">
+                    <button class="result-download" id="downloadBtn">
+                        <span class="action-icon-text">↓</span>
+                        下载
+                    </button>
+                    <button class="result-share" id="shareBtn">
+                        <span class="action-icon-text">↗</span>
+                        分享
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 处理中弹窗 -->
+    <div class="processing-overlay" id="processingOverlay">
+        <div class="processing-content">
+            <span class="processing-icon-text">处理中</span>
+            <h3 class="processing-text">声音置换处理中</h3>
+            <p class="processing-subtext">请稍候，正在进行AI语音转换...</p>
+        </div>
+    </div>
+
+    <script src="assets/js/libs/axios.min.js"></script>
+    <script src="assets/js/common.js"></script>
+    <script type="module" src="assets/js/auth.js"></script>
+    <script src="assets/js/voice-swap.js"></script>
+</body>
+</html>
